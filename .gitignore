@@ -1,0 +1,13 @@
+# Datos crudos: pesados y descargables de la TLC (ver README)
+DATA/crudos/
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Sistema / editores
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
