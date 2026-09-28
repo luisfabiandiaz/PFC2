@@ -57,6 +57,7 @@ PERIODOS = {
 }
 N_BINS = 12
 MEDIA_MIN = 5.0     # "actividad suficiente": media diaria mínima de la celda
+TRAMOS = [(5, 50), (50, 500), (500, np.inf)]    # tramos de media diaria
 ALFA = 0.05
 
 
@@ -153,15 +154,22 @@ def estimadores(X):
     contrib = np.sum(div((X - E2) ** 2, E2), axis=0) / ((D - 1) * (Z - 1) * (T - 1) / (Z * T))
     res["D_mediana"] = float(np.median(contrib[activas]))
 
-    # ¿φ constante (cuasi-Poisson, var = φ μ) o binomial negativa (var = μ + μ²/k)?
-    # Pendiente de log var frente a log media: 1 si φ es constante, hasta 2 con BN.
-    res["pendiente"], _ = np.polyfit(np.log(media[activas]), np.log(var[activas]), 1)
-    # Momentos para la BN: 1/k = mediana de (var - media) / media²
-    res["k_BN"] = float(1 / np.median((var[activas] - media[activas]) / media[activas] ** 2))
-    # φ efectivo por tramo de volumen
-    for nombre, (lo, hi) in {"φ media<50": (MEDIA_MIN, 50), "φ media≥500": (500, np.inf)}.items():
-        tramo = activas & (media >= lo) & (media < hi)
-        res[nombre] = float(np.median(var[tramo] / media[tramo]))
+    # Función de varianza. Varianza residual por celda tras el modelo D, escalada
+    # por los gl que le corresponden a cada celda para que sea comparable con var.
+    var_res = np.sum((X - E2) ** 2, axis=0) / ((D - 1) * (Z - 1) * (T - 1) / (Z * T))
+    lm = np.log(media[activas])
+    for sufijo, v in (("", var), ("_res", var_res)):
+        # Ley de potencia de Taylor: var = a μ^b (b = 1: φ constante; b = 2: BN dominada por μ²)
+        b, log_a = np.polyfit(lm, np.log(v[activas]), 1)
+        res["b" + sufijo], res["a" + sufijo] = float(b), float(np.exp(log_a))
+        res["ecm_pot" + sufijo] = float(np.mean((np.log(v[activas]) - (log_a + b * lm)) ** 2))
+        # φ constante con la misma medida de ajuste, para comparar
+        log_phi = np.median(np.log(v[activas]) - lm)
+        res["ecm_phi" + sufijo] = float(np.mean((np.log(v[activas]) - (log_phi + lm)) ** 2))
+        # φ efectivo por tramo de volumen
+        for lo, hi in TRAMOS:
+            tramo = activas & (media >= lo) & (media < hi)
+            res[f"φ[{lo},{hi})" + sufijo] = float(np.median(v[tramo] / media[tramo]))
 
     return res, media, var, activas
 
@@ -205,11 +213,16 @@ def main():
         "C": "C. Pearson X²/gl, modelo [D][ZT] (quita el día)",
         "D": "D. Pearson X²/gl, modelo [DZ][DT][ZT]",
         "D_mediana": "D'. Mediana por celda del modelo D",
-        "φ media<50": "A en celdas con media diaria < 50",
-        "φ media≥500": "A en celdas con media diaria >= 500",
-        "pendiente": "Pendiente log var ~ log media (1 = φ cte.)",
-        "k_BN": "k de la binomial negativa (var = μ + μ²/k)",
     }
+    for sufijo, desc in (("", "var cruda"), ("_res", "var residual modelo D")):
+        nombres.update({
+            f"φ[{lo},{hi})" + sufijo: f"φ por tramo, media en [{lo:g},{hi:g}) ({desc})" for lo, hi in TRAMOS})
+        nombres.update({
+            "b" + sufijo: f"Taylor var = a μ^b: exponente b ({desc})",
+            "a" + sufijo: f"Taylor var = a μ^b: coeficiente a ({desc})",
+            "ecm_pot" + sufijo: f"ECM log-var, ley de potencia ({desc})",
+            "ecm_phi" + sufijo: f"ECM log-var, φ constante ({desc})",
+        })
     lineas = [f"Sobredispersión con réplicas diarias (celdas activas: media diaria >= {MEDIA_MIN:g})", ""]
     resultados, datos_fig = {}, {}
 
@@ -225,10 +238,10 @@ def main():
         lineas.append(f"{periodo}: D = {X.shape[0]} días, N = {int(S.sum()):,} viajes, "
                       f"{activas.sum()} de {activas.size} celdas activas")
     lineas.append("")
-    lineas.append(f"{'Estimador':<50} {'weekday':>9} {'holiday':>9}")
-    lineas.append("-" * 70)
+    lineas.append(f"{'Estimador':<58} {'weekday':>9} {'holiday':>9}")
+    lineas.append("-" * 78)
     for k, nombre in nombres.items():
-        lineas.append(f"{nombre:<50} {resultados['weekday'][k]:>9.2f} {resultados['holiday'][k]:>9.2f}")
+        lineas.append(f"{nombre:<58} {resultados['weekday'][k]:>9.2f} {resultados['holiday'][k]:>9.2f}")
 
     # Pruebas en los bloques base de ST-CC
     for periodo, X in tensores.items():
@@ -256,7 +269,7 @@ def main():
 
 
 def figura(datos_fig):
-    tinta, tinta2, azul, naranja = "#0b0b0b", "#52514e", "#2a78d6", "#eb6834"
+    tinta, tinta2, azul, naranja, aqua = "#0b0b0b", "#52514e", "#2a78d6", "#eb6834", "#1baf7a"
     fig, ejes = plt.subplots(1, 2, figsize=(10, 4.4), sharey=True, facecolor="#fcfcfb")
     for ax, (periodo, (media, var, activas, res)) in zip(ejes, datos_fig.items()):
         ax.set_facecolor("#fcfcfb")
@@ -267,8 +280,9 @@ def figura(datos_fig):
                    linewidths=0, label="celdas poco activas")
         x = np.logspace(np.log10(media[m].min()), np.log10(media.max()), 100)
         ax.plot(x, x, color=tinta2, lw=1.5, ls="--", label="Poisson: var = media")
-        ax.plot(x, res["A"] * x, color=naranja, lw=2, label="var = φ̂_A · media (cuasi-Poisson)")
-        ax.text(0.97, 0.04, f"φ̂_A = {res['A']:.1f}   pendiente = {res['pendiente']:.2f}",
+        ax.plot(x, res["A"] * x, color=naranja, lw=2, label="φ constante: var = φ̂_A · media")
+        ax.plot(x, res["a"] * x ** res["b"], color=aqua, lw=2, label="ley de Taylor: var = a · media^b")
+        ax.text(0.97, 0.04, f"φ̂_A = {res['A']:.1f}    b = {res['b']:.2f}",
                 transform=ax.transAxes, ha="right", va="bottom", color=tinta2, fontsize=9)
         ax.set_xscale("log")
         ax.set_yscale("log")
@@ -280,8 +294,6 @@ def figura(datos_fig):
         ax.tick_params(colors=tinta2)
     ejes[0].set_ylabel("varianza entre días", color=tinta2)
     ejes[0].legend(frameon=False, fontsize=8, loc="upper left", labelcolor=tinta2)
-    fig.suptitle("Varianza frente a media de los conteos diarios por celda (zona × bloque de 2 h)",
-                 color=tinta, x=0.02, ha="left", fontsize=12)
     fig.tight_layout()
     fig.savefig(SALIDA_RES / "sobredispersion_media_varianza.png", dpi=150)
 

@@ -3,17 +3,27 @@ Sobredispersión con réplicas diarias (celdas activas: media diaria >= 5)
 weekday: D = 12 días, N = 3,602,851 viajes, 740 de 792 celdas activas
 holiday: D = 9 días, N = 2,389,795 viajes, 746 de 792 celdas activas
 
-Estimador                                            weekday   holiday
-----------------------------------------------------------------------
-A. Mediana var/media por celda (Propuesta)              3.17     17.07
-B. Pearson X²/gl, modelo [celda]                        4.50     27.91
-C. Pearson X²/gl, modelo [D][ZT] (quita el día)         3.87     17.49
-D. Pearson X²/gl, modelo [DZ][DT][ZT]                   2.06      6.73
-D'. Mediana por celda del modelo D                      1.64      3.53
-A en celdas con media diaria < 50                       1.97      2.82
-A en celdas con media diaria >= 500                     4.32     49.06
-Pendiente log var ~ log media (1 = φ cte.)              1.22      1.81
-k de la binomial negativa (var = μ + μ²/k)            149.01     16.58
+Estimador                                                    weekday   holiday
+------------------------------------------------------------------------------
+A. Mediana var/media por celda (Propuesta)                      3.17     17.07
+B. Pearson X²/gl, modelo [celda]                                4.50     27.91
+C. Pearson X²/gl, modelo [D][ZT] (quita el día)                 3.87     17.49
+D. Pearson X²/gl, modelo [DZ][DT][ZT]                           2.06      6.73
+D'. Mediana por celda del modelo D                              1.64      3.53
+φ por tramo, media en [5,50) (var cruda)                        1.97      2.82
+φ por tramo, media en [50,500) (var cruda)                      2.65     12.84
+φ por tramo, media en [500,inf) (var cruda)                     4.32     49.06
+Taylor var = a μ^b: exponente b (var cruda)                     1.22      1.81
+Taylor var = a μ^b: coeficiente a (var cruda)                   0.98      0.19
+ECM log-var, ley de potencia (var cruda)                        0.62      0.68
+ECM log-var, φ constante (var cruda)                            0.70      1.46
+φ por tramo, media en [5,50) (var residual modelo D)            1.14      2.21
+φ por tramo, media en [50,500) (var residual modelo D)          1.58      3.09
+φ por tramo, media en [500,inf) (var residual modelo D)         2.08      6.13
+Taylor var = a μ^b: exponente b (var residual modelo D)         1.16      1.28
+Taylor var = a μ^b: coeficiente a (var residual modelo D)       0.73      0.85
+ECM log-var, ley de potencia (var residual modelo D)            0.34      0.89
+ECM log-var, φ constante (var residual modelo D)                0.39      0.99
 
 Bloques base de ST-CC, weekday (K_R x K_T = 32; χ² asintótica; Bonferroni α = 0.05/32)
 
