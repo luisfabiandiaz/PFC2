@@ -14,7 +14,8 @@ Implementaciones/
 │   │   ├── taxi_zone_lookup.csv
 │   │   └── taxi_zones/        Shapefile de zonas TLC
 │   └── procesados/
-│       └── ST-CC/             Matrices 66x12 y etiquetas de clusters (.npy)
+│       ├── ST-CC/             Matrices 66x12 y etiquetas de clusters (.npy)
+│       └── Calibracion/       Conteos diarios D x 66 x 12 por periodo (.npy)
 ├── ST-CC/                     Reproducción de Liu et al. (2021)
 │   ├── 00_verificar_datos.py
 │   ├── 01_matriz_y_coclustering.py
@@ -23,9 +24,12 @@ Implementaciones/
 │   └── 04_refinamiento_kmeans.py
 ├── Verificacion_teorica/      Comprobación numérica del marco teórico y la propuesta
 │   └── identidades.py
+├── Calibracion/               Supuestos estadísticos de las pruebas (sobredispersión, H0)
+│   └── 01_sobredispersion.py
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
-    └── Verificacion_teorica/
+    ├── Verificacion_teorica/
+    └── Calibracion/
 ```
 
 Convenciones:
@@ -55,6 +59,7 @@ python ST-CC/02_barrido_K.py
 python ST-CC/03_visualizacion.py
 python ST-CC/04_refinamiento_kmeans.py
 python Verificacion_teorica/identidades.py
+python Calibracion/01_sobredispersion.py
 ```
 
 `02` a `04` leen las matrices que guarda `01`, así que `01` debe ejecutarse primero.
