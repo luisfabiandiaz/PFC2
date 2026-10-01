@@ -1,0 +1,348 @@
+% =====================================================================
+% Capítulo 2 (continuación): Secs. 2.7-2.8
+%   Pruebas de hipótesis para tablas de conteo y SigTree
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Pruebas de hipótesis para tablas de conteo}\label{sec:pruebas}
+
+La Sección~\ref{sec:idiv-poisson} mostró que la interacción que queda dentro de un
+bloque se mide con el estadístico $G^2$ de una prueba de independencia. Para usar
+ese estadístico como criterio de refinamiento hay que resolver tres cuestiones. La
+primera es cómo obtener una distribución de referencia válida cuando las tablas
+son pequeñas o escasas y cuando los bloques se eligieron con los mismos datos. La
+segunda es cómo controlar el error al realizar muchas pruebas, una por cada bloque
+de un árbol de refinamientos. La tercera es cómo evitar que, con millones de
+viajes, cualquier diferencia mínima resulte significativa. Esta sección presenta
+las herramientas estadísticas que responden a cada una.
+
+A lo largo de la sección se considera una tabla de contingencia genérica
+$x = (x_{ij})$ de $a$ filas y $b$ columnas, con totales $x_{i+}$, $x_{+j}$ y
+$x_{++}$. En la propuesta, esa tabla será la restricción de la matriz de
+co-ocurrencia a un bloque.
+
+\subsection{Pruebas de independencia}\label{sec:est-independencia}
+
+La hipótesis nula de independencia afirma que la probabilidad de cada celda es el
+producto de las probabilidades marginales, $\pi_{ij} = \pi_{i+}\,\pi_{+j}$, o, en
+el modelo de Poisson, que las medias se factorizan como $\mu_{ij} = \alpha_i
+\beta_j$. En cualquiera de los dos casos, los conteos esperados estimados bajo la
+hipótesis nula son
+\begin{equation}\label{eq:esperados}
+  \hat{E}_{ij} = \frac{x_{i+}\, x_{+j}}{x_{++}} .
+\end{equation}
+Las dos pruebas clásicas comparan los conteos observados con estos esperados
+\cite{Agresti2013}. La prueba de Pearson usa el estadístico
+\begin{equation}\label{eq:pearson}
+  X^2 = \sum_{i,j} \frac{(x_{ij} - \hat{E}_{ij})^2}{\hat{E}_{ij}} ,
+\end{equation}
+y la prueba de razón de verosimilitud usa
+\begin{equation}\label{eq:g2}
+  G^2 = 2 \sum_{i,j} x_{ij} \log \frac{x_{ij}}{\hat{E}_{ij}} .
+\end{equation}
+Bajo la hipótesis nula, y cuando los conteos esperados son grandes, ambos
+estadísticos siguen aproximadamente una distribución $\chi^2$ con
+$(a-1)(b-1)$ grados de libertad, y son asintóticamente equivalentes
+\cite{Agresti2013}. Con conteos esperados pequeños la aproximación se deteriora;
+la regla práctica más difundida pide que la mayoría de los conteos esperados sean
+al menos cinco.
+
+El estadístico $G^2$ tiene dos propiedades que lo hacen preferible en esta tesis.
+La primera es su conexión con el marco de Bregman: como los esperados
+\eqref{eq:esperados} reproducen el total de la tabla, los términos lineales de la
+I-divergencia se cancelan y $G^2 = 2\,D_I(x \,\|\, \hat{E})$. Por la
+ecuación~\eqref{eq:g2-im}, esto equivale a $G^2 = 2\,x_{++}\,\hat{I}(R;T)$: el
+estadístico es la información mutua de la tabla escalada por su masa. La segunda
+es que $G^2$ admite una partición exacta: cuando las filas de una tabla se
+agrupan, el $G^2$ de la tabla completa es igual al $G^2$ de la tabla colapsada más
+la suma de los $G^2$ de las subtablas de cada grupo \cite{Agresti2013}. El
+estadístico de Pearson no cumple esta identidad de forma exacta. Esta propiedad
+es la que permite, en el Capítulo~\ref{chap:propuesta}, repartir la interacción
+de un bloque entre la parte que explica un corte y la que queda dentro de los
+hijos.
+
+\subsection{Pruebas condicionales y p-valores por simulación}\label{sec:est-permutacion}
+
+La distribución $\chi^2$ es solo una aproximación. Para tablas con celdas
+escasas, que son frecuentes en bloques de poca actividad, conviene una prueba cuya
+validez no dependa del tamaño de la muestra. La idea es eliminar los parámetros
+desconocidos condicionando sobre sus estadísticos suficientes. Bajo la hipótesis
+nula de independencia, tanto en el modelo de Poisson como en el multinomial, la
+distribución de la tabla condicionada a sus totales de fila y de columna es la
+hipergeométrica multivariada, que no depende de los parámetros $\alpha_i$ y
+$\beta_j$ \cite{Agresti2013}. El p-valor exacto es la probabilidad, bajo esa
+distribución, de obtener un estadístico al menos tan extremo como el observado.
+Para tablas $2 \times 2$ esta es la prueba exacta de Fisher.
+
+Enumerar todas las tablas con los mismos totales es inviable salvo en tablas muy
+pequeñas, por lo que el p-valor se estima por simulación. El algoritmo de
+\cite{Patefield1981} genera tablas aleatorias con totales de fila y columna
+fijos, con probabilidad igual a la hipergeométrica multivariada. Con $B$ tablas
+simuladas y sus estadísticos $t_1, \dots, t_B$, el p-valor se estima como
+\begin{equation}\label{eq:pval-mc}
+  \hat{p} = \frac{1 + \#\{k : t_k \ge t_{\mathrm{obs}}\}}{1 + B} .
+\end{equation}
+\cite{Phipson2010} muestran que sumar uno en el numerador y en el denominador no
+es un ajuste arbitrario: la tabla observada es, bajo la hipótesis nula, una
+realización más de la misma distribución, y la fórmula~\eqref{eq:pval-mc} produce
+una prueba exacta, mientras que la proporción sin corregir $\#\{k : t_k \ge
+t_{\mathrm{obs}}\}/B$ puede valer cero y subestima el p-valor. Una consecuencia
+práctica es que el menor p-valor alcanzable es $1/(B+1)$, así que para probar a un
+nivel $\alpha$ se necesita $B \ge 1/\alpha - 1$ como mínimo.
+
+Cuando se realizan muchas pruebas, la mayoría con p-valores grandes, simular $B$
+tablas en todas ellas desperdicia cómputo. \cite{Besag1991} propusieron un
+procedimiento secuencial: se simulan tablas hasta que $h$ de ellas superan al
+estadístico observado, o hasta alcanzar un máximo $B$. Si la simulación se detiene
+tras $l$ tablas, el p-valor es $h/l$; si no, se usa la fórmula anterior. El
+procedimiento mantiene la validez de la prueba y detiene pronto la simulación en
+los casos claramente no significativos.
+
+Un aspecto de las pruebas por simulación que se usará después es que el
+estadístico puede ser cualquier función de la tabla, incluida una que involucre
+una búsqueda. Si $t$ es, por ejemplo, el máximo de $G^2$ sobre un conjunto de
+divisiones candidatas, el p-valor~\eqref{eq:pval-mc} sigue siendo válido siempre
+que en cada tabla simulada se repita la misma búsqueda. Esta es la base del ajuste
+por selección de la Sección~\ref{sec:est-seleccion}.
+
+\subsection{Comparaciones múltiples}\label{sec:est-multiplicidad}
+
+Cuando se realizan $M$ pruebas, cada una a un nivel $\alpha$, la probabilidad de
+cometer al menos un falso rechazo crece con $M$. Dos medidas de error resumen el
+problema. La tasa de error por familia (FWER) es la probabilidad de cometer al
+menos un falso rechazo. La tasa de falsos descubrimientos (FDR) es la proporción
+esperada de falsos rechazos entre todos los rechazos \cite{Benjamini1995}.
+Controlar la FWER es más estricto; controlar la FDR tolera algunos falsos
+rechazos a cambio de más potencia, lo que suele ser preferible en análisis
+exploratorios con muchas hipótesis.
+
+La corrección de Bonferroni prueba cada hipótesis al nivel $\alpha/M$ y controla la
+FWER sin ningún supuesto sobre la dependencia entre pruebas. Su costo es la
+potencia: cuando las pruebas están correlacionadas, como ocurre al evaluar
+divisiones candidatas de un mismo bloque, que comparten casi todos sus datos, la
+corrección es mucho más conservadora de lo necesario. El ajuste \emph{min-P} de
+\cite{Westfall1993} resuelve este problema usando remuestreo: en lugar de dividir
+$\alpha$ entre $M$, compara el menor p-valor observado, o de forma equivalente el
+mayor estadístico, con su distribución bajo la hipótesis nula conjunta, obtenida
+por simulación. Así el ajuste tiene en cuenta a la vez el número de pruebas y la
+correlación entre ellas. \cite{Benjamini1995} propusieron, para la FDR, un
+procedimiento secuencial sobre los p-valores ordenados que controla esa tasa
+cuando las pruebas son independientes.
+
+\paragraph{Pruebas jerárquicas.} En muchos problemas las hipótesis forman un
+árbol, y la hipótesis de un nodo solo tiene sentido si la de su padre fue
+rechazada. En ese caso no es necesario corregir por todas las pruebas posibles,
+sino solo por las que efectivamente se realizan. \cite{Meinshausen2008} propuso un
+procedimiento de arriba abajo para grupos jerárquicos de variables, en el que el
+nivel asignado a cada grupo es proporcional a su tamaño, y mostró que controla la
+FWER sobre toda la jerarquía. \cite{Kimes2017} aplicaron una idea análoga al
+agrupamiento jerárquico: recorren el dendrograma desde la raíz, prueban en cada
+nodo si la división en dos grupos es significativa mediante una prueba por
+simulación, y controlan la FWER asignando a cada nodo un umbral proporcional a su
+número de observaciones. Para la FDR, \cite{Yekutieli2008} propuso aplicar el
+procedimiento de \cite{Benjamini1995} dentro de cada familia de hijos de una
+hipótesis rechazada, y acotó la FDR resultante sobre el árbol completo.
+
+Estos procedimientos aprovechan una estructura que también tiene el problema de
+esta tesis. Si la hipótesis nula de independencia se cumple en un bloque, se
+cumple en todos sus sub-bloques, porque cualquier subtabla de una tabla con medias
+factorizadas también las tiene factorizadas. Por lo tanto, las hipótesis nulas
+verdaderas forman subárboles completos, y un falso rechazo solo puede producirse
+por primera vez en la raíz de uno de ellos.
+
+\subsection{Inferencia después de la selección}\label{sec:est-seleccion}
+
+Las garantías anteriores suponen que las hipótesis se fijan antes de ver los
+datos. En el agrupamiento no ocurre así: los grupos, y por tanto las hipótesis que
+se prueban sobre ellos, se eligen con los mismos datos. Este problema se conoce
+como \emph{doble uso de los datos}. \cite{Gao2024} mostraron que, cuando los grupos
+se definen mediante agrupamiento, una prueba clásica de diferencia de medias
+tiene una tasa de error de tipo~I extremadamente inflada, y que el problema
+persiste aunque se usen dos conjuntos de datos independientes para definir los
+grupos y para probarlos. La razón es que el procedimiento de agrupamiento
+encuentra grupos distintos incluso cuando no hay estructura, y la prueba clásica
+no lo tiene en cuenta.
+
+Existen tres formas de abordar el problema, que la Sección~\ref{sec:ea_inferencia}
+revisa con más detalle:
+
+\begin{enumerate}
+  \item \textbf{Incluir la selección en la simulación.} Si la prueba es por
+  simulación, basta con repetir el procedimiento de selección completo en cada
+  réplica nula, como se indicó al final de la Sección~\ref{sec:est-permutacion}.
+  El p-valor resultante es válido para la hipótesis nula global de que no hay
+  estructura en la tabla, aunque no para hipótesis más específicas.
+  \item \textbf{Inferencia selectiva.} Se calcula el p-valor condicionando sobre
+  el evento de que el procedimiento haya producido los grupos observados. Es el
+  enfoque de \cite{Gao2024} para el agrupamiento jerárquico y de
+  \cite{Watanabe2021si} para modelos de bloques latentes. Ofrece garantías
+  formales, pero se ha desarrollado sobre todo para datos gaussianos y su costo
+  computacional es alto.
+  \item \textbf{División de cada observación.} Para conteos de Poisson,
+  \cite{Neufeld2024cs} proponen el \emph{count splitting}: cada conteo se divide
+  como $x_{ij} = x^{(1)}_{ij} + x^{(2)}_{ij}$, con $x^{(1)}_{ij} \mid x_{ij} \sim
+  \mathrm{Binomial}(x_{ij}, \varepsilon)$. Si $x_{ij} \sim
+  \mathrm{Poisson}(\mu_{ij})$, las dos partes son independientes y de Poisson, con
+  medias $\varepsilon\mu_{ij}$ y $(1-\varepsilon)\mu_{ij}$. La estructura se
+  elige con $x^{(1)}$ y se prueba con $x^{(2)}$ como si hubiera sido fijada de
+  antemano. \cite{Neufeld2024dt} generalizan la idea, con el nombre de
+  \emph{data thinning}, a otras familias de distribuciones cerradas bajo
+  convolución. Si los conteos presentan sobredispersión, las dos partes dejan de
+  ser independientes y la garantía se debilita.
+\end{enumerate}
+
+\subsection{Tamaño de efecto y sobredispersión}\label{sec:est-efecto}
+
+\paragraph{Tamaño de efecto.} Con muestras grandes, una prueba de hipótesis
+detecta desviaciones de la hipótesis nula por pequeñas que sean. En el caso de la
+independencia esto se ve directamente: por la relación $G^2 = 2\,x_{++}\,\hat
+I(R;T)$, si la información mutua de la población es positiva, aunque sea
+mínima, el estadístico crece de forma proporcional al número de observaciones y
+el p-valor tiende a cero. Los propios \cite[Sec.~5]{Hu2025} identifican este
+fenómeno como una limitación de SigTree. Con millones de viajes, la
+significancia deja de distinguir entre interacciones relevantes e irrelevantes.
+
+La respuesta habitual es acompañar la significancia con una medida de tamaño de
+efecto que no crezca con la muestra. Para tablas de contingencia hay dos opciones
+naturales. La primera es la propia información mutua por observación,
+$\hat I(R;T) = G^2/(2\,x_{++})$, medida en nats, que conecta directamente con la
+función objetivo del co-agrupamiento. La segunda es la $V$ de Cramér,
+\begin{equation}\label{eq:cramer}
+  V = \sqrt{\frac{X^2}{x_{++}\,\min(a-1,\, b-1)}} ,
+\end{equation}
+que toma valores entre 0, bajo independencia, y 1, bajo asociación perfecta
+\cite{Agresti2013}. Ambas permiten fijar un umbral de relevancia independiente
+del tamaño de la muestra.
+
+\paragraph{Sobredispersión.} El modelo de Poisson impone que la varianza de cada
+conteo sea igual a su media. En datos reales es frecuente que la varianza sea
+mayor, $\mathrm{Var}(x_{ij}) = \varphi\,\mu_{ij}$ con $\varphi > 1$, porque los
+eventos no son independientes: en movilidad, la actividad de una celda varía de un
+día a otro por el día de la semana, el clima o eventos puntuales. En ese caso los
+estadísticos $X^2$ y $G^2$ se inflan aproximadamente por el factor $\varphi$, y
+una prueba calibrada bajo el modelo de Poisson rechaza la hipótesis nula con
+demasiada frecuencia. El enfoque de cuasi-verosimilitud corrige este efecto
+dividiendo los estadísticos entre una estimación de $\varphi$, por ejemplo el
+cociente entre el estadístico de Pearson y sus grados de libertad
+\cite{McCullagh1989}. Cuando la matriz se construye agregando varios días, como en
+esta tesis, $\varphi$ también puede estimarse a partir de la variación de cada
+celda entre días.
+
+% ---------------------------------------------------------------------
+\section{Agrupamiento guiado por pruebas de hipótesis: SigTree}\label{sec:sigtree}
+
+Los árboles de decisión son uno de los modelos más usados para producir
+agrupamientos interpretables, porque cada grupo queda descrito por la secuencia de
+reglas que lleva a su hoja \cite{Hu2025}. En la mayoría de los métodos, sin
+embargo, la decisión de dividir un nodo no tiene una interpretación estadística.
+La idea de usar pruebas de hipótesis para decidir las divisiones tiene un
+antecedente supervisado en CHAID \cite{Kass1980}, que elige las divisiones de un
+árbol de clasificación con pruebas $\chi^2$ entre cada división candidata y la
+variable de clase. \cite{Hu2025} trasladaron esta idea al caso no supervisado con
+SigTree, un algoritmo que construye un árbol de decisión binario para agrupar
+datos categóricos y que usa una prueba de hipótesis tanto para elegir cada
+división como para decidir cuándo detenerse.
+
+\subsection{Divisiones candidatas y pseudo-clases}
+
+Sea un conjunto de $n$ muestras descritas por $m$ atributos categóricos, donde el
+atributo $q$ tiene $k_q$ categorías. En cada nodo, SigTree considera como división
+candidata cada categoría $c$ de cada atributo $j$: la división separa las muestras
+que toman el valor $c$ en el atributo $j$ de las que no, y se representa con una
+variable binaria $Z = \mathbb{1}[x_j = c]$. Como no hay una variable de clase,
+cada uno de los otros $m-1$ atributos actúa como \emph{pseudo-clase}. La hipótesis
+nula de cada prueba es que $Z$ es independiente del atributo $q$, y la hipótesis
+nula global es que $Z$ es independiente de todos los demás atributos. La intuición
+es que, si las muestras del nodo no tienen estructura de grupos, ninguna división
+candidata estará asociada con la mayoría de las pseudo-clases \cite[Sec.~3]{Hu2025}.
+
+\subsection{Estadístico y criterio de división}
+
+Para cada par formado por la división $Z$ y un atributo $q \ne j$ se construye la
+tabla de contingencia $2 \times k_q$ de sus frecuencias conjuntas y se calcula el
+estadístico de Pearson $X^2(Z, q)$ de la ecuación~\eqref{eq:pearson}. En tablas
+$2 \times 2$ con algún conteo esperado menor que cinco se aplica la corrección de
+Yates. Los estadísticos de todos los atributos se suman,
+\begin{equation}\label{eq:sigtree}
+  X^2(Z) = \sum_{q \ne j} X^2(Z, q), \qquad
+  \mathrm{gl}(Z) = \sum_{q \ne j} (k_q - 1),
+\end{equation}
+y el p-valor de la división se obtiene de la distribución $\chi^2$ con
+$\mathrm{gl}(Z)$ grados de libertad, bajo el supuesto de que las pruebas
+individuales son independientes \cite[Sec.~3.3]{Hu2025}. En cada nodo se elige la
+división candidata con menor p-valor.
+
+\subsection{Criterios de parada}
+
+La división elegida solo se aplica si su p-valor es menor o igual que un nivel
+ajustado $\alpha^\ast$. Para controlar la FWER al elegir la mejor de muchas
+candidatas, SigTree usa la corrección de Bonferroni con un divisor constante,
+el número total de categorías de todos los atributos, $|Q|$:
+\begin{equation}\label{eq:sigtree-alpha}
+  \alpha^\ast = \frac{\alpha}{|Q|} ,
+\end{equation}
+que se aplica por igual en todos los nodos \cite[Sec.~3.4]{Hu2025}. Además, se
+usan dos reglas triviales: no se dividen nodos con cinco muestras o menos, y no se
+aceptan divisiones que produzcan un hijo con menos de tres muestras. El
+crecimiento termina cuando ninguna hoja admite una división significativa, y las
+hojas del árbol son los grupos finales. El resultado es un algoritmo con un solo
+parámetro con interpretación estadística clara, el nivel $\alpha$, que no
+requiere fijar el número de grupos de antemano.
+
+\subsection{Limitaciones}
+
+Los autores reconocen tres limitaciones \cite[Sec.~5]{Hu2025}. Evaluar todas las
+divisiones candidatas en cada nodo es costoso. El algoritmo no optimiza una
+función objetivo explícita, por lo que no hay garantía de que el árbol obtenido
+sea el mejor posible. Y, como se discutió en la Sección~\ref{sec:est-efecto}, el
+estadístico $\chi^2$ crece con el número de muestras y de atributos, lo que empuja
+los p-valores hacia cero y dificulta controlar los falsos descubrimientos con el
+umbral~\eqref{eq:sigtree-alpha}. A estas se pueden añadir dos observaciones desde
+la Sección~\ref{sec:pruebas}: el p-valor de la división elegida se calcula como si
+esa división se hubiera fijado de antemano, sin tener en cuenta que se eligió por
+ser la de menor p-valor, y la suma~\eqref{eq:sigtree} supone independencia entre
+pruebas que comparten la misma variable $Z$.
+
+\subsection{Relación con la propuesta}\label{sec:sigtree-propuesta}
+
+La propuesta de esta tesis toma de SigTree su principio central, construir una
+partición con pruebas de hipótesis y detenerse cuando ninguna división es
+significativa, y lo traslada al refinamiento de los bloques de ST-CC. Esa
+traslación exige adaptar cada componente. La Tabla~\ref{tab:sigtree-astcc} resume
+la correspondencia, que se desarrolla en el Capítulo~\ref{chap:propuesta}.
+
+\begin{table}[ht]
+  \centering
+  {\footnotesize
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}
+                  >{\raggedright\arraybackslash}p{0.34\textwidth}
+                  >{\raggedright\arraybackslash}p{0.36\textwidth}@{}}
+    \toprule
+    \textbf{Componente} & \textbf{SigTree} & \textbf{Propuesta} \\
+    \midrule
+    Objeto que se divide & Conjunto de muestras con atributos categóricos &
+      Bloque de una matriz de conteos región~$\times$~tiempo \\
+    División candidata & Presencia o ausencia de una categoría &
+      Bipartición de las filas o de las columnas del bloque \\
+    Qué se prueba & Asociación entre la división y los demás atributos &
+      Asociación entre la división y la otra dimensión del bloque \\
+    Estadístico & Suma de estadísticos $X^2$ & $G^2$ de la tabla colapsada,
+      coherente con la I-divergencia \\
+    Distribución de referencia & $\chi^2$ asintótica & Simulación condicionada a
+      los totales del bloque, repitiendo la búsqueda \\
+    Comparaciones múltiples & Bonferroni uniforme & Reparto jerárquico del nivel
+      a lo largo del árbol \\
+    Criterio de parada & Significancia y reglas triviales & Significancia, tamaño
+      de efecto y reglas triviales \\
+    \bottomrule
+  \end{tabular}
+  }
+  \caption{Correspondencia entre SigTree \cite{Hu2025} y el método propuesto.}
+  \label{tab:sigtree-astcc}
+\end{table}
+
+Las limitaciones de los dos métodos base orientan además el diseño. La elección
+heurística del número de grupos en ST-CC (Sección~\ref{sec:stcc-limitaciones})
+motiva que la resolución final no dependa solo de $K_R$ y $K_T$, y la inflación
+del estadístico de SigTree con muestras grandes motiva complementar la
+significancia con un umbral de tamaño de efecto.

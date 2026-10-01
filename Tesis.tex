@@ -1,0 +1,112 @@
+% Template LaTeX Tesis Ciencia de la Computación UCSP
+% 2022
+
+\documentclass[a4paper,openany,12pt]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[spanish,mexico]{babel}
+\usepackage{sty/fancyhdr}
+\usepackage{ae}
+\usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=2cm]{geometry}
+\usepackage[printonlyused]{acronym}
+\usepackage{xspace}
+\usepackage{sty/hlundef}
+\usepackage{sty/tesis}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{babel,positioning,arrows.meta,shapes.geometric,patterns}
+
+% Entornos de teoremas (numerados por capítulo)
+\newtheorem{proposicion}{Proposición}[chapter]
+\newtheorem{corolario}{Corolario}[chapter]
+\theoremstyle{definition}
+\newtheorem{definicion}{Definición}[chapter]
+\theoremstyle{remark}
+\newtheorem{observacion}{Observación}[chapter]
+\theoremstyle{plain}
+
+% Pseudocódigo en español
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Lista de algoritmos}
+\algrenewcommand\algorithmicrequire{\textbf{Entrada:}}
+\algrenewcommand\algorithmicensure{\textbf{Salida:}}
+\algrenewcommand\algorithmicif{\textbf{si}}
+\algrenewcommand\algorithmicthen{\textbf{entonces}}
+\algrenewcommand\algorithmicelse{\textbf{si no}}
+\algrenewcommand\algorithmicfor{\textbf{para}}
+\algrenewcommand\algorithmicforall{\textbf{para cada}}
+\algrenewcommand\algorithmicdo{\textbf{hacer}}
+\algrenewcommand\algorithmicreturn{\textbf{devolver}}
+\algrenewcommand\algorithmicfunction{\textbf{función}}
+\algrenewcommand\algorithmicprocedure{\textbf{procedimiento}}
+\algrenewcommand\algorithmicend{\textbf{fin}}
+
+\title{Extensión de ST-CC con refinamiento jerárquico por bloques para la detección de patrones
+espacio-temporales locales}
+
+\author{Luis Fabian Diaz Alvizuri}
+
+
+\advisor{Dr. Erick Mauricio Gómez Nieto}
+
+
+\date{Arequipa, Mes Año}
+
+%\examinerone{Prof. Dr. Hidalgo Buena Gente}{Presidente}%
+%\examinertwo{Prof. Dr. Antero A. Gal Oppe}{Secretario}%
+%\examinerthree{Prof. Dr. Liu Xiao Ling}{University of ...} % of being the case
+
+\dedicado{Aquí deberás colocar a quien va dedicada tu tesis por ejemplo: A Dios, por todo lo que me ha dado, a todos los profesores por sus enseñanzas y algunos amigos.}
+
+\begin{document}
+\pagestyle{fancy}
+
+\maketitle %Compone la carátula y la dedicatoria
+\newpage
+
+%\approved{\tres}%  {\tres} or {\cuatro}
+
+\include{abreviaturas}
+
+\input{Agradecimientos} %Inserta los agradecimientos
+\input{Resumen} %Inserta el resumen
+\input{Abstract} %Inserta el abstract
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\tableofcontents %Inserta el índice general
+\listoftables %Inserta el índice de cuadros
+\listoffigures %Inserta el índice de figuras
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%   En esta parte deberas incluir los archivos de tu tesis   %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\input{Cap_1} %Inserta el capítulo 1: Introducción
+% Capítulo 2: Marco Teórico y Estado del Arte (un solo capítulo en tres archivos)
+\input{Cap_2} %Secs. 2.1-2.6: co-agrupamiento de Bregman y ST-CC
+\input{Cap_Estadistica} %Secs. 2.7-2.8: pruebas de hipótesis y SigTree
+\input{Cap_EA} %Secs. 2.9-2.10: estado del arte y consideraciones finales
+\input{Cap_3} %Inserta el capítulo 3: Propuesta
+\input{Cap_4} %Inserta el capítulo 4
+\input{conclusiones} %Inserta el capítulo 5
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{apalike}
+
+\bibliography{Bibliog}
+\addcontentsline{toc}{chapter}{Bibliografía}
+\end{document}
