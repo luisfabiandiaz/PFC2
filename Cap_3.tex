@@ -121,8 +121,9 @@ bloque y la información mutua empírica asociada son, como en
   \qquad
   \hat I_B = \frac{G^2_B}{2N_B}.
 \end{equation}
-La cantidad $\hat I_B$ se mide en \emph{nats por observación}, no depende del
-tamaño de la muestra y se usará como tamaño de efecto.
+La cantidad $\hat I_B$ se mide en \emph{nats por observación}, no crece con el
+tamaño de la muestra y, en una versión corregida por sesgo
+(Sección~\ref{sec:prop-parada}), se usará como tamaño de efecto.
 
 \subsection{Árbol de bloques y teselación guillotina}
 
@@ -361,10 +362,15 @@ responde con la prueba de independencia sobre la tabla $O|_B$, con estadístico
 $G^2_B$ \eqref{eq:prop-G2}. Si los conteos son de Poisson independientes, al
 condicionar sobre los totales de fila y columna del bloque la tabla sigue, bajo
 el nulo, una distribución hipergeométrica multivariada que no depende de los
-parámetros desconocidos $a_i$ y $b_j$. Esto permite calcular un p-valor exacto
-por simulación (Sección~\ref{sec:prop-calibracion}), sin depender de la
-aproximación $\chi^2$ con $(|I|-1)(|J|-1)$ grados de libertad, que es poco
-fiable en bloques con celdas escasas.
+parámetros desconocidos $a_i$ y $b_j$. Esto permitiría calcular un p-valor
+exacto por simulación, sin depender de la aproximación $\chi^2$ con
+$(|I|-1)(|J|-1)$ grados de libertad, que es poco fiable en bloques con celdas
+escasas. Los datos de taxis, sin embargo, no son de Poisson: presentan una
+sobredispersión que crece con el volumen de la celda
+(Sección~\ref{sec:prop-sobredispersion}). Por eso la distribución nula de
+referencia de AST-CC se genera con un modelo que reproduce esa variabilidad, y
+la versión de Poisson se conserva como punto de comparación
+(Sección~\ref{sec:prop-calibracion}).
 
 \subsection{Pruebas dirigidas}
 
@@ -452,7 +458,9 @@ p-valores calibrados de los estadísticos \eqref{eq:prop-dirigidos}.
 
 \begin{enumerate}
   \item \textbf{Puerta ómnibus.} Si $p_{\mathrm{omn}}>\alpha_B$ o
-  $\hat I_B<\delta$, el bloque es una hoja \emph{homogénea}.
+  $\tilde I_B<\delta$, donde $\tilde I_B$ es la información mutua corregida por
+  sesgo \eqref{eq:prop-efecto-corregido}, el bloque es una hoja
+  \emph{homogénea}.
   \item \textbf{Cortes unidimensionales.} En caso contrario:
   \begin{enumerate}
     \item si exactamente uno de $p_{\mathrm{fil}}$, $p_{\mathrm{col}}$ es
@@ -469,8 +477,9 @@ p-valores calibrados de los estadísticos \eqref{eq:prop-dirigidos}.
   $p_{\mathrm{conj}}\le\alpha_B$, se aplica; si no, el bloque es una hoja
   \emph{heterogénea no localizada}.
   \item \textbf{Ganancia mínima.} Un corte seleccionado solo se acepta si
-  $G^2_{B,s}/(2N_B)\ge\delta$, es decir, si explica al menos $\delta$ nats
-  de información mutua por observación. En caso contrario, el bloque es una
+  $\tilde g_{B,s}\ge\delta$, es decir, si explica al menos $\delta$ nats
+  de información mutua por observación más de lo que explicaría el mejor corte
+  de una tabla nula. En caso contrario, el bloque es una
   hoja heterogénea no localizada.
 \end{enumerate}
 
@@ -484,14 +493,14 @@ p-valores calibrados de los estadísticos \eqref{eq:prop-dirigidos}.
   cut/.style={box, fill=blue!8},
   >={Stealth[length=2mm]}]
   \node[box] (in) {Bloque $B$, nivel $\alpha_B$};
-  \node[dec, below=of in] (omn) {¿$p_{\mathrm{omn}}\le\alpha_B$\\y $\hat I_B\ge\delta$?};
+  \node[dec, below=of in] (omn) {¿$p_{\mathrm{omn}}\le\alpha_B$\\y $\tilde I_B\ge\delta$?};
   \node[leaf, right=of omn] (h1) {Hoja\\homogénea};
   \node[dec, below=of omn] (uni) {¿$p_{\mathrm{fil}}$ o $p_{\mathrm{col}}$\\$\le\alpha_B$?};
   \node[cut, right=of uni] (c1) {Corte 1D de\\menor p-valor};
   \node[dec, below=of uni] (conj) {¿$p_{\mathrm{conj}}\le\alpha_B$?};
   \node[cut, right=of conj] (c2) {Corte\\conjunto $2\times2$};
   \node[leaf, below=of conj] (h2) {Hoja heterogénea\\no localizada};
-  \node[dec, right=of c1, xshift=0.2cm, yshift=-0.9cm] (gan) {¿$G^2_{B,s}/(2N_B)$\\$\ge\delta$?};
+  \node[dec, right=of c1, xshift=0.2cm, yshift=-0.9cm] (gan) {¿$\tilde g_{B,s}\ge\delta$?};
   \node[cut, right=of gan] (rec) {Recurrir en\\cada hijo};
   \draw[->] (in) -- (omn);
   \draw[->] (omn) -- node[above,font=\tiny]{no} (h1);
@@ -538,21 +547,37 @@ homogéneo un bloque que no lo es.
 
 \section{Calibración de las pruebas}\label{sec:prop-calibracion}
 
-\subsection{Distribución nula condicional}
+\subsection{Distribución nula}
 
-Todas las pruebas se calibran con la distribución de la tabla del bloque
-condicionada a sus totales de fila y de columna. Las réplicas nulas se generan
-con el algoritmo de \cite{Patefield1981}, que produce tablas aleatorias con
-marginales exactamente iguales a las observadas y distribución hipergeométrica
-multivariada. Con $B_{\mathrm{perm}}$ réplicas y el estadístico observado
-$t_{\mathrm{obs}}$, el p-valor es
+Todas las pruebas se calibran por simulación: se generan $B_{\mathrm{perm}}$
+tablas nulas del bloque, se calcula en cada una el estadístico $t_b$ y, con el
+estadístico observado $t_{\mathrm{obs}}$, el p-valor es
 \begin{equation}\label{eq:prop-pval}
   p = \frac{1 + \#\{b : t_b \ge t_{\mathrm{obs}}\}}{1 + B_{\mathrm{perm}}},
 \end{equation}
 que incluye la tabla observada entre las réplicas y nunca vale cero
-\cite{Phipson2010}. Para la prueba ómnibus, cuando todos los conteos esperados
-$E^B_{ij}$ son grandes, la aproximación $\chi^2$ puede usarse como filtro previo
-y reservar la simulación para los casos cercanos al umbral.
+\cite{Phipson2010}. Se consideran dos formas de generar las réplicas:
+
+\begin{itemize}
+  \item \textbf{Nula de Poisson.} Las réplicas se generan con el algoritmo de
+  \cite{Patefield1981}, que produce tablas con marginales exactamente iguales a
+  las observadas y distribución hipergeométrica multivariada. La prueba es exacta
+  si los conteos son de Poisson.
+  \item \textbf{Nula sobredispersa.} Las réplicas se generan con una mezcla
+  gamma--Poisson cuya media es la de independencia en el bloque, $E^B_{ij}$, y
+  cuya varianza sigue la función de varianza estimada con las réplicas diarias
+  (Sección~\ref{sec:prop-sobredispersion}).
+\end{itemize}
+
+La evidencia preliminar de la Sección~\ref{sec:prop-sobredispersion} indica que
+el supuesto de Poisson no se cumple, por lo que la nula sobredispersa es la de
+referencia y la de Poisson se usa como comparación. Por la misma razón, la
+aproximación $\chi^2$ no se usa como filtro, ni siquiera en bloques con conteos
+esperados grandes, que son justamente los más sobredispersos.
+
+Además del p-valor, las réplicas proporcionan la media $\bar t_0$ del
+estadístico bajo el nulo, que se usa para corregir el sesgo del tamaño de efecto
+(Sección~\ref{sec:prop-parada}) sin costo adicional.
 
 \subsection{Corrección por la búsqueda del mejor corte}\label{sec:prop-minP}
 
@@ -572,7 +597,7 @@ repetición de la búsqueda, es decir, comparar el máximo observado con réplic
 en las que no se busca, invalida el p-valor; es el error más común en esquemas
 de este tipo.
 
-\subsection{Alcance de la corrección y variante con count splitting}
+\subsection{Alcance de la corrección y variante con división por días}
 
 La repetición de la búsqueda corrige la selección del corte dentro de un nodo,
 pero no la selección del propio nodo. Los bloques base provienen de BBAC$_I$ y
@@ -582,32 +607,146 @@ Capítulo~\ref{chap:resultados} incluye un experimento de calibración sobre dat
 nulos que mide cuántos refinamientos espurios produce el método completo al
 nivel nominal.
 
-Como alternativa con garantía formal bajo el supuesto de Poisson, se propone la
-variante AST-CC-CS basada en \emph{count splitting} \cite{Neufeld2024cs}. Cada
-conteo se divide como $O_{ij} = O^{(1)}_{ij} + O^{(2)}_{ij}$, con
-$O^{(1)}_{ij}\sim\mathrm{Binomial}(O_{ij},\varepsilon)$. Si
+Una alternativa que elimina el doble uso de los datos es separar la selección de
+la inferencia. El \emph{count splitting} de \cite{Neufeld2024cs} divide cada
+conteo como $O_{ij} = O^{(1)}_{ij} + O^{(2)}_{ij}$, con
+$O^{(1)}_{ij}\sim\mathrm{Binomial}(O_{ij},\varepsilon)$; si
 $O_{ij}\sim\mathrm{Poisson}(\mu_{ij})$, las dos partes son independientes y de
-Poisson con medias $\varepsilon\mu_{ij}$ y $(1-\varepsilon)\mu_{ij}$. La
-partición base y los cortes se eligen con $O^{(1)}$, y las pruebas se realizan
-sobre $O^{(2)}$ con los bloques ya fijados, sin búsqueda. El precio es una
-pérdida de potencia, y la garantía se debilita si los conteos presentan
-sobredispersión, porque entonces las dos partes dejan de ser independientes.
+Poisson con medias $\varepsilon\mu_{ij}$ y $(1-\varepsilon)\mu_{ij}$. Esa
+independencia depende del supuesto de Poisson, que los datos no cumplen
+(Sección~\ref{sec:prop-sobredispersion}). El \emph{data thinning} de
+\cite{Neufeld2024dt} extiende la idea a la binomial negativa, pero requiere
+conocer su parámetro de dispersión, que aquí además varía con el volumen.
+
+Como la matriz es la suma de $D$ días, AST-CC aprovecha una división que no
+necesita ninguno de esos supuestos. En la variante AST-CC-DD (\emph{división por
+días}), los días del periodo se reparten en dos subconjuntos, por ejemplo
+alternándolos en el calendario, y se construyen dos matrices, $O^{(1)}$ y
+$O^{(2)}$. La partición base y los cortes se eligen con $O^{(1)}$, y las pruebas
+se realizan sobre $O^{(2)}$ con los bloques ya fijados, sin búsqueda y con la
+nula sobredispersa estimada con sus propios días. Si los días son independientes
+entre sí, $O^{(2)}$ es independiente de la selección, cualquiera que sea la
+distribución de los conteos dentro de un día; la división corrige así el sesgo
+de selección, y la nula sobredispersa, la variabilidad de los conteos. El precio es
+una pérdida de potencia, porque cada parte tiene la mitad de los días
+(seis en el periodo laborable), y la garantía se debilita si hay dependencia
+entre días consecutivos, por ejemplo por episodios de clima que duran varios
+días.
 
 \subsection{Sobredispersión}\label{sec:prop-sobredispersion}
 
-La distribución nula condicional supone que los viajes son eventos
-independientes. En la práctica, los conteos de una celda varían de un día a
-otro más de lo que predice un modelo de Poisson, por efectos del día de la
-semana, el clima o eventos puntuales, y esa variabilidad adicional haría
-rechazar la independencia con demasiada facilidad. Como la matriz se construye
-agregando $D$ días, la sobredispersión puede estimarse de las réplicas diarias.
-Para cada celda con actividad suficiente se calcula el cociente entre la
-varianza y la media de sus conteos diarios, y se toma como $\hat\varphi$ la
-mediana de esos cocientes. La prueba ajustada compara $t_{\mathrm{obs}}$ con
-$\hat\varphi\, t_b$ en \eqref{eq:prop-pval}, como en un modelo cuasi-Poisson.
-Este ajuste es opcional y su efecto se evalúa en el
-Capítulo~\ref{chap:resultados}; su estimación es más fiable si los días
-laborables y los feriados se tratan por separado, como hacen \cite{Liu2021}.
+La nula de Poisson supone que los viajes son eventos independientes. En la
+práctica, los conteos de una celda varían de un día a otro más de lo que
+predice ese modelo, por el clima, eventos puntuales o diferencias entre días de
+la semana, y esa variabilidad adicional hace rechazar la independencia con
+demasiada facilidad. Como la matriz se construye agregando $D$ días, el supuesto
+puede contrastarse directamente con las réplicas diarias $X_{dij}$ de cada
+celda, $d = 1,\dots,D$, que cumplen $O_{ij} = \sum_d X_{dij}$.
+
+\paragraph{Evidencia preliminar.} La Tabla~\ref{tab:prop-dispersion} y la
+Figura~\ref{fig:prop-dispersion} resumen este contraste para los datos de
+noviembre de 2017 descritos en la Sección~\ref{sec:stcc}, con las celdas cuya
+media diaria es de al menos cinco viajes (740 de 792 en el periodo laborable y
+746 de 792 en el feriado). Se desprenden tres hechos.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & Laborable ($D=12$) & Feriado ($D=9$) \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Varianza entre días de cada celda}} \\
+\quad Mediana de var/media, todas las celdas & 3.2 & 17.1 \\
+\quad \ldots\ con media diaria en $[5, 50)$ & 2.0 & 2.8 \\
+\quad \ldots\ con media diaria en $[50, 500)$ & 2.7 & 12.8 \\
+\quad \ldots\ con media diaria $\ge 500$ & 4.3 & 49.1 \\
+\quad Exponente $b$ de $\mathrm{var} = a\,\mu^b$ & 1.22 & 1.81 \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Tras quitar los efectos día--región y día--intervalo}} \\
+\quad Dispersión de Pearson, $X^2/\text{gl}$ & 2.1 & 6.7 \\
+\quad Exponente $b$ de $\mathrm{var} = a\,\mu^b$ & 1.16 & 1.28 \\
+\bottomrule
+\end{tabular}
+\caption{Sobredispersión de los conteos diarios por celda (zona $\times$
+intervalo de dos horas) en noviembre de 2017. Con conteos de Poisson, todos los
+cocientes valdrían 1 y los exponentes también.}
+\label{tab:prop-dispersion}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figs/Chap3/sobredispersion_media_varianza.png}
+\caption{Varianza entre días frente a media diaria de cada celda, en escala
+logarítmica. La recta discontinua es la de Poisson; la naranja, un modelo
+cuasi-Poisson con $\varphi$ constante; la verde, la ley de potencia
+$\mathrm{var} = a\,\mu^b$ ajustada a las celdas activas.}
+\label{fig:prop-dispersion}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{La sobredispersión es sustancial.} La varianza de una celda
+  típica es 3 veces su media en el periodo laborable y 17 veces en el feriado.
+  Con la nula de Poisson, la prueba rechazaría la independencia por esta sola
+  razón.
+  \item \textbf{No es constante: crece con el volumen.} En escala logarítmica,
+  la varianza crece con pendiente $b > 1$, y el cociente var/media pasa de 2.8 en
+  las celdas poco activas a 49 en las más activas del periodo feriado. Un modelo
+  cuasi-Poisson con un único $\hat\varphi$ corrige de más los bloques poco
+  activos y de menos los de mucho volumen, que son los que concentran la masa.
+  \item \textbf{Una parte no afecta a la prueba.} Si la intensidad de un día
+  se multiplica por un factor común a toda la ciudad, a una región o a un
+  intervalo, por ejemplo $\mu_{dij} = a_i\, b_j\, \gamma_{di}$, la suma sobre
+  los días $\sum_d \mu_{dij} = a_i \bigl(\sum_d \gamma_{di}\bigr) b_j$ sigue
+  siendo un producto de un efecto de fila y uno de columna, y la independencia
+  dentro del bloque se conserva. El caso $\gamma_{dj}$ es simétrico. Solo la
+  combinación de ambos tipos de efecto a lo largo de los días y la variación
+  propia de cada celda alejan la matriz agregada de la independencia. Al
+  eliminar esos efectos con el modelo log-lineal sin interacción triple, con
+  términos día--región, día--intervalo y región--intervalo, la dispersión
+  residual baja a 2.1 y 6.7. La reducción es mayor en el periodo feriado, que
+  mezcla sábados, domingos y el Día de Acción de Gracias, con perfiles horarios
+  distintos. Aun así, la dispersión residual sigue creciendo con el volumen.
+\end{enumerate}
+
+La dispersión relevante para la prueba está, por lo tanto, entre la cruda y la
+residual, y en ambos casos depende del volumen.
+
+\paragraph{Modelo nulo con función de varianza.} En lugar de un único
+$\hat\varphi$, AST-CC usa una función de varianza estimada con las réplicas
+diarias, en la forma de la ley de potencia de \cite{Taylor1961}:
+\begin{equation}\label{eq:prop-varianza}
+  \mathrm{Var}(X_{dij}) = V(\mu_{dij}) = \max\bigl\{\mu_{dij},\ a\,\mu_{dij}^{\,b}\bigr\}.
+\end{equation}
+Los parámetros $a$ y $b$ se estiman por separado en cada periodo, por mínimos
+cuadrados sobre el logaritmo de la varianza y la media de las celdas activas.
+La familia contiene como casos particulares el modelo de Poisson ($a=b=1$) y el
+cuasi-Poisson ($b=1$), de modo que la comparación entre ellos es directa, y
+ajusta mejor que un $\varphi$ constante en los dos periodos. El máximo evita
+que, al extrapolar a celdas poco activas, la varianza quede por debajo de la de
+Poisson. Si los $D$ días son independientes y tienen la misma media, el conteo
+agregado tiene varianza
+\begin{equation}\label{eq:prop-varianza-D}
+  V_D(\mu_{ij}) = \max\bigl\{\mu_{ij},\ a\,D^{\,1-b}\,\mu_{ij}^{\,b}\bigr\},
+  \qquad \mu_{ij} = \mathrm{E}[O_{ij}] .
+\end{equation}
+
+Las réplicas de la nula sobredispersa se generan celda por celda como
+$O^{(b)}_{ij}\sim\mathrm{Poisson}(\Lambda_{ij})$, con $\Lambda_{ij}$ gamma de
+media $E^B_{ij}$ y varianza $V_D(E^B_{ij}) - E^B_{ij}$, de modo que
+$O^{(b)}_{ij}$ tiene media $E^B_{ij}$ y varianza $V_D(E^B_{ij})$. A diferencia de
+la nula de Poisson, esta no condiciona sobre las marginales del bloque, sino que
+usa $E^B$ como estimación de las medias. En los bloques con mucha masa, el error
+de esa estimación es pequeño frente a la sobredispersión; en los bloques
+pequeños, su efecto se mide en el experimento de calibración.
+
+Queda por decidir si $a$ y $b$ se estiman con la varianza cruda o con la
+residual, que en principio acotan la dispersión relevante por arriba y por
+abajo. La elección
+se hará con el experimento de calibración del Capítulo~\ref{chap:resultados}: se
+adoptará la versión cuyo error de tipo~I sobre datos nulos se acerque más al
+nominal. Como análisis de sensibilidad, el periodo feriado se analizará también
+separando sábados y domingos.
 
 \section{Control de comparaciones múltiples}\label{sec:prop-multiplicidad}
 
@@ -675,8 +814,8 @@ Tamaño mínimo & $|I|<2$ o $|J|<2$ & Con una sola fila o columna, $G^2_B=0$: no
 Masa mínima & $N_B<N_{\min}$ & Evita probar bloques con muy poca actividad. \\
 Profundidad máxima & $d\ge d_{\max}$ & Acota el costo y la complejidad del árbol. \\
 Significancia & $p_{\mathrm{omn}}>\alpha_B$, o ningún corte con p-valor $\le\alpha_B$ & No hay evidencia de heterogeneidad, o no puede localizarse. \\
-Tamaño de efecto & $\hat I_B<\delta$ & La interacción residual es irrelevante aunque sea detectable. \\
-Ganancia del corte & $G^2_{B,s}/(2N_B)<\delta$ & El corte explica demasiado poca información. \\
+Tamaño de efecto & $\tilde I_B<\delta$ & La interacción residual es irrelevante aunque sea detectable. \\
+Ganancia del corte & $\tilde g_{B,s}<\delta$ & El corte explica demasiado poca información. \\
 \bottomrule
 \end{tabular}
 \caption{Criterios de parada de AST-CC. Los tres primeros son reglas triviales,
@@ -686,9 +825,52 @@ análogas a las de SigTree \cite{Hu2025}; los tres últimos son estadísticos.}
 
 El umbral $\delta$ es la defensa principal contra la inflación por tamaño de
 muestra. Tiene una interpretación directa, información mutua en nats por
-observación, y no crece con $N$. Su valor no se fija a priori: se elige mediante
-un análisis de sensibilidad en el Capítulo~\ref{chap:resultados}. Como medida
-estandarizada complementaria puede reportarse la $V$ de Cramér de cada hoja.
+observación, y no crece con $N$.
+
+\paragraph{Evidencia preliminar.} Sobre los bloques base de ST-CC de noviembre
+de 2017, la prueba de independencia, con la aproximación $\chi^2$ y corrección
+de Bonferroni, rechaza en los 24 bloques con al menos un grado de libertad de
+cada periodo si se supone Poisson. Dividiendo $G^2$ entre el $\hat\varphi$
+constante de la Tabla~\ref{tab:prop-dispersion}, rechaza todavía en 22 de 24 en
+el periodo laborable y en 21 de 24 en el feriado. Con masas de unos mil a cientos
+de miles de viajes por bloque, el cociente $G^2_B/\nu_B$ va de 3 a más de 1700.
+Estos p-valores son optimistas, porque la partición se estimó con los mismos
+datos, pero las magnitudes muestran que en los primeros niveles del árbol la
+significancia no discrimina: el refinamiento lo decide $\delta$. La prueba
+cobra importancia en los bloques pequeños y profundos, donde la masa es menor.
+
+\paragraph{Tamaño de efecto corregido por sesgo.} La información mutua empírica
+está sesgada hacia arriba en los bloques pequeños. Aunque no haya interacción,
+$\mathrm{E}[G^2_B]\approx\nu_B = (|I|-1)(|J|-1)$ bajo Poisson, y más con
+sobredispersión, de modo que $\mathrm{E}[\hat I_B]\approx \nu_B/(2N_B) > 0$. En el
+periodo laborable, por ejemplo, un bloque de 1033 viajes y 12 grados de
+libertad tiene $\hat I_B = 0.017$, el quinto valor más alto de los 24 bloques,
+y cerca de un tercio de esa cantidad ($12/2066\approx 0.006$) es la que se
+esperaría solo por el ruido de Poisson. AST-CC usa, por eso, las versiones
+corregidas
+\begin{equation}\label{eq:prop-efecto-corregido}
+  \tilde I_B = \max\Bigl\{0,\ \frac{G^2_B - \bar t_0}{2N_B}\Bigr\},
+  \qquad
+  \tilde g_{B,s} = \max\Bigl\{0,\ \frac{G^2_{B,s} - \bar t_{0,s}}{2N_B}\Bigr\},
+\end{equation}
+donde $\bar t_0$ es la media de $G^2_B$ sobre las réplicas nulas de la prueba
+ómnibus y $\bar t_{0,s}$ la media del estadístico dirigido
+\eqref{eq:prop-dirigidos} sobre las réplicas del ajuste min-P. Ambas medias se
+obtienen de réplicas que ya se generan para los p-valores, así que la corrección
+no tiene costo. Como las réplicas siguen la nula sobredispersa, $\bar t_0$
+incorpora la sobredispersión; y como $\bar t_{0,s}$ se calcula repitiendo la
+búsqueda, descuenta también el optimismo de elegir el mejor corte.
+
+\paragraph{Elección de $\delta$.} Su valor no se fija a priori. Como referencia
+de escala, la información mutua $\hat I_B$ de los bloques base de ST-CC va de
+0.0012 a 0.061 nats en el periodo laborable y de 0.0017 a 0.19 en el feriado.
+En el Capítulo~\ref{chap:resultados} se recorre una rejilla que cubre ese rango,
+por ejemplo $\delta\in\{0.001, 0.0025, 0.005, 0.01, 0.02\}$, y para cada valor
+se reportan el número de hojas, la fracción del término de interacción local de
+ST-CC que explica el árbol según el Corolario~\ref{cor:stcc},
+$\sum_{B\in\mathcal{S}}G^2_{B,s_B}\big/\sum_{g,h}G^2_{gh}$, y la estabilidad de
+las hojas. Como medida estandarizada complementaria puede reportarse la $V$ de
+Cramér de cada hoja.
 
 \section{Algoritmo}\label{sec:prop-algoritmo}
 
@@ -710,23 +892,25 @@ anteriores. La Tabla~\ref{tab:prop-parametros} resume los parámetros.
   \If{$|I|<2$ \textbf{o} $|J|<2$ \textbf{o} $N_B<N_{\min}$ \textbf{o} $d\ge d_{\max}$}
     \State marcar $B$ como hoja; \Return
   \EndIf
-  \State calcular $G^2_B$ y $\hat I_B$ con \eqref{eq:prop-G2}
-  \State $p_{\mathrm{omn}}\gets$ p-valor de $G^2_B$ con réplicas de Patefield
-  \If{$p_{\mathrm{omn}}>\alpha_B$ \textbf{o} $\hat I_B<\delta$}
+  \State calcular $G^2_B$ con \eqref{eq:prop-G2}
+  \State $(p_{\mathrm{omn}}, \bar t_0)\gets$ p-valor y media nula de $G^2_B$ \Comment{nula sobredispersa}
+  \State $\tilde I_B\gets\max\{0,\ (G^2_B-\bar t_0)/(2N_B)\}$
+  \If{$p_{\mathrm{omn}}>\alpha_B$ \textbf{o} $\tilde I_B<\delta$}
     \State marcar $B$ como hoja homogénea; \Return
   \EndIf
-  \State $(s_{\mathrm{fil}},p_{\mathrm{fil}})\gets$ \Call{MejorCorte}{$B,\ \text{filas}$}
-  \State $(s_{\mathrm{col}},p_{\mathrm{col}})\gets$ \Call{MejorCorte}{$B,\ \text{columnas}$}
+  \State $(s_{\mathrm{fil}},p_{\mathrm{fil}},\bar t_{\mathrm{fil}})\gets$ \Call{MejorCorte}{$B,\ \text{filas}$}
+  \State $(s_{\mathrm{col}},p_{\mathrm{col}},\bar t_{\mathrm{col}})\gets$ \Call{MejorCorte}{$B,\ \text{columnas}$}
   \If{$\min(p_{\mathrm{fil}},p_{\mathrm{col}})\le\alpha_B$}
     \State $s\gets$ corte de menor p-valor (desempate por $z$)
   \Else
-    \State $(s_{\mathrm{conj}},p_{\mathrm{conj}})\gets$ \Call{MejorCorte}{$B,\ \text{conjunto}$}
+    \State $(s_{\mathrm{conj}},p_{\mathrm{conj}},\bar t_{\mathrm{conj}})\gets$ \Call{MejorCorte}{$B,\ \text{conjunto}$}
     \If{$p_{\mathrm{conj}}>\alpha_B$}
       \State marcar $B$ como hoja heterogénea no localizada; \Return
     \EndIf
     \State $s\gets s_{\mathrm{conj}}$
   \EndIf
-  \If{$G^2_{B,s}/(2N_B)<\delta$}
+  \State $\tilde g_{B,s}\gets\max\{0,\ (G^2_{B,s}-\bar t_{0,s})/(2N_B)\}$ \Comment{$\bar t_{0,s}$: media nula del tipo de $s$}
+  \If{$\tilde g_{B,s}<\delta$}
     \State marcar $B$ como hoja heterogénea no localizada; \Return
   \EndIf
   \ForAll{$C\in\mathcal{C}(B,s)$}
@@ -743,12 +927,13 @@ anteriores. La Tabla~\ref{tab:prop-parametros} resume los parámetros.
   \State $s^\ast\gets$ \Call{Buscar}{$O|_B,\ \text{tipo}$} \Comment{Sección~\ref{sec:prop-candidatos}}
   \State $t_{\mathrm{obs}}\gets G^2_{B,s^\ast}$
   \For{$b=1,\dots,B_{\mathrm{perm}}(B)$}
-    \State $O^{(b)}\gets$ tabla de Patefield con las marginales de $O|_B$
+    \State $O^{(b)}\gets$ réplica de la nula sobredispersa con medias $E^B$ \Comment{Sección~\ref{sec:prop-sobredispersion}}
     \State $s_b\gets$ \Call{Buscar}{$O^{(b)},\ \text{tipo}$} \Comment{se repite la búsqueda completa}
     \State $t_b\gets G^2_{B,s_b}$ calculado sobre $O^{(b)}$
   \EndFor
   \State $p\gets \bigl(1+\#\{b: t_b\ge t_{\mathrm{obs}}\}\bigr)/\bigl(1+B_{\mathrm{perm}}(B)\bigr)$
-  \State \Return $(s^\ast, p)$
+  \State $\bar t\gets$ media de los $t_b$ \Comment{para \eqref{eq:prop-efecto-corregido}}
+  \State \Return $(s^\ast, p, \bar t)$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -762,11 +947,12 @@ Parámetro & Papel & Valor de referencia \\
 \midrule
 $K_R$, $K_T$ & Resolución inicial de la partición base & Los de \cite{Liu2021}; sensibilidad en el Cap.~\ref{chap:resultados} \\
 $\alpha$ & Nivel global (FWER o FDR sobre el árbol) & $0.05$ \\
-$\delta$ & Información mutua mínima por observación & Por análisis de sensibilidad \\
+$\delta$ & Información mutua mínima por observación, corregida por sesgo & Rejilla en $[0.001, 0.02]$ nats; sensibilidad \\
+$a$, $b$ & Función de varianza \eqref{eq:prop-varianza} de la nula sobredispersa & Estimados por periodo con las réplicas diarias \\
 $N_{\min}$, $d_{\max}$ & Reglas triviales de parada & Por análisis de sensibilidad \\
 $B_{\mathrm{perm}}$, $c$, $h$ & Réplicas, resolución mínima y parada secuencial & $B_{\mathrm{perm}}\ge\max(999,\lceil c/\alpha_B\rceil)$ \\
 $R_{\mathrm{ini}}$ & Inicializaciones de la búsqueda de filas & $10$ \\
-$\varepsilon$ & Fracción de selección en AST-CC-CS & $0.5$ \\
+Días de selección & Días usados para elegir la partición en AST-CC-DD & Días alternos (mitad del periodo) \\
 \bottomrule
 \end{tabular}
 \caption{Parámetros de AST-CC.}
@@ -802,7 +988,7 @@ partición temporal puede cambiar de un subconjunto de regiones a otro. Para no
 perder interpretabilidad, AST-CC acompaña el árbol de cinco productos.
 
 \paragraph{Descriptores de hoja.} Para cada hoja $L$ con padre $P$ se reportan
-sus regiones y horarios, su masa $N_L$, su interacción residual $\hat I_L$, su
+sus regiones y horarios, su masa $N_L$, su interacción residual $\tilde I_L$, su
 tipo (homogénea o heterogénea no localizada) y su \emph{nivel de actividad
 relativo}
 \begin{equation}\label{eq:prop-lift}
@@ -817,7 +1003,7 @@ $O_{i\cdot}O_{\cdot j}/N$, de modo que $\ell_L$ mide la actividad del bloque
 respecto de los volúmenes globales de sus regiones e intervalos.
 
 \paragraph{Árbol anotado.} Cada nodo interno muestra el tipo de corte, la
-ganancia $G^2_{B,s}/(2N_B)$ y el p-valor, de modo que se lee qué parte de la
+ganancia corregida $\tilde g_{B,s}$ y el p-valor, de modo que se lee qué parte de la
 heterogeneidad fue espacial y qué parte temporal.
 
 \paragraph{Matriz teselada.} La matriz se reordena según la partición base y,
@@ -866,7 +1052,9 @@ conviene explicitarlas antes de los experimentos.
   no debe recuperar los patrones locales que encuentra AST-CC.
   \item \textbf{Validez de las pruebas.} Como se discutió en la
   Sección~\ref{sec:prop-calibracion}, la selección de los nodos a partir de
-  los datos y la sobredispersión pueden inflar el error de tipo~I. Sin un
+  los datos y la sobredispersión pueden inflar el error de tipo~I. La nula
+  sobredispersa depende de una función de varianza estimada y de las medias
+  $E^B$, y la variante por días supone que los días son independientes. Sin un
   experimento de calibración sobre datos nulos, el método no sería defendible.
   \item \textbf{Significativo no es interesante.} Una hoja puede tener
   heterogeneidad detectable y ser irrelevante en el dominio. Por eso se reporta
@@ -889,10 +1077,12 @@ criterio de refinamiento y la función objetivo de ST-CC son la misma cantidad
 vista a distintas escalas.
 
 Sobre esa base, el método combina una prueba ómnibus que controla el error de
-tipo~I, pruebas dirigidas que localizan la estructura con un ajuste min-P que
+tipo~I, calibrada con una nula que reproduce la sobredispersión observada en
+los datos, pruebas dirigidas que localizan la estructura con un ajuste min-P que
 repite la búsqueda en cada réplica, un reparto jerárquico del nivel de
-significancia a lo largo del árbol y un umbral de tamaño de efecto que no crece
-con el número de viajes. Las limitaciones identificadas, en particular la
+significancia a lo largo del árbol y un umbral de tamaño de efecto, corregido por sesgo, que no crece
+con el número de viajes. El análisis preliminar de los datos de noviembre de
+2017 mostró que, a esa escala, este umbral es el que decide el refinamiento. Las limitaciones identificadas, en particular la
 validez aproximada de las pruebas cuando la jerarquía se construye con los
 datos, orientan directamente el diseño experimental del
 Capítulo~\ref{chap:resultados}, donde el método se evalúa sobre datos sintéticos

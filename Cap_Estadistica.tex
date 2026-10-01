@@ -228,6 +228,15 @@ cociente entre el estadístico de Pearson y sus grados de libertad
 esta tesis, $\varphi$ también puede estimarse a partir de la variación de cada
 celda entre días.
 
+Un único $\varphi$ supone que la varianza es proporcional a la media. La
+cuasi-verosimilitud admite, más en general, una función de varianza
+$\mathrm{Var}(x_{ij}) = V(\mu_{ij})$ \cite{McCullagh1989}. Dos formas habituales
+para conteos son la de la binomial negativa, $V(\mu) = \mu + \mu^2/k$, en la que
+la sobredispersión aumenta con la media, y la ley de potencia
+$V(\mu) = a\,\mu^b$, propuesta por \cite{Taylor1961} para la agregación de
+poblaciones biológicas, que contiene como casos particulares la de Poisson
+($a=b=1$) y la de $\varphi$ constante ($b=1$).
+
 % ---------------------------------------------------------------------
 \section{Agrupamiento guiado por pruebas de hipótesis: SigTree}\label{sec:sigtree}
 
