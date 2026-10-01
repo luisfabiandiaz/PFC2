@@ -43,6 +43,10 @@ import matplotlib.pyplot as plt  # noqa: E402
 sys.stdout.reconfigure(encoding="utf-8")
 
 RAIZ = Path(__file__).resolve().parents[1]      # Implementaciones/
+sys.path.insert(0, str(RAIZ))
+from astcc.estadisticos import G2, div  # noqa: E402
+from astcc.nulas import ajuste_sin_interaccion_triple  # noqa: E402
+
 CRUDOS_DIR = RAIZ / "DATA/crudos"
 STCC_DIR = RAIZ / "DATA/procesados/ST-CC"
 SALIDA_DATOS = RAIZ / "DATA/procesados/Calibracion"
@@ -108,9 +112,6 @@ def conteos_diarios():
 # ----------------------------------------------------------------
 # 2. Estimadores de φ
 # ----------------------------------------------------------------
-def div(a, b):
-    a, b = np.broadcast_arrays(np.asarray(a, float), np.asarray(b, float))
-    return np.divide(a, b, out=np.zeros_like(a), where=b > 0)
 
 
 def pearson(X, E, gl):
@@ -118,17 +119,6 @@ def pearson(X, E, gl):
     return float(np.sum((X[m] - E[m]) ** 2 / E[m]) / gl)
 
 
-def ajuste_sin_interaccion_triple(X, tol=1e-10, max_iter=5000):
-    """IPF para el modelo log-lineal [DZ][DT][ZT]."""
-    E = np.full_like(X, X.mean())
-    for _ in range(max_iter):
-        E *= div(X.sum(0), E.sum(0))[None, :, :]
-        E *= div(X.sum(1), E.sum(1))[:, None, :]
-        E *= div(X.sum(2), E.sum(2))[:, :, None]
-        err = max(np.max(np.abs(E.sum(0) - X.sum(0))), np.max(np.abs(E.sum(1) - X.sum(1))))
-        if err < tol * X.sum():
-            break
-    return E
 
 
 def estimadores(X):
@@ -177,10 +167,6 @@ def estimadores(X):
 # ----------------------------------------------------------------
 # 3. Efecto sobre las pruebas de los bloques base de ST-CC
 # ----------------------------------------------------------------
-def G2(T):
-    E = div(np.outer(T.sum(1), T.sum(0)), T.sum())
-    m = T > 0
-    return float(2 * np.sum(T[m] * np.log(T[m] / E[m])))
 
 
 def pruebas_bloques(S, filas, cols, phis):

@@ -10,6 +10,7 @@ dependencies:
   - numpy
   - scipy
   - statsmodels
+  - pytest
   - scikit-learn
   - matplotlib
   - jupyter

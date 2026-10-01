@@ -22,10 +22,19 @@ Implementaciones/
 │   ├── 02_barrido_K.py
 │   ├── 03_visualizacion.py
 │   └── 04_refinamiento_kmeans.py
+├── astcc/                     Biblioteca compartida: estadísticos, modelos nulos, cortes
+│   ├── estadisticos.py
+│   ├── nulas.py
+│   └── cortes.py
+├── tests/                     Pruebas de astcc (python -m pytest tests)
 ├── Verificacion_teorica/      Comprobación numérica del marco teórico y la propuesta
 │   └── identidades.py
 ├── Calibracion/               Supuestos estadísticos de las pruebas (sobredispersión, H0)
-│   └── 01_sobredispersion.py
+│   ├── 01_sobredispersion.py       φ̂ y función de varianza con las réplicas diarias
+│   ├── 02_exactitud_omnibus.py     E1: nivel de Patefield y de la χ² bajo Poisson
+│   ├── 03_seleccion_minP.py        E2: mejor corte, ingenuo frente a min-P
+│   ├── 04_nula_semirreal.py        E3: tipo I con la variabilidad real de los días
+│   └── 05_bloques_base_BBAC.py     E4: efecto de elegir los bloques con BBAC
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -60,6 +69,14 @@ python ST-CC/03_visualizacion.py
 python ST-CC/04_refinamiento_kmeans.py
 python Verificacion_teorica/identidades.py
 python Calibracion/01_sobredispersion.py
+python Calibracion/02_exactitud_omnibus.py
+python Calibracion/03_seleccion_minP.py
+python Calibracion/04_nula_semirreal.py
+python Calibracion/05_bloques_base_BBAC.py
+python -m pytest tests
 ```
 
-`02` a `04` leen las matrices que guarda `01`, así que `01` debe ejecutarse primero.
+En `ST-CC`, `02` a `04` leen las matrices que guarda `01`. En `Calibracion`, `01`
+guarda los conteos diarios que usan los demás. Los scripts de `Calibracion`
+importan `astcc` añadiendo la raíz del proyecto a `sys.path`, así que no hace
+falta instalar nada.

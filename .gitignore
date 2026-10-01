@@ -11,3 +11,4 @@ __pycache__/
 .idea/
 Thumbs.db
 desktop.ini
+.pytest_cache/
