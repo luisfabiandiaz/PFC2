@@ -368,9 +368,9 @@ $(|I|-1)(|J|-1)$ grados de libertad, que es poco fiable en bloques con celdas
 escasas. Los datos de taxis, sin embargo, no son de Poisson: presentan una
 sobredispersión que crece con el volumen de la celda
 (Sección~\ref{sec:prop-sobredispersion}). Por eso la distribución nula de
-referencia de AST-CC se genera con un modelo que reproduce esa variabilidad, y
-la versión de Poisson se conserva como punto de comparación
-(Sección~\ref{sec:prop-calibracion}).
+referencia de AST-CC se genera remuestreando los días observados, de modo que
+reproduce su variabilidad real, y la versión de Poisson se conserva como punto
+de comparación (Sección~\ref{sec:prop-calibracion}).
 
 \subsection{Pruebas dirigidas}
 
@@ -556,24 +556,35 @@ estadístico observado $t_{\mathrm{obs}}$, el p-valor es
   p = \frac{1 + \#\{b : t_b \ge t_{\mathrm{obs}}\}}{1 + B_{\mathrm{perm}}},
 \end{equation}
 que incluye la tabla observada entre las réplicas y nunca vale cero
-\cite{Phipson2010}. Se consideran dos formas de generar las réplicas:
+\cite{Phipson2010}. Se consideran tres formas de generar las réplicas, que se
+detallan en la Sección~\ref{sec:prop-sobredispersion}:
 
 \begin{itemize}
   \item \textbf{Nula de Poisson.} Las réplicas se generan con el algoritmo de
   \cite{Patefield1981}, que produce tablas con marginales exactamente iguales a
   las observadas y distribución hipergeométrica multivariada. La prueba es exacta
   si los conteos son de Poisson.
-  \item \textbf{Nula sobredispersa.} Las réplicas se generan con una mezcla
+  \item \textbf{Nula paramétrica.} Las réplicas se generan con una mezcla
   gamma--Poisson cuya media es la de independencia en el bloque, $E^B_{ij}$, y
-  cuya varianza sigue la función de varianza estimada con las réplicas diarias
-  (Sección~\ref{sec:prop-sobredispersion}).
+  cuya varianza sigue una función de varianza estimada con las réplicas diarias.
+  \item \textbf{Bootstrap de días.} Las réplicas se construyen aplicando a
+  $E^B$ las fluctuaciones de días observados, remuestreados con reemplazo.
 \end{itemize}
 
-La evidencia preliminar de la Sección~\ref{sec:prop-sobredispersion} indica que
-el supuesto de Poisson no se cumple, por lo que la nula sobredispersa es la de
-referencia y la de Poisson se usa como comparación. Por la misma razón, la
-aproximación $\chi^2$ no se usa como filtro, ni siquiera en bloques con conteos
-esperados grandes, que son justamente los más sobredispersos.
+Un experimento preliminar con tablas de Poisson independientes (4000 por
+escenario, con tamaños de $2\times2$ a $15\times12$ y de 0.5 a 100 viajes
+esperados por celda) confirmó que la nula de Poisson con
+\eqref{eq:prop-pval} se mantiene en el nivel nominal dentro del error de Monte
+Carlo (tasas de rechazo de 0 a 0.056 al nivel 0.05, más bajas en las tablas más
+escasas), mientras que la aproximación $\chi^2$ falla en ambos sentidos: rechazó
+hasta el 13\,\% de las tablas de $15\times12$ con diez viajes por celda y
+prácticamente ninguna de las de $13\times5$ o mayores con 0.5.
+Con los datos reales, sin embargo, el supuesto de Poisson no se cumple, y la
+evidencia de la Sección~\ref{sec:prop-sobredispersion} lleva a adoptar el
+bootstrap de días como nula de referencia, con la nula de Poisson y la
+paramétrica como comparación. Por la misma razón, la aproximación $\chi^2$ no se
+usa como filtro, ni siquiera en bloques con conteos esperados grandes, que son
+justamente los más sobredispersos.
 
 Además del p-valor, las réplicas proporcionan la media $\bar t_0$ del
 estadístico bajo el nulo, que se usa para corregir el sesgo del tamaño de efecto
@@ -597,6 +608,18 @@ repetición de la búsqueda, es decir, comparar el máximo observado con réplic
 en las que no se busca, invalida el p-valor; es el error más común en esquemas
 de este tipo.
 
+Un experimento preliminar muestra la magnitud del problema. Con bloques nulos de
+Poisson de los tamaños de los bloques base de ST-CC, comparar el mejor corte con
+la $\chi^2$ de un corte fijo produjo, al nivel 0.05, errores de tipo~I de entre
+0.20 y 0.98 para los cortes de filas, que tienen hasta 4095 candidatos, y de
+entre 0.12 y 0.41 para los de columnas. Con el ajuste min-P, el error medio fue
+0.050 y 0.056, respectivamente, compatible con el nominal. Una comprobación
+adicional, sobre tablas de $8\times5$ en las que el óptimo puede calcularse por
+enumeración, mostró que el 2-medias de la Sección~\ref{sec:prop-candidatos},
+con diez inicializaciones, no lo encuentra en alrededor del 8\,\% de los casos. Como los bloques base tienen a lo sumo quince filas, AST-CC
+enumera todos los cortes de filas cuando $|I|\le 14$ y reserva el 2-medias para
+bloques mayores.
+
 \subsection{Alcance de la corrección y variante con división por días}
 
 La repetición de la búsqueda corrige la selección del corte dentro de un nodo,
@@ -606,6 +629,18 @@ la validez de las pruebas en los nodos no puede darse por supuesta, y el
 Capítulo~\ref{chap:resultados} incluye un experimento de calibración sobre datos
 nulos que mide cuántos refinamientos espurios produce el método completo al
 nivel nominal.
+
+Un experimento preliminar sugiere que, al menos en el nivel base, la selección
+no infla el error. Se generaron 200 matrices nulas de $66\times12$ bajo
+independencia global con las marginales reales, se les aplicó BBAC$_I$ con los
+$K_R$ y $K_T$ de \cite{Liu2021} y se probaron sus bloques base con la nula de
+Poisson. La tasa de rechazo por bloque al nivel 0.05 fue 0.049 en el periodo
+laborable y 0.052 en el feriado, prácticamente igual que con particiones
+aleatorias de los mismos tamaños (0.053 y 0.051). La razón probable es que
+BBAC$_I$ agrupa filas y columnas por su volumen y sus perfiles globales, no por
+la interacción que queda dentro de los bloques. Los bloques hijos, en cambio, sí
+se eligen maximizando esa interacción, y para ellos la corrección min-P y el
+experimento sobre el método completo siguen siendo necesarios.
 
 Una alternativa que elimina el doble uso de los datos es separar la selección de
 la inferencia. El \emph{count splitting} de \cite{Neufeld2024cs} divide cada
@@ -623,11 +658,11 @@ necesita ninguno de esos supuestos. En la variante AST-CC-DD (\emph{división po
 días}), los días del periodo se reparten en dos subconjuntos, por ejemplo
 alternándolos en el calendario, y se construyen dos matrices, $O^{(1)}$ y
 $O^{(2)}$. La partición base y los cortes se eligen con $O^{(1)}$, y las pruebas
-se realizan sobre $O^{(2)}$ con los bloques ya fijados, sin búsqueda y con la
-nula sobredispersa estimada con sus propios días. Si los días son independientes
-entre sí, $O^{(2)}$ es independiente de la selección, cualquiera que sea la
-distribución de los conteos dentro de un día; la división corrige así el sesgo
-de selección, y la nula sobredispersa, la variabilidad de los conteos. El precio es
+se realizan sobre $O^{(2)}$ con los bloques ya fijados, sin búsqueda y con el
+bootstrap de sus propios días. Si los días son independientes entre sí,
+$O^{(2)}$ es independiente de la selección, cualquiera que sea la distribución
+de los conteos dentro de un día; la división corrige así el sesgo de selección,
+y el bootstrap, la variabilidad de los conteos. El precio es
 una pérdida de potencia, porque cada parte tiene la mitad de los días
 (seis en el periodo laborable), y la garantía se debilita si hay dependencia
 entre días consecutivos, por ejemplo por episodios de clima que duran varios
@@ -712,9 +747,10 @@ $\mathrm{var} = a\,\mu^b$ ajustada a las celdas activas.}
 La dispersión relevante para la prueba está, por lo tanto, entre la cruda y la
 residual, y en ambos casos depende del volumen.
 
-\paragraph{Modelo nulo con función de varianza.} En lugar de un único
-$\hat\varphi$, AST-CC usa una función de varianza estimada con las réplicas
-diarias, en la forma de la ley de potencia de \cite{Taylor1961}:
+\paragraph{Nula paramétrica con función de varianza.} Una primera forma de
+incorporar la sobredispersión es sustituir el único $\hat\varphi$ por una
+función de varianza estimada con las réplicas diarias, en la forma de la ley de
+potencia de \cite{Taylor1961}:
 \begin{equation}\label{eq:prop-varianza}
   \mathrm{Var}(X_{dij}) = V(\mu_{dij}) = \max\bigl\{\mu_{dij},\ a\,\mu_{dij}^{\,b}\bigr\}.
 \end{equation}
@@ -731,22 +767,103 @@ agregado tiene varianza
   \qquad \mu_{ij} = \mathrm{E}[O_{ij}] .
 \end{equation}
 
-Las réplicas de la nula sobredispersa se generan celda por celda como
+Las réplicas se generan celda por celda como
 $O^{(b)}_{ij}\sim\mathrm{Poisson}(\Lambda_{ij})$, con $\Lambda_{ij}$ gamma de
 media $E^B_{ij}$ y varianza $V_D(E^B_{ij}) - E^B_{ij}$, de modo que
 $O^{(b)}_{ij}$ tiene media $E^B_{ij}$ y varianza $V_D(E^B_{ij})$. A diferencia de
 la nula de Poisson, esta no condiciona sobre las marginales del bloque, sino que
-usa $E^B$ como estimación de las medias. En los bloques con mucha masa, el error
-de esa estimación es pequeño frente a la sobredispersión; en los bloques
-pequeños, su efecto se mide en el experimento de calibración.
+usa $E^B$ como estimación de las medias.
 
-Queda por decidir si $a$ y $b$ se estiman con la varianza cruda o con la
-residual, que en principio acotan la dispersión relevante por arriba y por
-abajo. La elección
-se hará con el experimento de calibración del Capítulo~\ref{chap:resultados}: se
-adoptará la versión cuyo error de tipo~I sobre datos nulos se acerque más al
-nominal. Como análisis de sensibilidad, el periodo feriado se analizará también
-separando sábados y domingos.
+Esta nula tiene una limitación de fondo: trata cada celda como independiente de
+las demás. La combinación de efectos día--región y día--intervalo del punto~3
+produce, en cambio, desviaciones \emph{correlacionadas} entre las celdas de un
+bloque, con la forma de una interacción, cuyo peso en $G^2_B$ crece con la masa
+del bloque. Ninguna función de varianza por celda puede reproducirlas.
+
+\paragraph{Bootstrap de días.} La alternativa es generar las réplicas con los
+propios días observados. Para cada celda del bloque con media diaria
+$\bar X_{ij}\ge 0.5$ se define la fluctuación multiplicativa del día $d$,
+$F_{dij} = X_{dij}/\bar X_{ij}$, y su versión corregida por muestra pequeña
+\begin{equation}\label{eq:prop-fluctuacion}
+  \tilde F_{dij} = \max\Bigl\{0,\ 1 + \sqrt{\tfrac{D}{D-1}}\,\bigl(F_{dij}-1\bigr)\Bigr\},
+\end{equation}
+que compensa que la varianza empírica de $D$ días subestima la poblacional; en
+las celdas con menos actividad se toma $\tilde F_{dij}=1$. Cada réplica sortea
+$D$ días $d_1,\dots,d_D$ con reemplazo y toma
+\begin{equation}\label{eq:prop-bootstrap}
+  O^{(b)}_{ij} = \frac{E^B_{ij}}{D}\sum_{k=1}^{D} \tilde F_{d_k ij},
+\end{equation}
+redondeado a un entero de forma estocástica, sin sesgo. Si un día solo difiere
+de los demás por un factor común a todo el bloque, a una región o a un
+intervalo, la fluctuación es de rango uno y la réplica sigue cumpliendo la
+independencia, como exige el punto~3; la combinación de efectos y la variación
+propia de cada celda, en cambio, se trasladan tal como aparecen en los datos.
+El método no supone ninguna forma para la varianza ni para la correlación entre
+celdas, pero sí que los días son independientes y que $E^B$ estima bien las
+medias.
+
+\paragraph{Evidencia de calibración.} Para comparar las nulas se construyeron
+datos nulos semirreales: para cada bloque base de ST-CC, 300 réplicas generadas
+con \eqref{eq:prop-bootstrap} a partir de los días reales, que cumplen la
+independencia por construcción pero tienen la variabilidad de los datos. Cada
+prueba se aplicó sin conocer el mecanismo, solo con los $D$ días de cada
+réplica, y con 199 réplicas propias. La Tabla~\ref{tab:prop-calibracion}
+resume el error de tipo~I resultante al nivel 0.05.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \multicolumn{2}{c}{Laborable (24 bloques)} & \multicolumn{2}{c}{Feriado (24 bloques)} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+Nula & Media & Máximo & Media & Máximo \\
+\midrule
+$\chi^2$ asintótica & 0.40 & 0.84 & 0.76 & 1.00 \\
+Poisson (Patefield) & 0.40 & 0.84 & 0.76 & 1.00 \\
+Cuasi-Poisson, $\hat\varphi$ constante & 0.03 & 0.19 & 0.01 & 0.06 \\
+Paramétrica, varianza cruda & 0.02 & 0.11 & 0.06 & 0.42 \\
+Paramétrica, varianza residual & 0.13 & 0.45 & 0.26 & 0.69 \\
+Bootstrap de días, sin corrección & 0.06 & 0.14 & 0.11 & 0.39 \\
+Bootstrap de días \eqref{eq:prop-bootstrap} & 0.04 & 0.13 & 0.09 & 0.33 \\
+\bottomrule
+\end{tabular}
+\caption{Error de tipo~I de la prueba ómnibus al nivel 0.05 sobre datos nulos
+semirreales construidos con los días de noviembre de 2017. Para cada bloque base
+de ST-CC se usaron 300 réplicas; el error de Monte Carlo por bloque es de
+aproximadamente 0.013.}
+\label{tab:prop-calibracion}
+\end{table}
+
+De la tabla se desprenden cuatro conclusiones.
+
+\begin{enumerate}
+  \item La nula de Poisson es inutilizable con estos datos: rechaza la
+  independencia verdadera en el 40\,\% de los casos en el periodo laborable y
+  en el 76\,\% en el feriado.
+  \item Ninguna nula paramétrica queda calibrada en todos los bloques. Con la
+  varianza residual son liberales; con la cruda o con $\hat\varphi$ constante
+  son conservadoras en la mayoría de los bloques, con una mediana de 0.01 o
+  menos, lo que cuesta potencia, y liberales en los de más volumen.
+  \item El bootstrap de días con la corrección \eqref{eq:prop-fluctuacion} es el
+  único cuyo error se centra en el nominal en el periodo laborable, con media
+  0.044 y mediana 0.042. Es la nula de referencia de AST-CC.
+  \item En el periodo feriado, el bootstrap sigue siendo algo liberal, con media
+  0.087. Los fallos se concentran en los bloques nocturnos de dos intervalos:
+  con solo nueve días que mezclan sábados, domingos y el Día de Acción de
+  Gracias, el remuestreo no reproduce bien la diferencia entre las noches de
+  sábado y de domingo. Para ese periodo se usará un bootstrap estratificado, que
+  remuestrea los sábados entre los sábados y los domingos entre los domingos, y
+  se reportará su calibración en el Capítulo~\ref{chap:resultados}.
+\end{enumerate}
+
+Como variante conservadora, puede exigirse que rechacen a la vez el bootstrap y
+la nula paramétrica con varianza cruda, es decir, tomar el mayor de sus
+p-valores. Su error medio fue 0.012 en el periodo laborable y 0.023 en el
+feriado, con máximos de 0.05 y 0.17. Estos datos nulos semirreales comparten su
+mecanismo con el bootstrap, lo que puede favorecerlo; por eso la calibración
+final se medirá también con datos sintéticos de mecanismo distinto en el
+Capítulo~\ref{chap:resultados}.
 
 \section{Control de comparaciones múltiples}\label{sec:prop-multiplicidad}
 
@@ -786,6 +903,11 @@ $B_{\mathrm{perm}}(B)\ge \lceil c/\alpha_B\rceil$ para una constante $c$
 moderada, y se aplica la parada secuencial de \cite{Besag1991}: la simulación
 se detiene en cuanto se acumulan $h$ réplicas con estadístico mayor o igual que
 el observado, lo que abarata los bloques claramente no significativos.
+
+La corrección es imprescindible incluso en el nivel base: en el experimento de
+la Sección~\ref{sec:prop-calibracion} sobre matrices nulas, probar cada bloque
+base al nivel 0.05 sin corregir produjo al menos un rechazo en el 63\,\% de las
+réplicas del periodo laborable y en el 70\,\% de las del feriado.
 
 Si se esperan muchos refinamientos, controlar la FWER puede ser demasiado
 estricto, porque el nivel se diluye rápidamente con la profundidad. Como
@@ -857,8 +979,8 @@ donde $\bar t_0$ es la media de $G^2_B$ sobre las réplicas nulas de la prueba
 ómnibus y $\bar t_{0,s}$ la media del estadístico dirigido
 \eqref{eq:prop-dirigidos} sobre las réplicas del ajuste min-P. Ambas medias se
 obtienen de réplicas que ya se generan para los p-valores, así que la corrección
-no tiene costo. Como las réplicas siguen la nula sobredispersa, $\bar t_0$
-incorpora la sobredispersión; y como $\bar t_{0,s}$ se calcula repitiendo la
+no tiene costo. Como las réplicas siguen el bootstrap de días, $\bar t_0$
+incorpora la variabilidad real entre días; y como $\bar t_{0,s}$ se calcula repitiendo la
 búsqueda, descuenta también el optimismo de elegir el mejor corte.
 
 \paragraph{Elección de $\delta$.} Su valor no se fija a priori. Como referencia
@@ -880,7 +1002,7 @@ anteriores. La Tabla~\ref{tab:prop-parametros} resume los parámetros.
 \begin{algorithm}[t]
 \caption{AST-CC: refinamiento jerárquico de ST-CC}\label{alg:astcc}
 \begin{algorithmic}[1]
-\Require Matriz de conteos $O\in\mathbb{N}^{m\times n}$; $K_R$, $K_T$; nivel $\alpha$; umbral $\delta$; $N_{\min}$, $d_{\max}$
+\Require Matriz de conteos $O\in\mathbb{N}^{m\times n}$ y sus días $X_1,\dots,X_D$; $K_R$, $K_T$; nivel $\alpha$; umbral $\delta$; $N_{\min}$, $d_{\max}$
 \Ensure Árbol de refinamiento $\mathcal{T}$
 \State $(\rho,\tau)\gets$ BBAC$_I(O, K_R, K_T)$ con base C5 \Comment{partición base = ST-CC}
 \ForAll{bloque base $B_{gh}$}
@@ -893,7 +1015,7 @@ anteriores. La Tabla~\ref{tab:prop-parametros} resume los parámetros.
     \State marcar $B$ como hoja; \Return
   \EndIf
   \State calcular $G^2_B$ con \eqref{eq:prop-G2}
-  \State $(p_{\mathrm{omn}}, \bar t_0)\gets$ p-valor y media nula de $G^2_B$ \Comment{nula sobredispersa}
+  \State $(p_{\mathrm{omn}}, \bar t_0)\gets$ p-valor y media nula de $G^2_B$ \Comment{bootstrap de días}
   \State $\tilde I_B\gets\max\{0,\ (G^2_B-\bar t_0)/(2N_B)\}$
   \If{$p_{\mathrm{omn}}>\alpha_B$ \textbf{o} $\tilde I_B<\delta$}
     \State marcar $B$ como hoja homogénea; \Return
@@ -927,7 +1049,7 @@ anteriores. La Tabla~\ref{tab:prop-parametros} resume los parámetros.
   \State $s^\ast\gets$ \Call{Buscar}{$O|_B,\ \text{tipo}$} \Comment{Sección~\ref{sec:prop-candidatos}}
   \State $t_{\mathrm{obs}}\gets G^2_{B,s^\ast}$
   \For{$b=1,\dots,B_{\mathrm{perm}}(B)$}
-    \State $O^{(b)}\gets$ réplica de la nula sobredispersa con medias $E^B$ \Comment{Sección~\ref{sec:prop-sobredispersion}}
+    \State $O^{(b)}\gets$ réplica del bootstrap de días alrededor de $E^B$ \Comment{ec.~\eqref{eq:prop-bootstrap}}
     \State $s_b\gets$ \Call{Buscar}{$O^{(b)},\ \text{tipo}$} \Comment{se repite la búsqueda completa}
     \State $t_b\gets G^2_{B,s_b}$ calculado sobre $O^{(b)}$
   \EndFor
@@ -948,7 +1070,8 @@ Parámetro & Papel & Valor de referencia \\
 $K_R$, $K_T$ & Resolución inicial de la partición base & Los de \cite{Liu2021}; sensibilidad en el Cap.~\ref{chap:resultados} \\
 $\alpha$ & Nivel global (FWER o FDR sobre el árbol) & $0.05$ \\
 $\delta$ & Información mutua mínima por observación, corregida por sesgo & Rejilla en $[0.001, 0.02]$ nats; sensibilidad \\
-$a$, $b$ & Función de varianza \eqref{eq:prop-varianza} de la nula sobredispersa & Estimados por periodo con las réplicas diarias \\
+Nula de referencia & Bootstrap de días \eqref{eq:prop-bootstrap} con la corrección \eqref{eq:prop-fluctuacion} & Estratificado por tipo de día en el periodo feriado \\
+$a$, $b$ & Función de varianza \eqref{eq:prop-varianza} de la nula paramétrica (comparación) & Estimados por periodo con la varianza cruda \\
 $N_{\min}$, $d_{\max}$ & Reglas triviales de parada & Por análisis de sensibilidad \\
 $B_{\mathrm{perm}}$, $c$, $h$ & Réplicas, resolución mínima y parada secuencial & $B_{\mathrm{perm}}\ge\max(999,\lceil c/\alpha_B\rceil)$ \\
 $R_{\mathrm{ini}}$ & Inicializaciones de la búsqueda de filas & $10$ \\
@@ -1052,9 +1175,10 @@ conviene explicitarlas antes de los experimentos.
   no debe recuperar los patrones locales que encuentra AST-CC.
   \item \textbf{Validez de las pruebas.} Como se discutió en la
   Sección~\ref{sec:prop-calibracion}, la selección de los nodos a partir de
-  los datos y la sobredispersión pueden inflar el error de tipo~I. La nula
-  sobredispersa depende de una función de varianza estimada y de las medias
-  $E^B$, y la variante por días supone que los días son independientes. Sin un
+  los datos y la sobredispersión pueden inflar el error de tipo~I. El
+  bootstrap de días supone que los días son independientes y usa $E^B$ como
+  estimación de las medias; con pocos días, como en el periodo feriado, puede
+  ser liberal. Sin un
   experimento de calibración sobre datos nulos, el método no sería defendible.
   \item \textbf{Significativo no es interesante.} Una hoja puede tener
   heterogeneidad detectable y ser irrelevante en el dominio. Por eso se reporta
@@ -1077,8 +1201,8 @@ criterio de refinamiento y la función objetivo de ST-CC son la misma cantidad
 vista a distintas escalas.
 
 Sobre esa base, el método combina una prueba ómnibus que controla el error de
-tipo~I, calibrada con una nula que reproduce la sobredispersión observada en
-los datos, pruebas dirigidas que localizan la estructura con un ajuste min-P que
+tipo~I, calibrada con un bootstrap de los días observados que reproduce su
+variabilidad real, pruebas dirigidas que localizan la estructura con un ajuste min-P que
 repite la búsqueda en cada réplica, un reparto jerárquico del nivel de
 significancia a lo largo del árbol y un umbral de tamaño de efecto, corregido por sesgo, que no crece
 con el número de viajes. El análisis preliminar de los datos de noviembre de
