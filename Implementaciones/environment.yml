@@ -1,0 +1,19 @@
+name: stcc
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - geopandas
+  - duckdb
+  - pandas
+  - numpy
+  - scipy
+  - statsmodels
+  - pytest
+  - scikit-learn
+  - matplotlib
+  - jupyter
+  - pip
+  - pip:
+      - clustering-geodata-cubes

@@ -1,0 +1,60 @@
+Verificación de identidades  (semilla 20260928, 300 matrices aleatorias)
+
+Afirmación                                                             Referencia                              n  err. máx.  estado
+---------------------------------------------------------------------------------------------------------------------------------------
+D_I(O||mu) = Dev(mu)/2                                                 eq:devianza                           300    1.4e-14  OK
+d_I(cx,cy) = c d_I(x,y)                                                eq:homogeneidad                       300    2.6e-14  OK
+D_I(O||C5) = N[I(R;T) - I(R^;T^)]                                      eq:perdida-im                         300    1.2e-14  OK
+D_I(O||C6) = 1/2 sum G2_gh                                             eq:c6-g2                              300    3.2e-15  OK
+G2_gh = 2 N_gh I_gh(R;T)                                               eq:g2-im                             1794    8.3e-12  OK
+Descomposición D_I(O||C2) = (i)+(ii)+(iii)                             prop:descomposicion                   300    1.6e-15  OK
+Pitágoras C2 ⊂ C5                                                      prop:descomposicion (dem.)            300    1.6e-15  OK
+Pitágoras C5 ⊂ C6                                                      prop:descomposicion (dem.)            300    1.4e-14  OK
+Parámetros C2 = K_R K_T                                                tab:parametros                        300    0.0e+00  OK
+Parámetros C5 = K_R K_T + (m-K_R) + (n-K_T)                            tab:parametros                        300    0.0e+00  OK
+Parámetros C6 = K_T m + K_R n - K_R K_T                                tab:parametros                        300    0.0e+00  OK
+Saturado - C6 = sum (|I_g|-1)(|J_h|-1)                                 tab:parametros (texto)                300    0.0e+00  OK
+Anidamiento C2 ⊂ C5 ⊂ C6                                               sec:loglineal                         300    0.0e+00  OK
+C2 cumple las condiciones de Birch (EMV)                               eq:c2 / sec:loglineal                 266    1.0e-15  OK
+C2 = ajuste GLM de Poisson (statsmodels)                               eq:c2 / sec:loglineal                  40    2.6e-15  OK
+C5 cumple las condiciones de Birch (EMV)                               eq:c5 / sec:loglineal                 186    4.2e-15  OK
+C5 = ajuste GLM de Poisson (statsmodels)                               eq:c5 / sec:loglineal                  40    3.1e-14  OK
+C6 cumple las condiciones de Birch (EMV)                               eq:c6 / sec:loglineal                 152    7.8e-15  OK
+C6 = ajuste GLM de Poisson (statsmodels)                               eq:c6 / sec:loglineal                  40    3.8e-14  OK
+G2(S/D) = G2(S)/D                                                      sec:escala                            300    2.1e-14  OK
+Aproximación C2 equivariante a la escala                               sec:escala                            300    3.4e-16  OK
+Aproximación C5 equivariante a la escala                               sec:escala                            300    5.8e-16  OK
+Aproximación C6 equivariante a la escala                               sec:escala                            300    3.9e-16  OK
+Árbol con hojas = bloques base da C6                                   def:aprox-arbol (texto)               300    0.0e+00  OK
+(a) D_I(O||O^T) = 1/2 sum_L G2_L                                       eq:prop-desc-hojas                    300    5.2e-15  OK
+(b) G2_B = G2_{B,s} + sum_C G2_C                                       eq:prop-cadena                       4722    1.2e-11  OK
+(b) G2_{B,s} >= 0                                                      prop:ganancia (b)                    4722    0.0e+00  OK
+(b) G2_{B,s} = fórmula colapsada, corte col (simétrico)                eq:prop-G2-colapsada                 1925    8.5e-13  OK
+(b) G2_{B,s} = G2 de la tabla colapsada 2x|.|, corte col (simétrico)   eq:prop-G2-colapsada                 1925    3.9e-12  OK
+Regla de la cadena de la IM                                            eq:prop-regla-cadena                 3620    4.4e-16  OK
+(b) gl del corte (col)                                                 prop:ganancia (b)                     764    0.0e+00  OK
+Parámetros del modelo del corte = sum_C(|I_C|+|J_C|-1)                 dem. prop:ganancia                   1816    0.0e+00  OK
+Independencia en B anidada en el modelo del corte                      dem. prop:ganancia                   1816    0.0e+00  OK
+Parametrización escrita (col) = efectos por hijo                       dem. prop:ganancia                    764    0.0e+00  OK
+(b) G2_{B,s} = fórmula colapsada, corte fil                            eq:prop-G2-colapsada                 2172    1.3e-11  OK
+(b) G2_{B,s} = G2 de la tabla colapsada 2x|.|, corte fil               eq:prop-G2-colapsada                 2172    1.7e-11  OK
+(b) gl del corte (fil)                                                 prop:ganancia (b)                     820    0.0e+00  OK
+Parametrización escrita (fil) = efectos por hijo                       dem. prop:ganancia                    820    0.0e+00  OK
+Corolario: D_I(O||C2) = (i)+(ii)+ 1/2 sum G2_{B,s} + 1/2 sum G2_L      eq:prop-desc-total                    300    1.6e-15  OK
+(c) Reducción al cortar una hoja = G2_{B,s}/2                          prop:ganancia (c)                     300    4.0e-13  OK
+Parámetros del árbol = sum_L(|I_L|+|J_L|-1)                            def:aprox-arbol / eq:prop-bic         120    0.0e+00  OK
+O^T cumple las condiciones de Birch (EMV)                              def:aprox-arbol (texto)                60    1.0e-14  OK
+E[d(X,s)] = E[d(X,mu)] + d(mu,s)                                       eq:media                              300    1.2e-15  OK
+I_phi(X) con KL = I(U;Y)                                               eq:info-bregman (texto)               300    5.0e-16  OK
+1/2 G2_B = 1/2 G2_{B,s} + sum_i O_i. KL(p(.|i)||p(.|r(i)))             sec:prop-candidatos (Filas)          9738    2.7e-13  OK
+argmax G2_{B,s} = argmin costo KL ponderado                            sec:prop-candidatos (Filas)           294    0.0e+00  OK
+Tablero: totales de fila y columna constantes                          sec:prop-estadisticos (tablero)       300    0.0e+00  OK
+Tablero: G2_B > 0                                                      sec:prop-estadisticos (tablero)       300    0.0e+00  OK
+Tablero: el corte de filas correcto captura todo G2_B                  sec:prop-estadisticos (tablero)       300    2.2e-13  OK
+Tablero: el corte correcto es el máximo sobre todas las biparticiones  sec:prop-estadisticos (tablero)       300    3.9e-15  OK
+Independencia => G2_{B,s}(mu) = 0 para todo corte de filas             obs:nulo-comun                        300    8.5e-12  OK
+No independencia => algún corte de una fila tiene G2 > 0               obs:nulo-comun                        300    0.0e+00  OK
+(b) gl del corte (conj)                                                prop:ganancia (b)                     232    0.0e+00  OK
+Parametrización escrita (conj) = efectos por hijo                      dem. prop:ganancia                    232    0.0e+00  OK
+
+54 de 54 afirmaciones verificadas; 0 fallos.
