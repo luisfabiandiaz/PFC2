@@ -21,7 +21,7 @@ El avance de los sensores, los dispositivos con posicionamiento global y
 los sistemas de registro automático ha hecho que grandes volúmenes de datos
 espacio-temporales estén disponibles de forma cotidiana. Los registros de
 viajes en taxi, los catálogos sísmicos o las series de monitoreo ambiental
-describen \emph{dónde} y \emph{cuándo} ocurre un fenómeno, y su análisis
+describen dónde y cuándo ocurre un fenómeno, y su análisis
 permite comprender la dinámica de una ciudad o de un territorio y apoyar la
 toma de decisiones en planificación urbana, transporte y gestión de riesgos
 \cite{Liu2021}.
@@ -48,11 +48,11 @@ movilidad en los datos de taxis de Manhattan. Su estudio utilizó alrededor
 de diez millones de viajes registrados en noviembre de 2017, agregados en
 66 regiones y 12 intervalos de dos horas.
 
-El resultado de \ac{BBACI} es una partición en \emph{tablero de ajedrez}
-(\emph{checkerboard}): cada región pertenece a un único grupo de regiones y
+El resultado de \ac{BBACI} es una partición en tablero de ajedrez
+(\emph{checkerboard}) donde cada región pertenece a un único grupo de regiones y
 cada intervalo a un único grupo temporal, de modo que la matriz queda
 dividida en $K_R \times K_T$ bloques rectangulares. Esta estructura es
-fácil de interpretar, pero es \emph{global}. Si una subzona de un grupo de
+fácil de interpretar, pero es global. Si una subzona de un grupo de
 regiones se comporta de manera distinta solo en un horario concreto, por
 ejemplo un foco de actividad alrededor de una estación de trenes al final
 de la tarde, la única forma de capturarlo es dividir el grupo de regiones
@@ -64,16 +64,16 @@ motivó enfoques bayesianos no paramétricos como el proceso de Mondrian
 
 \cite{Liu2021} reconocieron parte de esta limitación y aplicaron
 \textit{K-means} sobre los bloques del tablero para obtener co-clusters que no
-siguen la rejilla. No obstante, ese paso \emph{reagrupa} bloques ya
-existentes a partir de su media y desviación estándar; no \emph{subdivide}
+siguen la rejilla. No obstante, ese paso reagrupa bloques ya
+existentes a partir de su media y desviación estándar; no subdivide
 un bloque internamente. Por tanto, la heterogeneidad que queda oculta dentro
 de un bloque, que es precisamente donde pueden residir los patrones locales,
 no se recupera. La alternativa de aumentar $K_R$ y $K_T$, o de elegirlos
-automáticamente con métodos como Cross-Associations \cite{Chakrabarti2004},
+automáticamente con métodos como \emph{Cross-Associations} \cite{Chakrabarti2004},
 sigue produciendo una rejilla global y aumenta el número de parámetros en
 toda la matriz.
 
-Una segunda pregunta surge al intentar refinar localmente: ¿cuándo detenerse?
+Una segunda pregunta surge al intentar refinar localmente, ¿cuándo deberia detenerse?
 Todo bloque presenta algo de variación, de modo que se necesita un criterio
 que distinga la heterogeneidad real del ruido. En agrupamiento interpretable
 basado en árboles, \cite{Hu2025} propusieron evaluar cada división candidata
@@ -84,7 +84,7 @@ una sola dimensión y no para bloques bidimensionales de una matriz
 espacio-temporal.
 
 Esta tesis se sitúa en la intersección de ambas líneas. Se propone extender
-\ac{ST-CC} con un refinamiento jerárquico que actúe \emph{dentro} de cada
+\ac{ST-CC} con un refinamiento jerárquico que actúe dentro de cada
 bloque, guiado por un criterio estadístico coherente con la misma función
 objetivo que optimiza \ac{BBACI}. En el caso de conteos, la I-divergencia
 que minimiza \ac{BBACI} coincide, salvo un factor constante, con la
@@ -102,7 +102,7 @@ datos de conteo espacio-temporales.
 El marco \ac{ST-CC} impone una partición en rejilla regular sobre la matriz
 región~$\times$~tiempo, en la que cada división de filas o columnas se
 aplica a la matriz completa. Como consecuencia, los patrones
-espacio-temporales \emph{locales}, es decir, la interacción entre un
+espacio-temporales locales, es decir, la interacción entre un
 subconjunto de regiones y un subconjunto de horarios que ocurre solo dentro
 de un bloque, quedan promediados y ocultos, y la única manera de revelarlos
 es aumentar la resolución global a costa de fragmentar innecesariamente el
@@ -130,9 +130,8 @@ espacio-temporales locales que la partición en rejilla regular no captura.
 \begin{enumerate}
     \item Formular el refinamiento como un árbol de bloques anidados que
           parte de la partición base de \ac{BBACI}, y definir un criterio
-          de heterogeneidad por bloque (estadístico $G^2$ bajo un modelo
-          nulo de independencia) coherente con la función objetivo de
-          \ac{ST-CC}.
+          de heterogeneidad por bloque coherente con la función objetivo 
+          de \ac{ST-CC}.
 
     \item Diseñar la regla de decisión y de parada del refinamiento,
           combinando una prueba global por bloque, la selección del mejor

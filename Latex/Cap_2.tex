@@ -41,20 +41,19 @@ Sección~\ref{sec:estado-arte} presenta el estado del arte.
 Los datos de movilidad urbana se registran como eventos individuales. Cada viaje
 en taxi, por ejemplo, queda descrito por el lugar y el instante en que el pasajero
 sube y baja del vehículo. Para analizarlos de forma agregada, el espacio se divide
-en $m$ regiones fijas, como las zonas de taxi que define la autoridad de
-transporte, y el día se divide en $n$ intervalos de igual duración. En la
+en $m$ regiones fijas, y el día se divide en $n$ intervalos de igual duración. En la
 clasificación de \cite{Wu2020}, el resultado es una serie temporal
-georreferenciada: un conjunto de valores observados en ubicaciones fijas y a
+georreferenciada es decir un conjunto de valores observados en ubicaciones fijas y a
 intervalos regulares, que puede organizarse como una matriz bidimensional.
 
 \subsection{La matriz de co-ocurrencia}
 
-Sea un periodo de observación de $D$ días. La \emph{matriz de co-ocurrencia}
+Sea un periodo de observación de $D$ días. La matriz de co-ocurrencia
 $O \in \mathbb{N}^{m \times n}$ tiene como entrada $O_{ij}$ el número de eventos,
 por ejemplo llegadas de taxi, registrados en la región $i$ durante el intervalo
-$j$, sumados sobre los $D$ días. Cada fila de $O$ es el \emph{perfil temporal} de
+$j$, sumados sobre los $D$ días. Cada fila de $O$ es el perfil temporal de
 una región, es decir, cómo se reparte su actividad a lo largo del día, y cada
-columna es el \emph{perfil espacial} de un intervalo, es decir, cómo se reparte la
+columna es el perfil espacial de un intervalo, es decir, cómo se reparte la
 actividad de ese horario entre las regiones. Se denotan
 $O_{i\cdot} = \sum_j O_{ij}$, $O_{\cdot j} = \sum_i O_{ij}$ y $N = \sum_{i,j} O_{ij}$
 los totales de fila, de columna y general.
@@ -77,30 +76,43 @@ que es no negativa y se anula si y solo si
 $O_{ij} = O_{i\cdot}\,O_{\cdot j}/N$ para todas las celdas. En ese caso todas las
 regiones tienen el mismo perfil temporal, salvo un factor de escala, y conocer la
 región no aporta información sobre el horario. Cuanto mayor es $I(R;T)$, más
-depende el ritmo diario de la región de que se trate. Esta interacción entre
+depende el ritmo diario de cual sea la regíon. Esta interacción entre
 espacio y tiempo es precisamente lo que buscan revelar los métodos de
 co-agrupamiento.
 
 \subsection{Modelo de conteos}\label{sec:modelo-conteos}
 
-Para hacer inferencia sobre $O$ se necesita un modelo probabilístico. El modelo
-natural para conteos de eventos es el de Poisson: se supone que
+ST-CC no adopta ningún modelo probabilístico: optimiza una función de pérdida y
+elige el número de grupos con criterios heurísticos (Sección~\ref{sec:stcc}).
+Para someter sus bloques a pruebas de hipótesis, como propone esta tesis, se
+necesita un modelo de cómo varían los conteos. El modelo de referencia para
+conteos de eventos es el de Poisson, en el que se supone que
 $O_{ij} \sim \mathrm{Poisson}(\mu_{ij})$, con conteos independientes entre celdas.
-La justificación es que cada conteo agrega un número muy grande de decisiones de
-viaje individuales, cada una con una probabilidad pequeña de caer en una celda
-concreta, que es la situación en que la distribución de Poisson aproxima a la
-binomial. Si además se condiciona sobre el total $N$, el vector de conteos sigue
-una distribución multinomial con probabilidades $\pi_{ij} = \mu_{ij}/\sum_{k,l}
-\mu_{kl}$, y ambos esquemas de muestreo conducen a las mismas estimaciones de
-máxima verosimilitud para las probabilidades $\pi_{ij}$ \cite{Agresti2013}. Por eso
-la distribución empírica~\eqref{eq:conjunta} puede leerse como la estimación de
-$\pi$ bajo cualquiera de los dos modelos.
+En este modelo la media y la varianza de cada conteo coinciden,
+$\mathrm{E}[O_{ij}] = \mathrm{Var}(O_{ij}) = \mu_{ij}$, de modo que el ruido
+relativo de una celda, $1/\sqrt{\mu_{ij}}$, disminuye a medida que crece su
+actividad. La justificación es que cada conteo agrega un número muy grande de
+decisiones de viaje individuales, cada una con una probabilidad pequeña,
+constante e independiente de las demás, de caer en una celda concreta, que es la
+situación en que la distribución de Poisson aproxima a la binomial. Si además se
+condiciona sobre el total $N$, el vector de conteos sigue una distribución
+multinomial con probabilidades $\pi_{ij} = \mu_{ij}/\sum_{k,l} \mu_{kl}$. Para
+los modelos log-lineales que incluyen un término para el total, como todos los
+que se usan en esta tesis, ambos esquemas de muestreo conducen a las mismas
+estimaciones de máxima verosimilitud para las probabilidades $\pi_{ij}$
+\cite{Agresti2013}. Por eso la distribución empírica~\eqref{eq:conjunta} puede
+leerse como la estimación de $\pi$ bajo cualquiera de los dos modelos.
 
 Este modelo tiene dos limitaciones que se retoman más adelante. La primera es que
-los viajes no son del todo independientes: la actividad de una celda varía de un
-día a otro por el día de la semana, el clima o los eventos puntuales, lo que
-produce más variabilidad de la que predice el modelo de Poisson
-(Sección~\ref{sec:est-efecto}). La segunda es que la equivalencia entre el
+los supuestos de la justificación no se cumplen del todo. La probabilidad de
+viajar no es constante: la actividad de una celda varía de un día a otro por el
+día de la semana, el clima o los eventos puntuales, lo que produce más
+variabilidad de la que predice el modelo de Poisson
+(Sección~\ref{sec:est-efecto}). Además, esos factores actúan sobre muchas celdas
+a la vez; un día de lluvia, por ejemplo, aumenta la actividad en casi todas las
+regiones, de modo que los conteos de celdas distintas tampoco son del todo
+independientes. La Sección~\ref{sec:prop-sobredispersion} constata ambos efectos
+en los datos de esta tesis. La segunda es que la equivalencia entre el
 co-agrupamiento con I-divergencia y la verosimilitud de Poisson exige que las
 celdas contengan conteos y no promedios, lo que se analiza en la
 Sección~\ref{sec:escala}.
