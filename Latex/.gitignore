@@ -1,0 +1,23 @@
+# Productos de compilación
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.toc
+*.log
+*.out
+*.synctex.gz
+*.synctex(busy)
+Tesis.pdf
+
+# PDFs de terceros (derechos de autor, 95 MB)
+Papers/
+
+# Sistema / editores
+Thumbs.db
+desktop.ini
+.vscode/
+~$*
