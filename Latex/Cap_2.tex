@@ -43,7 +43,7 @@ en taxi, por ejemplo, queda descrito por el lugar y el instante en que el pasaje
 sube y baja del vehículo. Para analizarlos de forma agregada, el espacio se divide
 en $m$ regiones fijas, y el día se divide en $n$ intervalos de igual duración. En la
 clasificación de \cite{Wu2020}, el resultado es una serie temporal
-georreferenciada es decir un conjunto de valores observados en ubicaciones fijas y a
+georreferenciada, es decir, un conjunto de valores observados en ubicaciones fijas y a
 intervalos regulares, que puede organizarse como una matriz bidimensional.
 
 \subsection{La matriz de co-ocurrencia}
@@ -76,7 +76,7 @@ que es no negativa y se anula si y solo si
 $O_{ij} = O_{i\cdot}\,O_{\cdot j}/N$ para todas las celdas. En ese caso todas las
 regiones tienen el mismo perfil temporal, salvo un factor de escala, y conocer la
 región no aporta información sobre el horario. Cuanto mayor es $I(R;T)$, más
-depende el ritmo diario de cual sea la regíon. Esta interacción entre
+depende el ritmo diario de cuál sea la región. Esta interacción entre
 espacio y tiempo es precisamente lo que buscan revelar los métodos de
 co-agrupamiento.
 
@@ -124,7 +124,7 @@ El agrupamiento tradicional, llamado también agrupamiento unidireccional, forma
 grupos en una sola dimensión de la matriz, a partir de la similitud de los datos a
 lo largo de la otra \cite{Wu2020}. Aplicado a la matriz $O$, agrupa regiones según
 sus perfiles temporales completos, o intervalos según sus perfiles espaciales
-completos. El \emph{co-agrupamiento} forma grupos en las dos dimensiones a la vez,
+completos. El co-agrupamiento forma grupos en las dos dimensiones a la vez,
 de modo que cada grupo de filas se describe por su comportamiento en cada grupo de
 columnas \cite{Wu2020}. La idea se remonta al agrupamiento directo de
 \cite{Hartigan1972}, considerado el origen del biclustering \cite{Castanho2024}.
@@ -183,9 +183,9 @@ en la literatura de co-agrupamiento se la llama partición en tablero
 (\emph{checkerboard}) \cite{Liu2021}. Es la estructura que producen el
 co-agrupamiento de teoría de la información \cite{Dhillon2003}, el co-agrupamiento
 de Bregman \cite{Banerjee2007} y, por tanto, ST-CC. Su ventaja es la
-interpretabilidad: la matriz se resume en $K_R K_T$ bloques, y cada grupo de filas
+interpretabilidad ya que la matriz se resume en $K_R K_T$ bloques, y cada grupo de filas
 y de columnas tiene una lectura directa. Su desventaja es que cada división es
-\emph{global}: si un grupo de filas se divide, la división se aplica en todos los
+global es decir si un grupo de filas se divide, la división se aplica en todos los
 grupos de columnas, aunque la diferencia solo exista en uno de ellos.
 
 Dentro de esta familia, una línea de trabajo se ocupa de elegir el número de
@@ -205,7 +205,7 @@ El biclustering relaja la exigencia de cubrir toda la matriz: busca submatrices,
 llamadas biclusters, cuyas filas se comportan de forma coherente en sus columnas,
 y admite que un mismo elemento pertenezca a varios biclusters o a ninguno
 (Figura~\ref{fig:estructuras}b) \cite{Castanho2024}. Esta flexibilidad permite
-describir patrones locales, pero tiene un costo: cuando los biclusters se solapan
+describir patrones locales, pero tiene un costo, cuando los biclusters se solapan
 de forma arbitraria, es más difícil extraer conocimiento del resultado
 \cite{Castanho2024}, y el resultado deja de ser una partición de la matriz, por lo
 que no puede compararse directamente con un tablero en términos de error de
@@ -216,8 +216,8 @@ reconstrucción.
 Una tercera posibilidad es organizar los bloques en una jerarquía. En la versión
 más común se construye un dendrograma para las filas y otro para las columnas;
 cortar ambos a cierta altura vuelve a producir un tablero, solo que con una
-resolución elegida a posteriori. Una alternativa distinta es la \emph{teselación
-guillotina}: se parte de la matriz completa, o de un tablero inicial, y se aplican
+resolución elegida a posteriori. Una alternativa distinta es la teselación
+guillotina en la cual se parte de la matriz completa, o de un tablero inicial, y se aplican
 cortes recursivos, cada uno de los cuales divide un único bloque en dos por filas
 o por columnas (Figura~\ref{fig:estructuras}c). El resultado sigue siendo una
 partición de la matriz en rectángulos, en el sentido de subconjuntos de filas por
@@ -225,15 +225,15 @@ subconjuntos de columnas, pero ya no es un tablero, porque dos filas del mismo
 grupo pueden quedar con particiones temporales distintas.
 
 El proceso de Mondrian de \cite{Roy2008} es la referencia clásica de este tipo de
-estructura. Los autores parten de la misma observación que motiva esta tesis: en
+estructura. Los autores parten de la misma observación que motiva esta tesis, en
 los modelos de bloques con partición regular, capturar un detalle fino en una
 zona de la matriz obliga a dividir toda la fila o columna. Para evitarlo, definen
 una distribución de probabilidad sobre árboles de cortes alineados con los ejes, y
 la usan como distribución a priori en un modelo bayesiano no paramétrico de datos
 relacionales, con inferencia mediante métodos de Monte Carlo. La propuesta de esta
-tesis produce el mismo tipo de estructura, pero por una vía distinta: parte del
+tesis produce el mismo tipo de estructura, pero por una vía distinta, parte del
 tablero de ST-CC y decide cada corte con una prueba de hipótesis, en lugar de
-muestrear la teselación completa de una distribución a posteriori.
+muestrear la teselación completa de una distribución a posterior.
 
 \begin{table}[ht]
   \centering
