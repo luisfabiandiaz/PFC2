@@ -27,7 +27,9 @@ Implementaciones/
 │   ├── estadisticos.py
 │   ├── nulas.py
 │   ├── cortes.py
-│   └── bbac.py                BBAC_I con bases C2 y C5 (+ búsqueda local)
+│   ├── bbac.py                BBAC_I con bases C2 y C5 (+ búsqueda local)
+│   ├── arbol.py               Algoritmo AST-CC (Algoritmos 1 y 2 del Cap. 3)
+│   └── sinteticos.py          Datos con patrones locales plantados
 ├── tests/                     Pruebas de astcc (python -m pytest tests)
 ├── Verificacion_teorica/      Comprobación numérica del marco teórico y la propuesta
 │   └── identidades.py
@@ -38,7 +40,8 @@ Implementaciones/
 │   ├── 04_nula_semirreal.py        E3: tipo I con la variabilidad real de los días
 │   └── 05_bloques_base_BBAC.py     E4: efecto de elegir los bloques con BBAC
 ├── AST-CC/                    Implementación del método propuesto
-│   └── 01_particion_base.py        Partición base con BBAC C2 y C5 sobre los datos reales
+│   ├── 01_particion_base.py        Partición base con BBAC C2 y C5 sobre los datos reales
+│   └── 02_refinamiento.py          AST-CC sobre los datos reales y sensibilidad a delta
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -79,6 +82,7 @@ python Calibracion/03_seleccion_minP.py
 python Calibracion/04_nula_semirreal.py
 python Calibracion/05_bloques_base_BBAC.py
 python AST-CC/01_particion_base.py
+python AST-CC/02_refinamiento.py
 python -m pytest tests
 ```
 

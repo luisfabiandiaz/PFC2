@@ -100,3 +100,33 @@ def test_semirreal_sin_sesgo_en_celdas_escasas():
     Xb = rng.poisson(np.broadcast_to(base, (12, 7, 3))).astype(float)
     R = replicas_semirreales(Xb, 20000, rng, diarias=True).sum(1)
     assert np.allclose(R.mean(0), esperados(Xb.sum(0)), rtol=0.03, atol=0.05)
+
+
+def test_suma_G2_hijos_explicita():
+    from astcc.cortes import _suma_G2_hijos
+    rng = np.random.default_rng(10)
+    T = tabla(rng, 6, 5)
+    a, b = np.array([0, 1, 0, 1, 1, 0]), np.array([1, 0, 0, 1, 0])
+    explicita = sum(G2(T[np.ix_(a == r, b == c)]) for r in (0, 1) for c in (0, 1))
+    assert np.isclose(_suma_G2_hijos(T[None], a[None], b[None])[0], explicita)
+
+
+def test_corte_conjunto_domina_a_los_unidimensionales_y_es_optimo():
+    """El modelo conjunto contiene a los de filas y columnas (Cap_3, 'El corte conjunto
+    como recurso'), así que su ganancia es al menos la del mejor corte 1D. Se compara
+    además con la enumeración de todos los pares (corte de filas, corte de columnas)."""
+    from astcc.cortes import _suma_G2_hijos, mejor_corte
+    rng = np.random.default_rng(11)
+    T = np.stack([tabla(rng, 6, 5) for _ in range(30)])
+    g_conj, (a, b) = mejor_corte(T, "conj", rng)
+    g_fil, _ = mejor_corte(T, "fil", rng)
+    g_col, _ = mejor_corte(T, "col", rng)
+    assert np.all(g_conj >= np.maximum(g_fil, g_col) - 1e-8)
+    Mf, Mc = mascaras_biparticion(6).astype(int), mascaras_biparticion(5).astype(int)
+    optimos = []
+    for t in T:
+        pares = [(x, y) for x in Mf for y in Mc]
+        A = np.array([p[0] for p in pares]); Bm = np.array([p[1] for p in pares])
+        optimos.append(G2(t) - _suma_G2_hijos(np.repeat(t[None], len(pares), 0), A, Bm).min())
+    assert np.all(g_conj <= np.array(optimos) + 1e-8)
+    assert np.allclose(g_conj, optimos)          # búsqueda exacta con |J| <= 6

@@ -8,8 +8,14 @@ búsqueda en todas las réplicas nulas a la vez (ajuste min-P, sec:prop-minP).
 """
 
 import numpy as np
+from scipy.special import xlogy
 
 from .estadisticos import G2
+
+
+def _xlx(x):
+    """x log x elemento a elemento, con 0 log 0 = 0."""
+    return xlogy(x, x)
 
 
 def mascaras_biparticion(k):
@@ -81,3 +87,104 @@ def corte_filas_2medias(T, rng, R_ini=10, max_iter=50):
     mejor = np.argmax(ganancias, axis=1)
     etiq = etiq.reshape(B, R_ini, m)[np.arange(B), mejor]
     return ganancias[np.arange(B), mejor], etiq
+
+
+# ----------------------------------------------------------------------------
+# Corte conjunto 2 x 2
+# ----------------------------------------------------------------------------
+
+def _suma_G2_hijos(T, a, b):
+    """sum_C G^2_C de los cuatro hijos {I_r x J_c} de un corte conjunto, para lotes.
+    T: (B, m, n); a: (B, m) y b: (B, n) en {0, 1}.
+    sum_C G^2_C / 2 = sum xlogy(T) - sum_i sum_c xlogy(O_ic) - sum_r sum_j xlogy(O_rj)
+                      + sum_rc xlogy(N_rc)."""
+    A = np.stack([1 - a, a], axis=-1).astype(float)          # (B, m, 2)
+    Bc = np.stack([1 - b, b], axis=-1).astype(float)         # (B, n, 2)
+    fila_c = np.einsum("bmn,bnc->bmc", T, Bc)                # O_ic
+    fila_r = np.einsum("bmr,bmn->brn", A, T)                 # O_rj
+    N_rc = np.einsum("brn,bnc->brc", fila_r, Bc)
+    return 2.0 * (_xlx(T).sum((1, 2)) - _xlx(fila_c).sum((1, 2))
+                  - _xlx(fila_r).sum((1, 2)) + _xlx(N_rc).sum((1, 2)))
+
+
+def _mejor_dimension(T, otra):
+    """Con las columnas agrupadas según `otra` (B, n), elige el corte de filas que
+    minimiza sum_C G^2_C, es decir, que maximiza
+    S = sum_r sum_j xlogy(O_rj) - sum_rc xlogy(N_rc)
+    (los demás términos no dependen del corte de filas). Enumera todos los cortes."""
+    m = T.shape[1]
+    M = mascaras_biparticion(m)                               # (K, m)
+    Bc = np.stack([1 - otra, otra], axis=-1).astype(float)    # (B, n, 2)
+    uno = np.einsum("km,bmn->bkn", M, T)                      # O_1j para cada máscara
+    cero = T.sum(1)[:, None, :] - uno
+    S = (_xlx(uno).sum(-1) + _xlx(cero).sum(-1)
+         - _xlx(np.einsum("bkn,bnc->bkc", uno, Bc)).sum(-1)
+         - _xlx(np.einsum("bkn,bnc->bkc", cero, Bc)).sum(-1))
+    return M[np.argmax(S, axis=1)].astype(int)
+
+
+def mejor_corte_conjunto(T, a0, b0, max_iter=10, exacto_hasta=14, cols_exacto_hasta=6):
+    """Corte conjunto 2 x 2 con G^2_{B,s} = G^2_B - sum_C G^2_C (eq:prop-cadena).
+
+    Si |J| <= cols_exacto_hasta y |I| <= exacto_hasta, la búsqueda es exacta: para
+    cada corte de columnas se enumeran todos los de filas. Si no, minimización
+    alternante (BBAC con base C6 y k = l = 2 restringido al bloque, Cap_3.tex
+    sec:prop-candidatos) desde los cortes a0 (filas) y b0 (columnas), que alcanza el
+    óptimo global en menos de la mitad de las tablas pequeñas probadas.
+    Devuelve (ganancia (B,), a (B, m), b (B, n))."""
+    T = np.asarray(T, float)
+    B, m, n = T.shape
+    if n <= cols_exacto_hasta and m <= exacto_hasta:
+        mejor_g, mejor_a, mejor_b = np.full(B, -np.inf), None, None
+        for c in mascaras_biparticion(n).astype(int):
+            b = np.broadcast_to(c, (B, n))
+            a = _mejor_dimension(T, b)
+            g = G2(T) - _suma_G2_hijos(T, a, b)
+            if mejor_a is None:
+                mejor_g, mejor_a, mejor_b = g, a, b.copy()
+            else:
+                mejora = g > mejor_g
+                mejor_g = np.where(mejora, g, mejor_g)
+                mejor_a[mejora], mejor_b[mejora] = a[mejora], c
+        return mejor_g, mejor_a, mejor_b
+    a, b = np.array(a0, int), np.array(b0, int)
+    for _ in range(max_iter):
+        nueva_a = _mejor_dimension(T, b) if T.shape[1] <= exacto_hasta else a
+        nueva_b = _mejor_dimension(np.swapaxes(T, 1, 2), nueva_a) if T.shape[2] <= exacto_hasta else b
+        if np.array_equal(nueva_a, a) and np.array_equal(nueva_b, b):
+            break
+        a, b = nueva_a, nueva_b
+    return G2(T) - _suma_G2_hijos(T, a, b), a, b
+
+
+# ----------------------------------------------------------------------------
+# Interfaz común con procesamiento por lotes
+# ----------------------------------------------------------------------------
+
+def mejor_corte(T, tipo, rng, R_ini=10, exacto_hasta=14, max_elementos=4_000_000):
+    """Máximo de G^2_{B,s} sobre los cortes de un tipo ('fil', 'col', 'conj') para un
+    lote de tablas (B, m, n), procesado en trozos para acotar la memoria.
+    Devuelve (ganancia (B,), etiquetas): etiquetas es (a, b) con a (B, m) y b (B, n);
+    en los cortes de un solo tipo, la otra dimensión queda toda en el grupo 0."""
+    T = np.asarray(T, float)
+    B, m, n = T.shape
+    K = 2 ** (max(min(m, exacto_hasta), n) - 1)
+    trozo = max(1, int(max_elementos // max(1, K * max(m, n) * 2)))
+    gan, A, Bl = np.empty(B), np.zeros((B, m), int), np.zeros((B, n), int)
+    for s in range(0, B, trozo):
+        t = T[s:s + trozo]
+        if tipo == "fil":
+            g, et = mejor_corte_filas(t, rng, R_ini=R_ini, exacto_hasta=exacto_hasta)
+            A[s:s + trozo] = et
+        elif tipo == "col":
+            g, et = mejor_corte_columnas(t)
+            Bl[s:s + trozo] = et
+        elif tipo == "conj":
+            _, a0 = mejor_corte_filas(t, rng, R_ini=R_ini, exacto_hasta=exacto_hasta)
+            _, b0 = mejor_corte_columnas(t)
+            g, a, b = mejor_corte_conjunto(t, a0, b0, exacto_hasta=exacto_hasta)
+            A[s:s + trozo], Bl[s:s + trozo] = a, b
+        else:
+            raise ValueError(f"tipo de corte desconocido: {tipo}")
+        gan[s:s + trozo] = g
+    return gan, (A, Bl)
