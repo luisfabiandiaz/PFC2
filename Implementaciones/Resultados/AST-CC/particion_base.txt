@@ -1,0 +1,29 @@
+Partición base de AST-CC con BBAC_I (200 inicializaciones, matriz de conteos)
+
+weekday: 66 x 12, N = 3,602,851, K_R = 8, K_T = 4
+  BBAC C2: D_I = 156,003.0; 12% de las ejecuciones alcanzan el óptimo; 41 óptimos locales distintos (4.1 s)
+  BBAC C5: D_I = 39,054.2; 48% de las ejecuciones alcanzan el óptimo; 30 óptimos locales distintos (9.0 s)
+
+  partición           D_I base C2    D_I base C5    (i) volumen  (ii) marg.  (iii) local
+  cgc (ST-CC/01)        161,318.5       92,337.7       68,980.8    66,634.4     25,703.3
+  BBAC C2               156,003.0       88,266.3       67,736.7    65,177.2     23,089.1
+  BBAC C5             1,365,409.4       39,054.2    1,326,355.2    24,071.6     14,982.6
+
+  ARI filas / columnas
+    cgc (ST-CC/01)   vs BBAC C2           0.867 / 1.000
+    cgc (ST-CC/01)   vs BBAC C5           0.079 / 0.138
+    BBAC C2          vs BBAC C5           0.094 / 0.138
+
+holiday: 66 x 12, N = 2,389,795, K_R = 6, K_T = 4
+  BBAC C2: D_I = 88,926.6; 50% de las ejecuciones alcanzan el óptimo; 9 óptimos locales distintos (6.8 s)
+  BBAC C5: D_I = 19,601.6; 40% de las ejecuciones alcanzan el óptimo; 18 óptimos locales distintos (7.4 s)
+
+  partición           D_I base C2    D_I base C5    (i) volumen  (ii) marg.  (iii) local
+  cgc (ST-CC/01)         89,315.0       66,230.0       23,085.0    23,218.7     43,011.3
+  BBAC C2                88,926.6       66,807.6       22,119.1    23,328.0     43,479.5
+  BBAC C5               599,880.4       19,601.6      580,278.8    12,478.4      7,123.2
+
+  ARI filas / columnas
+    cgc (ST-CC/01)   vs BBAC C2           0.781 / 1.000
+    cgc (ST-CC/01)   vs BBAC C5           0.050 / 0.116
+    BBAC C2          vs BBAC C5           0.046 / 0.116

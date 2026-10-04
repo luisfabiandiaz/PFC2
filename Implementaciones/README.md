@@ -15,7 +15,8 @@ Implementaciones/
 │   │   └── taxi_zones/        Shapefile de zonas TLC
 │   └── procesados/
 │       ├── ST-CC/             Matrices 66x12 y etiquetas de clusters (.npy)
-│       └── Calibracion/       Conteos diarios D x 66 x 12 por periodo (.npy)
+│       ├── Calibracion/       Conteos diarios D x 66 x 12 por periodo (.npy)
+│       └── AST-CC/            Particiones base (rho, tau) por periodo y base (.npy)
 ├── ST-CC/                     Reproducción de Liu et al. (2021)
 │   ├── 00_verificar_datos.py
 │   ├── 01_matriz_y_coclustering.py
@@ -25,7 +26,8 @@ Implementaciones/
 ├── astcc/                     Biblioteca compartida: estadísticos, modelos nulos, cortes
 │   ├── estadisticos.py
 │   ├── nulas.py
-│   └── cortes.py
+│   ├── cortes.py
+│   └── bbac.py                BBAC_I con bases C2 y C5 (+ búsqueda local)
 ├── tests/                     Pruebas de astcc (python -m pytest tests)
 ├── Verificacion_teorica/      Comprobación numérica del marco teórico y la propuesta
 │   └── identidades.py
@@ -35,10 +37,13 @@ Implementaciones/
 │   ├── 03_seleccion_minP.py        E2: mejor corte, ingenuo frente a min-P
 │   ├── 04_nula_semirreal.py        E3: tipo I con la variabilidad real de los días
 │   └── 05_bloques_base_BBAC.py     E4: efecto de elegir los bloques con BBAC
+├── AST-CC/                    Implementación del método propuesto
+│   └── 01_particion_base.py        Partición base con BBAC C2 y C5 sobre los datos reales
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
-    └── Calibracion/
+    ├── Calibracion/
+    └── AST-CC/
 ```
 
 Convenciones:
@@ -73,6 +78,7 @@ python Calibracion/02_exactitud_omnibus.py
 python Calibracion/03_seleccion_minP.py
 python Calibracion/04_nula_semirreal.py
 python Calibracion/05_bloques_base_BBAC.py
+python AST-CC/01_particion_base.py
 python -m pytest tests
 ```
 
