@@ -48,7 +48,10 @@ def _lognormal_media_1(rng, sd, forma):
 
 
 def generar(rng, m=40, n=12, KR=4, KT=3, D=12, escala=2000.0, patrones=(),
-            k=np.inf, var_dia=0.1, var_dia_fila=0.0, var_dia_col=0.0):
+            k=np.inf, var_dia=0.1, var_dia_fila=0.0, var_dia_col=0.0, modificar=None):
+    """modificar(mu, rho, tau, rng) -> lista: patrones arbitrarios. Recibe la media
+    (la modifica en el lugar) y devuelve una descripción de la verdad que se añade a
+    `activas`."""
     rho = rng.permutation(np.arange(m) % KR)
     tau = rng.permutation(np.arange(n) % KT)
     a = rng.lognormal(0, 1.0, m)
@@ -62,6 +65,8 @@ def generar(rng, m=40, n=12, KR=4, KT=3, D=12, escala=2000.0, patrones=(),
         fj = rng.choice(J, max(1, round(pt.frac_cols * len(J))), replace=False)
         mu[np.ix_(fi, fj)] *= pt.factor
         activas.append((np.sort(fi), np.sort(fj)))
+    if modificar is not None:
+        activas += modificar(mu, rho, tau, rng)
     gamma = _lognormal_media_1(rng, var_dia, D)
     u = _lognormal_media_1(rng, var_dia_fila, (D, m))
     v = _lognormal_media_1(rng, var_dia_col, (D, n))

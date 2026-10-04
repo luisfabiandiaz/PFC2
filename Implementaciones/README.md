@@ -43,7 +43,8 @@ Implementaciones/
 ├── AST-CC/                    Implementación del método propuesto
 │   ├── 01_particion_base.py        Partición base con BBAC C2 y C5 sobre los datos reales
 │   ├── 02_refinamiento.py          AST-CC sobre los datos reales y sensibilidad a delta
-│   └── 03_simulacion.py            Calibración (FWER) y potencia sobre datos sintéticos
+│   ├── 03_simulacion.py            Calibración (FWER) y potencia sobre datos sintéticos
+│   └── 04_patrones.py              Otros tipos de patrón: XOR, anidado, entre bloques, BBAC
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -87,6 +88,7 @@ python Calibracion/06_feriado_estratificado.py
 python AST-CC/01_particion_base.py
 python AST-CC/02_refinamiento.py
 python AST-CC/03_simulacion.py
+python AST-CC/04_patrones.py
 python -m pytest tests
 ```
 

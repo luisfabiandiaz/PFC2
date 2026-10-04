@@ -1,0 +1,68 @@
+  simple         1.25      0    0.78  0.77  0.8   0.02     nan
+  simple         1.25  0.001    0.47  0.47  0.5   0.00     nan
+  simple          1.5      0    1.00  1.00  1.0   0.02     nan
+  simple          1.5  0.001    1.00  1.00  1.0   0.00     nan
+  simple          2.0      0    1.00  1.00  1.0   0.00     nan
+  simple          2.0  0.001    1.00  1.00  1.0   0.00     nan
+  simple-BBAC    1.25      0    0.77  0.88  0.8   0.03    0.10
+  simple-BBAC    1.25  0.001    0.57  0.68  0.6   0.02    0.10
+  simple-BBAC     1.5      0    0.92  0.97  0.9   0.00    0.07
+  simple-BBAC     1.5  0.001    0.93  0.99  0.9   0.00    0.07
+  simple-BBAC     2.0      0    0.72  1.00  0.7   0.00    0.32
+  simple-BBAC     2.0  0.001    0.72  1.00  0.7   0.00    0.32
+  xor            1.25      0    1.00  1.00  1.0   0.00     nan
+  xor            1.25  0.001    1.00  1.00  1.0   0.00     nan
+  xor             1.5      0    1.00  1.00  1.0   0.00     nan
+  xor             1.5  0.001    1.00  1.00  1.0   0.00     nan
+  xor             2.0      0    1.00  1.00  1.0   0.02     nan
+  xor             2.0  0.001    1.00  1.00  1.0   0.00     nan
+  anidado        1.25      0    0.97  0.70  1.5   0.02     nan
+  anidado        1.25  0.001    0.90  0.56  1.1   0.00     nan
+  anidado         1.5      0    1.00  0.98  2.0   0.02     nan
+  anidado         1.5  0.001    1.00  0.97  1.9   0.00     nan
+  anidado         2.0      0    1.00  1.00  2.0   0.02     nan
+  anidado         2.0  0.001    1.00  1.00  2.0   0.00     nan
+  cruza          1.25      0    0.97  0.75  1.0   0.00     nan
+  cruza          1.25  0.001    0.62  0.42  0.6   0.00     nan
+  cruza           1.5      0    1.00  1.00  1.0   0.02     nan
+  cruza           1.5  0.001    1.00  1.00  1.0   0.00     nan
+  cruza           2.0      0    1.00  1.00  1.0   0.02     nan
+  cruza           2.0  0.001    1.00  1.00  1.0   0.00     nan
+
+Paso 3b. Tipos de patrón (escenario realista, nula de bootstrap, 60 réplicas)
+
+  escenario    factor  delta  refina   ARI prof falsos absorbe
+  simple         1.25      0    0.78  0.77  0.8   0.02     nan
+  simple         1.25  0.001    0.47  0.47  0.5   0.00     nan
+  simple          1.5      0    1.00  1.00  1.0   0.02     nan
+  simple          1.5  0.001    1.00  1.00  1.0   0.00     nan
+  simple          2.0      0    1.00  1.00  1.0   0.00     nan
+  simple          2.0  0.001    1.00  1.00  1.0   0.00     nan
+  simple-BBAC    1.25      0    0.77  0.88  0.8   0.03    0.10
+  simple-BBAC    1.25  0.001    0.57  0.68  0.6   0.02    0.10
+  simple-BBAC     1.5      0    0.92  0.97  0.9   0.00    0.07
+  simple-BBAC     1.5  0.001    0.93  0.99  0.9   0.00    0.07
+  simple-BBAC     2.0      0    0.72  1.00  0.7   0.00    0.32
+  simple-BBAC     2.0  0.001    0.72  1.00  0.7   0.00    0.32
+  xor            1.25      0    1.00  1.00  1.0   0.00     nan
+  xor            1.25  0.001    1.00  1.00  1.0   0.00     nan
+  xor             1.5      0    1.00  1.00  1.0   0.00     nan
+  xor             1.5  0.001    1.00  1.00  1.0   0.00     nan
+  xor             2.0      0    1.00  1.00  1.0   0.02     nan
+  xor             2.0  0.001    1.00  1.00  1.0   0.00     nan
+  anidado        1.25      0    0.97  0.70  1.5   0.02     nan
+  anidado        1.25  0.001    0.90  0.56  1.1   0.00     nan
+  anidado         1.5      0    1.00  0.98  2.0   0.02     nan
+  anidado         1.5  0.001    1.00  0.97  1.9   0.00     nan
+  anidado         2.0      0    1.00  1.00  2.0   0.02     nan
+  anidado         2.0  0.001    1.00  1.00  2.0   0.00     nan
+  cruza          1.25      0    0.97  0.75  1.0   0.00     nan
+  cruza          1.25  0.001    0.62  0.42  0.6   0.00     nan
+  cruza           1.5      0    1.00  1.00  1.0   0.02     nan
+  cruza           1.5  0.001    1.00  1.00  1.0   0.00     nan
+  cruza           2.0      0    1.00  1.00  1.0   0.02     nan
+  cruza           2.0  0.001    1.00  1.00  1.0   0.00     nan
+
+ARI medio sobre todas las réplicas (0 si no se refina y la base no separa el patrón).
+Tiempo total: 6.6 min
+exit=0
