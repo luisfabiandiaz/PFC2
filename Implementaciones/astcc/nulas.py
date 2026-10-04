@@ -89,7 +89,7 @@ def phi_constante(media, var, media_min=5.0):
 # Nula semirreal para el experimento de calibración
 # ----------------------------------------------------------------------------
 
-def replicas_semirreales(Xb, R, rng, media_min=0.5, diarias=False, inflar=False):
+def replicas_semirreales(Xb, R, rng, media_min=0.5, diarias=False, inflar=False, estratos=None):
     """Tablas de un bloque que cumplen H0 con la variabilidad real de los días
     (bootstrap multiplicativo de días).
 
@@ -105,14 +105,26 @@ def replicas_semirreales(Xb, R, rng, media_min=0.5, diarias=False, inflar=False)
     aplica la corrección de muestra pequeña: las fluctuaciones F_d - 1 se
     multiplican por sqrt(D / (D - 1)), porque la varianza empírica de D días
     subestima la poblacional en ese factor.
+
+    estratos: etiqueta de cada día (por ejemplo sábado, domingo, festivo). Con
+    estratos, cada réplica remuestrea los días dentro de su estrato y conserva la
+    composición del periodo; la corrección de muestra pequeña se aplica a las
+    desviaciones respecto de la media de cada estrato, y un estrato de un solo día
+    entra fijo en todas las réplicas. Como cada estrato conserva su suma esperada,
+    la media de las réplicas sigue siendo E^B.
     """
     D = Xb.shape[0]
     media = Xb.mean(0)
     e = esperados(Xb.sum(0)) / D
     F = np.where(media >= media_min, div(Xb, media), 1.0)
-    if inflar:
-        F = np.maximum(0.0, 1.0 + np.sqrt(D / (D - 1)) * (F - 1.0))
-    dias = rng.integers(0, D, size=(R, D))
+    estratos = np.zeros(D, int) if estratos is None else np.asarray(estratos)
+    dias = np.empty((R, D), int)
+    for s in np.unique(estratos):
+        idx = np.where(estratos == s)[0]
+        if inflar and len(idx) > 1:
+            centro = F[idx].mean(0)
+            F[idx] = np.maximum(0.0, centro + np.sqrt(len(idx) / (len(idx) - 1)) * (F[idx] - centro))
+        dias[:, idx] = idx[rng.integers(0, len(idx), size=(R, len(idx)))]
     if diarias:
         return redondeo_estocastico(e * F[dias], rng)
     return redondeo_estocastico(e * F[dias].sum(1), rng)

@@ -130,3 +130,20 @@ def test_corte_conjunto_domina_a_los_unidimensionales_y_es_optimo():
         optimos.append(G2(t) - _suma_G2_hijos(np.repeat(t[None], len(pares), 0), A, Bm).min())
     assert np.all(g_conj <= np.array(optimos) + 1e-8)
     assert np.allclose(g_conj, optimos)          # búsqueda exacta con |J| <= 6
+
+
+def test_bootstrap_estratificado_conserva_composicion_y_media():
+    rng = np.random.default_rng(12)
+    estratos = np.array([0, 1, 0, 1, 2, 0, 1])          # p. ej. sábado, domingo, festivo
+    base = np.outer(rng.uniform(5, 50, 5), rng.uniform(1, 3, 4))
+    perfil = np.array([1.5, 0.6, 1.0])[estratos]          # cada tipo de día con su nivel
+    Xb = rng.poisson(perfil[:, None, None] * base[None]).astype(float)
+    R = replicas_semirreales(Xb, 20000, rng, diarias=True, inflar=True, estratos=estratos)
+    # El día festivo (estrato de un solo día) entra fijo en todas las réplicas: su
+    # única variación es la del redondeo estocástico (varianza <= 1/4)
+    assert R[:, 4].var(0).max() <= 0.25 + 1e-2
+    assert R[:, 0].var(0).max() > 1.0
+    assert np.allclose(R.sum(1).mean(0), esperados(Xb.sum(0)), rtol=0.03, atol=0.1)
+    # Sin estratos, la corrección coincide con la versión original
+    sin = replicas_semirreales(Xb, 20000, np.random.default_rng(1), inflar=True)
+    assert np.allclose(sin.mean(0), esperados(Xb.sum(0)), rtol=0.03, atol=0.1)

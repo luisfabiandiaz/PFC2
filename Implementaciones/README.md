@@ -38,10 +38,12 @@ Implementaciones/
 │   ├── 02_exactitud_omnibus.py     E1: nivel de Patefield y de la χ² bajo Poisson
 │   ├── 03_seleccion_minP.py        E2: mejor corte, ingenuo frente a min-P
 │   ├── 04_nula_semirreal.py        E3: tipo I con la variabilidad real de los días
-│   └── 05_bloques_base_BBAC.py     E4: efecto de elegir los bloques con BBAC
+│   ├── 05_bloques_base_BBAC.py     E4: efecto de elegir los bloques con BBAC
+│   └── 06_feriado_estratificado.py E5: bootstrap estratificado en el periodo feriado
 ├── AST-CC/                    Implementación del método propuesto
 │   ├── 01_particion_base.py        Partición base con BBAC C2 y C5 sobre los datos reales
-│   └── 02_refinamiento.py          AST-CC sobre los datos reales y sensibilidad a delta
+│   ├── 02_refinamiento.py          AST-CC sobre los datos reales y sensibilidad a delta
+│   └── 03_simulacion.py            Calibración (FWER) y potencia sobre datos sintéticos
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -81,8 +83,10 @@ python Calibracion/02_exactitud_omnibus.py
 python Calibracion/03_seleccion_minP.py
 python Calibracion/04_nula_semirreal.py
 python Calibracion/05_bloques_base_BBAC.py
+python Calibracion/06_feriado_estratificado.py
 python AST-CC/01_particion_base.py
 python AST-CC/02_refinamiento.py
+python AST-CC/03_simulacion.py
 python -m pytest tests
 ```
 

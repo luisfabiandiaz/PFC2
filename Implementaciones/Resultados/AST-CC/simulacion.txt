@@ -1,0 +1,43 @@
+Paso 3. AST-CC sobre datos sintéticos (66 x 12, tablero 8 x 4, D = 12, N ~ 3 M)
+
+A. Calibración: FWER sin patrones (200 réplicas; alfa = 0.05; error Monte Carlo ~ 0.015)
+
+  escenario  partición  nula        delta    FWER cortes/rép. seg/rép.
+  poisson    verdadera  poisson         0   0.040        0.04     0.10
+  poisson    verdadera  poisson     0.005   0.000        0.00     0.08
+  poisson    verdadera  bootstrap       0   0.000        0.00     0.06
+  poisson    verdadera  bootstrap   0.005   0.000        0.00     0.06
+  realista   verdadera  poisson         0   1.000       13.51     1.95
+  realista   verdadera  poisson     0.005   0.000        0.00     0.17
+  realista   verdadera  bootstrap       0   0.005        0.01     0.05
+  realista   verdadera  bootstrap   0.005   0.000        0.00     0.06
+  fuerte     verdadera  poisson         0   1.000       27.02     3.43
+  fuerte     verdadera  poisson     0.005   0.000        0.00     0.24
+  fuerte     verdadera  bootstrap       0   0.025        0.03     0.06
+  fuerte     verdadera  bootstrap   0.005   0.000        0.00     0.06
+  realista   BBAC C5    bootstrap       0   0.040        0.04     0.45
+  realista   BBAC C5    bootstrap   0.005   0.010        0.01     0.45
+
+B. Potencia y recuperación (escenario realista, nula de bootstrap, partición verdadera; 60 réplicas, 2 patrones por réplica)
+
+  factor    I_pob  delta  detecta    ARI falsos
+     1.1   0.0002      0     0.06   0.67   0.02
+     1.1   0.0002  0.001     0.00    nan   0.00
+     1.1   0.0002  0.005     0.00    nan   0.00
+     1.2   0.0007      0     0.52   0.92   0.00
+     1.2   0.0007  0.001     0.13   1.00   0.00
+     1.2   0.0007  0.005     0.00    nan   0.00
+    1.35   0.0020      0     0.92   0.99   0.00
+    1.35   0.0020  0.001     0.84   0.99   0.00
+    1.35   0.0020  0.005     0.00    nan   0.00
+     1.5   0.0034      0     0.97   1.00   0.00
+     1.5   0.0034  0.001     0.97   1.00   0.00
+     1.5   0.0034  0.005     0.07   1.00   0.00
+     2.0   0.0090      0     1.00   1.00   0.00
+     2.0   0.0090  0.001     1.00   1.00   0.00
+     2.0   0.0090  0.005     0.87   1.00   0.00
+
+ARI: media sobre los patrones detectados; 1 = el primer corte separa exactamente
+las filas (o columnas) activadas.
+
+Tiempo total: 26.9 min
