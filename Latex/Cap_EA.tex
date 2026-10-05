@@ -133,13 +133,14 @@ partición con una prueba de hipótesis, no solo validarla después— a
 bloques de una matriz de conteos, donde la división puede ser de filas, de
 columnas o conjunta. Se apoya en la prueba de \cite{Watanabe2021si} como la
 referencia más rigurosa para estructuras de bloques —aunque planteada para
-residuos cuadráticos y no para conteos— y en la idea de separar la selección de
-la inferencia del \emph{count splitting} de \cite{Neufeld2024cs}, que adapta a
-matrices de conteos de viajes dividiendo los días en lugar de los conteos,
-porque estos presentan sobredispersión. El sesgo de selección demostrado por \cite{Gao2024}
-exige además repetir la búsqueda del mejor corte dentro de cada
-permutación. Los fundamentos de esta línea se presentan en la
-Sección~\ref{sec:est-seleccion}.
+residuos cuadráticos y no para conteos—. Del sesgo de selección demostrado por
+\cite{Gao2024} toma la necesidad de repetir la búsqueda del mejor corte en cada
+réplica nula. El \emph{count splitting} y el \emph{data thinning} no se adoptan,
+porque su garantía depende de que los conteos sigan una distribución conocida,
+y los conteos de viajes presentan una sobredispersión que varía con el volumen;
+separar la selección de la inferencia dividiendo los días, en lugar de los
+conteos, queda como trabajo futuro. Los fundamentos de esta línea se presentan
+en la Sección~\ref{sec:est-seleccion}.
 
 % ---------------------------------------------------------------------
 \subsection{Detección de hotspots espacio-temporales}
@@ -271,10 +272,12 @@ entre regiones y horarios que queda dentro de cada bloque; es el objeto que el
 método propuesto intenta detectar, y el estadístico $G^2$ que lo mide es la pieza
 que conecta el marco de \ac{ST-CC} con las pruebas de hipótesis. La parte
 estadística presentó las herramientas para usar ese estadístico como criterio de
-decisión: pruebas condicionales por simulación que no dependen de aproximaciones
-asintóticas, procedimientos jerárquicos para controlar el error a lo largo de un
+decisión: pruebas por simulación que no dependen de aproximaciones asintóticas,
+incluido el remuestreo de réplicas independientes cuando los conteos no son de
+Poisson, procedimientos jerárquicos para controlar el error a lo largo de un
 árbol, formas de corregir el doble uso de los datos y medidas de tamaño de efecto
-que no crecen con la muestra. SigTree mostró que el principio de construir una
+que no crecen con la muestra, junto con la corrección de su sesgo en tablas
+pequeñas. SigTree mostró que el principio de construir una
 partición con pruebas de hipótesis es viable, y sus limitaciones indicaron qué
 debe adaptarse.
 
