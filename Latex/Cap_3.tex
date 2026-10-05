@@ -660,7 +660,10 @@ estadístico observado $t_{\mathrm{obs}}$, el p-valor es
 que incluye la tabla observada entre las réplicas y nunca vale cero
 \cite{Phipson2010}.
 
-Las réplicas se generan con los propios días observados. Para cada celda del
+Las réplicas se generan con los propios días observados, aplicando el principio
+del bootstrap bajo la hipótesis nula (Sección~\ref{sec:est-bootstrap}): se
+remuestrean los días, pero alrededor de la media de independencia del bloque y
+no de los datos observados. Para cada celda del
 bloque con media diaria $\bar X_{ij}\ge 0.5$ se define la fluctuación
 multiplicativa del día $d$, $F_{dij} = X_{dij}/\bar X_{ij}$, y su versión
 corregida por muestra pequeña
@@ -856,7 +859,8 @@ rechaza en prácticamente todos ellos. La prueba cobra importancia en los bloque
 pequeños y profundos, donde la masa es menor.
 
 \paragraph{Tamaño de efecto corregido por sesgo.} La información mutua empírica
-está sesgada hacia arriba en los bloques pequeños. Aunque no haya interacción,
+está sesgada hacia arriba en los bloques pequeños
+(Sección~\ref{sec:est-efecto}). Aunque no haya interacción,
 $\mathrm{E}[G^2_B]\approx\nu_B = (|I|-1)(|J|-1)$ bajo Poisson, y más con
 sobredispersión, de modo que $\mathrm{E}[\hat I_B]\approx \nu_B/(2N_B) > 0$. En el
 periodo laborable, por ejemplo, un bloque de 1033 viajes y 12 grados de

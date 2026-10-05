@@ -10,7 +10,9 @@ La Sección~\ref{sec:idiv-poisson} mostró que la interacción que queda dentro 
 bloque se mide con el estadístico $G^2$ de una prueba de independencia. Para usar
 ese estadístico como criterio de refinamiento hay que resolver tres cuestiones. La
 primera es cómo obtener una distribución de referencia válida cuando las tablas
-son pequeñas o escasas y cuando los bloques se eligieron con los mismos datos. La
+son pequeñas o escasas, cuando los conteos varían entre días más de lo que
+admite el modelo de Poisson y cuando los bloques se eligieron con los mismos
+datos. La
 segunda es cómo controlar el error al realizar muchas pruebas, una por cada bloque
 de un árbol de refinamientos. La tercera es cómo evitar que, con millones de
 viajes, cualquier diferencia mínima resulte significativa. Esta sección presenta
@@ -104,6 +106,32 @@ una búsqueda. Si $t$ es, por ejemplo, el máximo de $G^2$ sobre un conjunto de
 divisiones candidatas, el p-valor~\eqref{eq:pval-mc} sigue siendo válido siempre
 que en cada tabla simulada se repita la misma búsqueda. Esta es la base del ajuste
 por selección de la Sección~\ref{sec:est-seleccion}.
+
+\subsection{Remuestreo de réplicas independientes}\label{sec:est-bootstrap}
+
+La prueba condicional anterior es exacta solo si los conteos son de Poisson.
+Cuando no lo son, la distribución de referencia debe reflejar la variabilidad
+real de los datos, y una forma de obtenerla sin suponer un modelo es el
+\emph{bootstrap} \cite{Efron1993}: si la tabla observada es la suma de $D$
+réplicas independientes y con la misma distribución, $x = \sum_{d=1}^{D} x_d$,
+la distribución de un estadístico de $x$ se aproxima remuestreando $D$ réplicas
+con reemplazo entre las observadas y recalculando el estadístico sobre su suma.
+
+Para una prueba de hipótesis, el remuestreo debe hacerse bajo la hipótesis
+nula, aunque los datos observados no la cumplan; de lo contrario, la
+distribución de referencia incluiría el propio efecto que se quiere detectar y
+la prueba perdería potencia \cite{HallWilson1991}. La forma habitual es
+desplazar o reescalar las réplicas para que su media sea la estimada bajo la
+hipótesis nula, de modo que el remuestreo conserve la variabilidad de los datos
+pero no su desviación respecto del nulo.
+
+Con pocas réplicas conviene una corrección adicional. La varianza empírica de
+$D$ réplicas subestima la poblacional en un factor $(D-1)/D$, de modo que las
+desviaciones de cada réplica respecto de su media se multiplican por
+$\sqrt{D/(D-1)}$ antes de remuestrear. El supuesto que no se puede eludir es la
+independencia entre réplicas: si las réplicas están correlacionadas, como dos
+días consecutivos con el mismo episodio de clima, el remuestreo subestima la
+variabilidad.
 
 \subsection{Comparaciones múltiples}\label{sec:est-multiplicidad}
 
@@ -214,6 +242,15 @@ que toma valores entre 0, bajo independencia, y 1, bajo asociación perfecta
 \cite{Agresti2013}. Ambas permiten fijar un umbral de relevancia independiente
 del tamaño de la muestra.
 
+La información mutua empírica tiene, sin embargo, un sesgo positivo que importa
+en tablas pequeñas. Aunque la población sea independiente, $G^2$ sigue
+aproximadamente una $\chi^2$ con $\nu = (a-1)(b-1)$ grados de libertad, cuya
+media es $\nu$, de modo que $\mathrm{E}[\hat I(R;T)] \approx \nu/(2\,x_{++}) > 0$.
+Es el mismo sesgo que describe la corrección de Miller y Madow para los
+estimadores de entropía e información mutua \cite{Paninski2003}. Un umbral
+sobre $\hat I$ sin corregir favorecería, por tanto, a las tablas con pocas
+observaciones y muchas celdas.
+
 \paragraph{Sobredispersión.} El modelo de Poisson impone que la varianza de cada
 conteo sea igual a su media. En datos reales es frecuente que la varianza sea
 mayor, $\mathrm{Var}(x_{ij}) = \varphi\,\mu_{ij}$ con $\varphi > 1$, porque los
@@ -236,6 +273,14 @@ la sobredispersión aumenta con la media, y la ley de potencia
 $V(\mu) = a\,\mu^b$, propuesta por \cite{Taylor1961} para la agregación de
 poblaciones biológicas, que contiene como casos particulares la de Poisson
 ($a=b=1$) y la de $\varphi$ constante ($b=1$).
+
+Todas estas formas describen la varianza de cada celda por separado. Cuando la
+variabilidad proviene de factores que actúan sobre muchas celdas a la vez, como
+el clima de un día, los conteos de celdas distintas dejan además de ser
+independientes, y ningún modelo de varianza por celda describe esa correlación.
+Si se dispone de réplicas independientes del periodo, como los días que forman
+la matriz, la correlación puede reproducirse por remuestreo
+(Sección~\ref{sec:est-bootstrap}) en lugar de modelarse.
 
 % ---------------------------------------------------------------------
 \section{Agrupamiento guiado por pruebas de hipótesis: SigTree}\label{sec:sigtree}
@@ -332,17 +377,17 @@ la correspondencia, que se desarrolla en el Capítulo~\ref{chap:propuesta}.
     Objeto que se divide & Conjunto de muestras con atributos categóricos &
       Bloque de una matriz de conteos región~$\times$~tiempo \\
     División candidata & Presencia o ausencia de una categoría &
-      Bipartición de las filas o de las columnas del bloque \\
+      Bipartición de las filas, de las columnas o de ambas a la vez \\
     Qué se prueba & Asociación entre la división y los demás atributos &
       Asociación entre la división y la otra dimensión del bloque \\
     Estadístico & Suma de estadísticos $X^2$ & $G^2$ de la tabla colapsada,
       coherente con la I-divergencia \\
-    Distribución de referencia & $\chi^2$ asintótica & Simulación condicionada a
-      los totales del bloque, repitiendo la búsqueda \\
+    Distribución de referencia & $\chi^2$ asintótica & Bootstrap de los días
+      alrededor de la independencia del bloque, repitiendo la búsqueda \\
     Comparaciones múltiples & Bonferroni uniforme & Reparto jerárquico del nivel
       a lo largo del árbol \\
     Criterio de parada & Significancia y reglas triviales & Significancia, tamaño
-      de efecto y reglas triviales \\
+      de efecto corregido por sesgo y reglas triviales \\
     \bottomrule
   \end{tabular}
   }

@@ -56,7 +56,11 @@ una región, es decir, cómo se reparte su actividad a lo largo del día, y cada
 columna es el perfil espacial de un intervalo, es decir, cómo se reparte la
 actividad de ese horario entre las regiones. Se denotan
 $O_{i\cdot} = \sum_j O_{ij}$, $O_{\cdot j} = \sum_i O_{ij}$ y $N = \sum_{i,j} O_{ij}$
-los totales de fila, de columna y general.
+los totales de fila, de columna y general. Se denota además $X_{dij}$ el número
+de eventos de la región $i$ en el intervalo $j$ durante el día $d$, de modo que
+$O_{ij} = \sum_{d=1}^{D} X_{dij}$. Las $D$ matrices diarias $X_d$ son réplicas
+de un mismo periodo, y permiten medir cuánto varían los conteos de un día a
+otro sin suponer un modelo para esa variación.
 
 \cite{Liu2021} interpretan esta matriz como la distribución de co-ocurrencia de dos
 variables aleatorias: la región $R$ y el intervalo $T$. Al dividir entre el total
@@ -513,7 +517,8 @@ agrupamiento de filas, el de columnas o los estadísticos de la base
 actualizaciones por lotes; \cite{Cho2004} muestran que una búsqueda local que
 mueve filas o columnas de una en una puede seguir reduciendo el objetivo después
 de la convergencia. Por eso se ejecuta con varias inicializaciones y se conserva
-la mejor solución; \cite{Liu2021}, por ejemplo, usaron 200. Para una matriz densa,
+la mejor solución, y cada ejecución puede completarse con esa búsqueda local;
+\cite{Liu2021}, por ejemplo, usaron 200 inicializaciones. Para una matriz densa,
 cada iteración cuesta $O\!\left(mn(K_R + K_T)\right)$ operaciones
 \cite[Sec.~4.4]{Cho2004}.
 
@@ -841,7 +846,10 @@ mutua.}, que por~\eqref{eq:perdida-im} corresponde a la base C5. La literatura d
 la que parte ST-CC describe BBAC\_I como un método que forma co-agrupamientos de
 valores similares \cite{Wu2022}, es decir, de bloques constantes, lo que sugiere
 que la implementación de \cite{Liu2021} corresponde a C2 aunque la función
-objetivo declarada sea la de C5.
+objetivo declarada sea la de C5. La implementación pública de BBAC\_I con la que
+esta tesis reproduce ST-CC, el paquete \texttt{clustering-geodata-cubes},
+corresponde en efecto a C2: aproxima cada bloque por su media, y la divergencia
+que reporta coincide con la de esa base.
 
 Las dos bases producen un tablero de $K_R \times K_T$ bloques, pero no son
 equivalentes. Para una misma partición, la Proposición~\ref{prop:descomposicion} muestra que C5 descuenta
