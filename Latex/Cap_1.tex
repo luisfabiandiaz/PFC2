@@ -73,9 +73,16 @@ automáticamente con métodos como \emph{Cross-Associations} \cite{Chakrabarti20
 sigue produciendo una rejilla global y aumenta el número de parámetros en
 toda la matriz.
 
-Una segunda pregunta surge al intentar refinar localmente, ¿cuándo deberia detenerse?
+Una segunda pregunta surge al intentar refinar localmente, ¿cuándo debería detenerse?
 Todo bloque presenta algo de variación, de modo que se necesita un criterio
-que distinga la heterogeneidad real del ruido. En agrupamiento interpretable
+que distinga la heterogeneidad real del ruido. Dos rasgos de los datos de
+movilidad hacen que esa distinción no sea trivial. El primero es que la matriz
+agrega varios días, y la actividad de cada celda varía de un día a otro mucho
+más de lo que supone el modelo de Poisson, y de forma correlacionada entre
+celdas, porque factores como el clima afectan a muchas regiones a la vez; una
+prueba que ignore esa variabilidad declara heterogéneo casi cualquier bloque. El
+segundo es que, con millones de viajes, incluso una diferencia irrelevante
+resulta estadísticamente significativa. En agrupamiento interpretable
 basado en árboles, \cite{Hu2025} propusieron evaluar cada división candidata
 mediante pruebas de hipótesis, elegir la de menor $p$-valor y detener el
 crecimiento cuando ninguna división es estadísticamente significativa. Este
@@ -88,12 +95,16 @@ Esta tesis se sitúa en la intersección de ambas líneas. Se propone extender
 bloque, guiado por un criterio estadístico coherente con la misma función
 objetivo que optimiza \ac{BBACI}. En el caso de conteos, la I-divergencia
 que minimiza \ac{BBACI} coincide, salvo un factor constante, con la
-devianza de un modelo de Poisson por bloques. En consecuencia, la reducción
+devianza de un modelo log-lineal de Poisson. En consecuencia, la reducción
 de divergencia al partir un bloque puede interpretarse como un estadístico
 de razón de verosimilitud. Esta conexión permite construir el criterio de
 refinamiento a partir del propio marco de \ac{ST-CC}, en lugar de importar
-un criterio ajeno, y abre la puerta a su aplicación en otros dominios con
-datos de conteo espacio-temporales.
+un criterio ajeno. Para que el criterio sea fiable, su distribución de
+referencia se obtiene remuestreando los días que forman la matriz, de modo que
+refleje la variabilidad real de los datos y no la que supondría un modelo de
+Poisson, y la decisión de refinar exige, además de significancia, un tamaño de
+efecto mínimo. El resultado puede aplicarse en otros dominios con datos de
+conteo espacio-temporales agregados a partir de réplicas, como días o semanas.
 
 % ---------------------------------------------------------------------
 \section{Planteamiento del Problema}
@@ -109,7 +120,10 @@ es aumentar la resolución global a costa de fragmentar innecesariamente el
 resto de la matriz. Además, no existe un criterio estadístico que indique
 si un bloque contiene heterogeneidad real que justifique subdividirlo, ni
 que controle el riesgo de producir refinamientos espurios cuando se evalúan
-muchas divisiones candidatas sobre los mismos datos. El problema que aborda
+muchas divisiones candidatas sobre los mismos datos. Ese criterio debe tener
+en cuenta que la matriz es la suma de varios días cuya variabilidad excede la
+de un modelo de Poisson, y que con millones de viajes la significancia
+estadística no basta para distinguir un patrón relevante. El problema que aborda
 esta tesis es, por tanto, cómo refinar localmente y de forma
 estadísticamente justificada la partición de \ac{ST-CC} para detectar
 patrones espacio-temporales locales, manteniendo la interpretabilidad del
@@ -135,9 +149,10 @@ espacio-temporales locales que la partición en rejilla regular no captura.
 
     \item Diseñar la regla de decisión y de parada del refinamiento,
           combinando una prueba global por bloque, la selección del mejor
-          corte en filas o columnas, un tratamiento para la interacción pura
-          entre ambas dimensiones, el control de comparaciones múltiples a
-          lo largo del árbol y un umbral mínimo de tamaño de efecto.
+          corte en filas, en columnas o en ambas a la vez, pruebas calibradas
+          con la variabilidad entre días de los datos, el control de
+          comparaciones múltiples a lo largo del árbol y un umbral mínimo de
+          tamaño de efecto.
 
     \item Implementar el método propuesto y evaluar su calibración y
           potencia sobre datos sintéticos con patrones locales conocidos y
@@ -146,9 +161,8 @@ espacio-temporales locales que la partición en rejilla regular no captura.
 
     \item Aplicar el método a los datos de taxis de Manhattan y compararlo
           con \ac{ST-CC} y con alternativas de rejilla global en términos
-          de error de reconstrucción por número de parámetros, capacidad
-          predictiva fuera de muestra, estabilidad e interpretabilidad de
-          los patrones locales detectados.
+          de error de reconstrucción por número de parámetros, estabilidad
+          e interpretabilidad de los patrones locales detectados.
 \end{enumerate}
 
 % ---------------------------------------------------------------------
@@ -166,8 +180,9 @@ forma:
           de hipótesis (SigTree) y la revisión de los trabajos relacionados
           publicados desde 2020.
     \item El Capítulo~\ref{chap:propuesta} presenta la propuesta: la
-          formulación del refinamiento jerárquico, el criterio estadístico,
-          la regla de parada y el algoritmo.
+          formulación del refinamiento jerárquico, el criterio estadístico y
+          su calibración con la variabilidad entre días, la regla de parada y
+          el algoritmo.
     \item El Capítulo~\ref{chap:resultados} expone los experimentos con
           datos sintéticos y reales, junto con el análisis de los
           resultados.
