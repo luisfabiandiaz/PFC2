@@ -272,28 +272,97 @@ particulares de una misma familia. Esta familia fue introducida por
 
 \subsection{Definición y propiedades}
 
-Sea $\phi : S \subseteq \mathbb{R}^d \to \mathbb{R}$ una función estrictamente
-convexa y diferenciable en el interior relativo de $S$. La \emph{divergencia de
-Bregman} asociada a $\phi$ se define como
-\begin{equation}\label{eq:bregman}
-  d_\phi(x, y) = \phi(x) - \phi(y) - \langle x - y, \nabla\phi(y) \rangle .
+Al agrupar datos, cada grupo se resume con un representante, y hace falta una
+medida de cuánto se pierde al reemplazar cada dato por su representante. La más
+conocida es la distancia euclídea al cuadrado, $(x - y)^2$, pero no siempre es la
+más adecuada. En una matriz de conteos, por ejemplo, una diferencia de 10 viajes
+es grande en una celda con 100 y despreciable en una con 10\,000
+(Sección~\ref{sec:modelo-conteos}), y la distancia euclídea trata ambos casos por
+igual. Las divergencias de Bregman ofrecen una forma general de construir medidas
+de este tipo a partir de una función elegida según los datos.
+
+La construcción parte de una función $\phi$ estrictamente convexa, es decir, con
+forma de U y sin tramos rectos. Para comparar un dato $x$ con un representante
+$y$ se traza la recta tangente a $\phi$ en $y$ y se mide cuánto queda la curva
+por encima de esa recta en el punto $x$ (Figura~\ref{fig:bregman}). Cuando $x$ e
+$y$ son números, la recta tangente parte de la altura $\phi(y)$ y sube
+$\phi'(y)$ por cada unidad que se avanza, de modo que en $x$ vale
+$\phi(y) + \phi'(y)\,(x - y)$. La divergencia es la diferencia entre la curva y
+esa recta,
+\begin{equation}\label{eq:bregman-1d}
+  d_\phi(x, y) = \phi(x) - \phi(y) - \phi'(y)\,(x - y).
 \end{equation}
-Geométricamente, $d_\phi(x,y)$ es la distancia vertical entre $\phi(x)$ y la recta
-(o hiperplano) tangente a $\phi$ en $y$, evaluada en $x$. Como $\phi$ es
-estrictamente convexa, esa distancia es siempre no negativa y se anula solo si
-$x = y$.
+Como la curva tiene forma de U, la tangente queda siempre por debajo de ella, por
+lo que la divergencia nunca es negativa y solo se anula cuando $x = y$. Con
+$\phi(x) = x^2$, por ejemplo, la pendiente es $\phi'(y) = 2y$ y la
+fórmula~\eqref{eq:bregman-1d} se reduce a $(x - y)^2$. Para $x = 3$ e $y = 1$, la
+curva vale 9 en $x$, la tangente vale 5 y la divergencia es 4.
 
-La divergencia es además convexa en su primer argumento. En cambio, en general no
-es simétrica ni cumple la desigualdad triangular, por lo que no es una métrica.
-Cuando $\phi$ es separable, es decir, $\phi(x) = \sum_k \phi(x_k)$, la divergencia
-también lo es: $d_\phi(x, y) = \sum_k d_\phi(x_k, y_k)$. Esta propiedad permite
-medir la discrepancia entre dos matrices sumando la discrepancia celda por celda.
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[xscale=1.6, yscale=0.35]
+    \draw[->] (-0.3,0) -- (3.9,0);
+    \draw[->] (0,-1.5) -- (0,11.5);
+    \draw[thick, domain=-0.25:3.3, samples=60] plot (\x,{\x*\x})
+      node[above] {\small $\phi(x) = x^2$};
+    \draw[dashed, domain=-0.25:3.3] plot (\x,{2*\x-1})
+      node[below right] {\small tangente en $y$};
+    \draw[dotted] (1,0) -- (1,1);
+    \draw[dotted] (3,0) -- (3,5);
+    \draw[line width=1.6pt] (3,5) -- (3,9);
+    \node[right] at (3,7) {\small $d_\phi(x,y) = 4$};
+    \node[circle, fill, inner sep=1.3pt] at (1,1) {};
+    \node[circle, fill, inner sep=1.3pt] at (3,9) {};
+    \node[circle, fill, inner sep=1.3pt] at (3,5) {};
+    \node[left] at (3,9) {\small 9};
+    \node[left] at (3,5) {\small 5};
+    \node[below] at (1,0) {\small $y = 1$};
+    \node[below] at (3,0) {\small $x = 3$};
+  \end{tikzpicture}
+  \caption{Divergencia de Bregman para $\phi(x) = x^2$, con representante
+  $y = 1$ y dato $x = 3$. La divergencia es la distancia vertical, en $x$, entre
+  la curva y su recta tangente en $y$.}
+  \label{fig:bregman}
+\end{figure}
 
-La Tabla~\ref{tab:bregman} reúne los tres casos que aparecen en esta tesis. La
-I-divergencia, término introducido por \cite{Csiszar1975} para distribuciones de
-probabilidad y extendido por \cite{Csiszar1991} a vectores no negativos que no
-suman uno, generaliza la divergencia de Kullback--Leibler; por eso es la adecuada
-para matrices de conteos. En ella se adopta la convención $0 \log 0 = 0$.
+En esta tesis los datos no son números sueltos sino matrices, y la recta
+tangente se convierte en un plano tangente con una pendiente por cada celda. La
+definición general \cite{Bregman1967} considera una función
+$\phi : S \subseteq \mathbb{R}^p \to \mathbb{R}$ estrictamente convexa y
+diferenciable en el interior relativo de $S$, y define la divergencia de Bregman
+asociada a $\phi$ como
+\begin{equation}\label{eq:bregman}
+  d_\phi(x, y) = \phi(x) - \phi(y) - \langle x - y, \nabla\phi(y) \rangle ,
+\end{equation}
+donde $\nabla\phi(y)$ es el vector de pendientes de $\phi$ en $y$, una por
+componente, y $\langle a, b \rangle = \sum_k a_k b_k$ suma los productos
+componente a componente. Con una sola componente, \eqref{eq:bregman} coincide
+con~\eqref{eq:bregman-1d}.
+
+De esta construcción se siguen las propiedades que se usan en el resto del
+capítulo. La divergencia es no negativa y solo vale cero cuando el dato coincide
+con el representante, por lo que puede usarse como función de pérdida. Es además
+convexa en su primer argumento. En general no es simétrica,
+$d_\phi(x, y) \neq d_\phi(y, x)$, porque la tangente se traza en el
+representante y no en el dato, y tampoco cumple la desigualdad triangular. Por
+eso no es una métrica, y se la llama divergencia y no distancia. Por último,
+cuando $\phi$ es una suma de funciones de cada componente,
+$\phi(x) = \sum_k \phi(x_k)$, la divergencia también lo es,
+$d_\phi(x, y) = \sum_k d_\phi(x_k, y_k)$. Esta propiedad permite medir la
+discrepancia entre dos matrices sumando la discrepancia celda por celda.
+
+La Tabla~\ref{tab:bregman} reúne los tres casos que aparecen en esta tesis, cada
+uno obtenido con una función $\phi$ distinta. La I-divergencia, término
+introducido por \cite{Csiszar1975} para distribuciones de probabilidad y extendido
+por \cite{Csiszar1991} a vectores no negativos que no suman uno, generaliza la
+divergencia de Kullback--Leibler a datos como las matrices de conteos. A
+diferencia de la distancia euclídea, pesa cada diferencia según la magnitud de la
+celda. Una diferencia de 10 viajes vale 0.48 en una celda con 100 y 0.005 en una
+con 10\,000, mientras que la distancia euclídea vale 100 en ambos casos. Esa
+ponderación es la del modelo de Poisson, y la
+Sección~\ref{sec:bregman-expfam} muestra que la correspondencia es exacta. En la
+I-divergencia se adopta la convención $0 \log 0 = 0$, de modo que el dato puede
+valer cero, mientras que el representante debe ser positivo.
 
 \begin{table}[ht]
   \centering
@@ -312,8 +381,9 @@ para matrices de conteos. En ella se adopta la convención $0 \log 0 = 0$.
   \label{tab:bregman}
 \end{table}
 
-Una propiedad de la I-divergencia que se usará más adelante es su homogeneidad:
-para todo $c > 0$,
+Una propiedad de la I-divergencia que se usará más adelante es su homogeneidad.
+Si el dato y el representante se multiplican por una misma constante $c > 0$, la
+divergencia queda multiplicada por $c$,
 \begin{equation}\label{eq:homogeneidad}
   d_I(cx, cy) = c \, d_I(x, y).
 \end{equation}
