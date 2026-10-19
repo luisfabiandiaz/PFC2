@@ -26,7 +26,7 @@ permite comprender la dinámica de una ciudad o de un territorio y apoyar la
 toma de decisiones en planificación urbana, transporte y gestión de riesgos
 \cite{Liu2021}.
 
-Sin embargo, estos datos presentan una dificultad característica: la
+Sin embargo, estos datos presentan una dificultad característica, y es que la
 dimensión espacial y la temporal no son independientes. En la movilidad
 urbana, por ejemplo, los destinos de los viajes se concentran en zonas de
 trabajo durante la mañana y en zonas residenciales durante la tarde. Un
@@ -63,13 +63,13 @@ motivó enfoques bayesianos no paramétricos como el proceso de Mondrian
 \cite{Roy2008}.
 
 \cite{Liu2021} reconocieron parte de esta limitación y aplicaron
-\textit{K-means} sobre los bloques del tablero para obtener co-clusters que no
+K-means sobre los bloques del tablero para obtener \emph{co-clusters} que no
 siguen la rejilla. No obstante, ese paso reagrupa bloques ya
 existentes a partir de su media y desviación estándar; no subdivide
 un bloque internamente. Por tanto, la heterogeneidad que queda oculta dentro
 de un bloque, que es precisamente donde pueden residir los patrones locales,
 no se recupera. La alternativa de aumentar $K_R$ y $K_T$, o de elegirlos
-automáticamente con métodos como \emph{Cross-Associations} \cite{Chakrabarti2004},
+automáticamente con métodos como Cross-Associations \cite{Chakrabarti2004},
 sigue produciendo una rejilla global y aumenta el número de parámetros en
 toda la matriz.
 
@@ -133,10 +133,18 @@ resultado.
 \section{Objetivos}
 \label{sec:objetivos}
 
-Proponer y validar una extensión de \ac{ST-CC} basada en refinamiento
-jerárquico por bloques, guiado por pruebas de significancia estadística
-derivadas de la I-divergencia, que permita detectar patrones
-espacio-temporales locales que la partición en rejilla regular no captura.
+El objetivo general de esta tesis es proponer y validar una extensión de
+\ac{ST-CC} basada en un refinamiento jerárquico por bloques, que se aplique
+sobre la partición en tablero que produce el marco original y que esté guiado
+por pruebas de significancia estadística derivadas de la I-divergencia. Se
+busca que esta extensión permita detectar patrones espacio-temporales locales,
+es decir, la interacción entre un subconjunto de regiones y un subconjunto de
+horarios que ocurre solo dentro de un bloque y que la partición en rejilla
+regular no captura. Al mismo tiempo, se espera que el criterio con el que se
+decide cada refinamiento sea coherente con la función objetivo del
+co-agrupamiento, que distinga la heterogeneidad real del ruido y que preserve
+la interpretabilidad del resultado, de modo que los patrones locales
+detectados puedan leerse directamente como grupos de regiones y de horarios.
 
 \subsection{Objetivos Específicos}
 \label{subsec:objetivos-especificos}
@@ -170,16 +178,19 @@ espacio-temporales locales que la partición en rejilla regular no captura.
 \label{sec:organizacion}
 
 El restante de este documento de tesis está organizado de la siguiente
-forma:
+forma. Los capítulos siguen el orden natural del trabajo, que va de los
+fundamentos teóricos a la propuesta, de la propuesta a su evaluación
+experimental y, finalmente, a las conclusiones. Cada capítulo se resume a
+continuación.
 
 \begin{itemize}
     \item El Capítulo~\ref{chap:marco} presenta el marco teórico y el estado
-          del arte: el co-agrupamiento basado en divergencias de Bregman y su
-          lectura como modelo de Poisson, el marco \ac{ST-CC}, las pruebas de
-          hipótesis para tablas de conteo, el agrupamiento guiado por pruebas
-          de hipótesis (SigTree) y la revisión de los trabajos relacionados
-          publicados desde 2020.
-    \item El Capítulo~\ref{chap:propuesta} presenta la propuesta: la
+          del arte, e incluye el co-agrupamiento basado en divergencias de
+          Bregman y su lectura como modelo de Poisson, el marco \ac{ST-CC}, las
+          pruebas de hipótesis para tablas de conteo, el agrupamiento guiado
+          por pruebas de hipótesis (SigTree) y la revisión de los trabajos
+          relacionados publicados desde 2020.
+    \item El Capítulo~\ref{chap:propuesta} presenta la propuesta, que abarca la
           formulación del refinamiento jerárquico, el criterio estadístico y
           su calibración con la variabilidad entre días, la regla de parada y
           el algoritmo.
@@ -196,7 +207,12 @@ forma:
 
 La Tabla~\ref{tab:cronograma} presenta la planificación de las actividades
 de la tesis, organizadas en diez meses y vinculadas a los objetivos
-específicos (OE) definidos en la Sección~\ref{subsec:objetivos-especificos}.
+específicos (OE) definidos en la Sección~\ref{subsec:objetivos-especificos}. Las
+primeras actividades corresponden a la revisión de la literatura y a la
+reproducción de \ac{ST-CC}, que sirven de base para el resto del trabajo. Luego
+siguen el diseño y la implementación del método, su evaluación con datos
+sintéticos y reales, y por último la redacción final y la revisión con el
+asesor.
 
 \begin{table}[htbp]
 \centering

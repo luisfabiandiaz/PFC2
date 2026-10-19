@@ -10,10 +10,10 @@
 Esta sección revisa los trabajos publicados desde 2020 que se relacionan con la
 propuesta. No incluye a \ac{ST-CC} ni a SigTree, que se presentaron en las
 Secciones~\ref{sec:stcc} y~\ref{sec:sigtree} como los dos métodos de los que la
-propuesta parte directamente: conserva la partición base de \ac{ST-CC} y le
+propuesta parte directamente, ya que conserva la partición base de \ac{ST-CC} y le
 añade un refinamiento local cuyo criterio de parada, inspirado en SigTree, es una
 prueba de hipótesis y no un umbral heurístico. Los trabajos revisados se
-organizan en tres familias: el co-agrupamiento espacio-temporal y las
+organizan en tres familias, que son el co-agrupamiento espacio-temporal y las
 estructuras de bloques flexibles, la inferencia selectiva para agrupamientos y
 estructuras de bloques, y la detección de focos de actividad (\emph{hotspots})
 espacio-temporales. Al final de cada familia se indica en qué se diferencia de la
@@ -25,26 +25,24 @@ brecha de investigación.
 \label{sec:ea_coagrupamiento}
 
 La primera familia agrupa dos tipos de trabajos que atacan el mismo
-problema de dos maneras distintas: aplicar co-agrupamiento o biclustering a
+problema de dos maneras distintas, que son aplicar co-agrupamiento o \emph{biclustering} a
 datos con una dimensión espacial y otra temporal, o bien relajar la rejilla
-regular decidiendo de forma flexible cuántos bloques usar.
-
-Dentro del mismo marco de Bregman en el que se basa \ac{ST-CC}
+regular decidiendo de forma flexible cuántos bloques usar. Dentro del mismo marco de Bregman en el que se basa \ac{ST-CC}
 (Sección~\ref{sec:stcc}), \cite{Wu2022} propuso BCC\_MSSR, una
-variante que usa el residuo cuadrático para encontrar co-clusters con
-\emph{tendencias coherentes} en lugar de valores similares, y la aplicó a
+variante que usa el residuo cuadrático para encontrar \emph{co-clusters} con
+tendencias coherentes en lugar de valores similares, y la aplicó a
 temperaturas mensuales de estaciones meteorológicas. Este trabajo muestra
 que el marco de Bregman admite distintas nociones de homogeneidad dentro de
 un bloque, algo relevante para esta tesis, que define la heterogeneidad de
 un bloque mediante la interacción residual entre filas y columnas.
 
-En movilidad vial, \cite{Neves2022} utilizaron biclustering para extraer
+En movilidad vial, \cite{Neves2022} utilizaron \emph{biclustering} para extraer
 patrones accionables a partir de datos de tráfico heterogéneos. A diferencia
-del co-agrupamiento en tablero, el biclustering busca submatrices que no
+del co-agrupamiento en tablero, el \emph{biclustering} busca submatrices que no
 necesitan cubrir toda la matriz. Cabe destacar que este trabajo sí
 incorpora una prueba de significancia estadística (BSig) para retener solo
-biclusters cuyo patrón de congestión sea improbable bajo un modelo nulo,
-con un nivel de significancia de 0.01 por bicluster.
+\emph{biclusters} cuyo patrón de congestión sea improbable bajo un modelo nulo,
+con un nivel de significancia de 0.01 por \emph{bicluster}.
 
 Un segundo grupo de trabajos, en lugar de cambiar la noción de coherencia
 dentro del bloque, flexibiliza directamente el número o la forma de la
@@ -52,7 +50,7 @@ estructura de bloques. En redes bipartitas, que equivalen a una matriz de
 filas y columnas, \cite{Yen2020} propusieron una formulación bayesiana no
 paramétrica del modelo de bloques estocástico (biSBM) que elige de forma
 parsimoniosa el número de comunidades. Al compararla con un modelo de
-bloques \emph{jerárquico} de alta resolución, encontraron un régimen,
+bloques jerárquico de alta resolución, encontraron un régimen,
 formado por redes pequeñas y dispersas, en el que los modelos no
 jerárquicos superan a su contraparte más flexible. Este hallazgo advierte
 que más flexibilidad estructural no garantiza mejores resultados cuando los
@@ -70,20 +68,20 @@ matrices aleatorias para la matriz de covarianza muestral.
 \textbf{Diferencia con la propuesta.} Estos cinco trabajos cubren dos
 maneras de escapar de la rejilla fija, pero ninguna coincide con la de esta
 tesis. Por un lado, los métodos basados en Bregman producen particiones
-globales en tablero, y el biclustering de \cite{Neves2022}, aunque sí
+globales en tablero, y el \emph{biclustering} de \cite{Neves2022}, aunque sí
 incorpora una prueba de significancia, la aplica como filtro
-\emph{posterior} sobre un conjunto de candidatos generado de forma
+posterior sobre un conjunto de candidatos generado de forma
 exhaustiva a distintos niveles de soporte y coherencia, no como un criterio
 que decide, durante la propia búsqueda, si una submatriz concreta merece
 subdividirse. Por otro lado, los métodos que flexibilizan el número de
 bloques lo hacen por vía bayesiana, mediante una jerarquía construida sobre
-la totalidad de filas y columnas, o eligiendo un número \emph{global} de
-grupos; en ningún caso el resultado refina un bloque \emph{desde dentro}.
+la totalidad de filas y columnas, o eligiendo un número global de
+grupos; en ningún caso el resultado refina un bloque desde dentro.
 Ninguno de los cinco trabajos usa una prueba estadística como criterio de
-\emph{parada} que gobierne, bloque por bloque, la construcción de la
+parada que gobierne, bloque por bloque, la construcción de la
 partición. La propuesta conserva el marco de \ac{ST-CC} y le añade un
 refinamiento local en el que la prueba de hipótesis gobierna la
-construcción misma del árbol: la jerarquía de columnas queda anidada dentro
+construcción misma del árbol, de modo que la jerarquía de columnas queda anidada dentro
 de un subconjunto de filas, por lo que el resultado deja de ser una
 rejilla. Por ello, un experimento necesario en esta tesis es comparar el
 refinamiento local contra una rejilla global más fina con el mismo número
@@ -94,17 +92,16 @@ de parámetros.
 \label{sec:ea_inferencia}
 
 Mientras que SigTree (Sección~\ref{sec:sigtree}) usa pruebas de
-hipótesis para \emph{construir} una partición, esta segunda familia las usa
-para \emph{validar} agrupamientos o estructuras de bloques que ya fueron
+hipótesis para construir una partición, esta segunda familia las usa
+para validar agrupamientos o estructuras de bloques que ya fueron
 estimados a partir de los mismos datos con los que después se prueban.
-
 \cite{Gao2024} mostraron que, cuando los grupos se definen mediante
 agrupamiento, una prueba clásica de diferencia de medias produce una tasa de
 error tipo~I extremadamente inflada, y que el problema persiste incluso si
 se usan dos conjuntos de datos independientes para definir y para probar los
 grupos. Para resolverlo, propusieron una prueba selectiva que calcula
 $p$-valores exactos para grupos obtenidos por agrupamiento jerárquico
-aglomerativo. \cite{Chen2023} extendieron la idea a \textit{K-means}, con un
+aglomerativo. \cite{Chen2023} extendieron la idea a K-means, con un
 $p$-valor que condiciona sobre todas las asignaciones intermedias del
 algoritmo.
 
@@ -143,7 +140,7 @@ conteos, queda como trabajo futuro. Los fundamentos de esta línea se presentan
 en la Sección~\ref{sec:est-seleccion}.
 
 % ---------------------------------------------------------------------
-\subsection{Detección de hotspots espacio-temporales}
+\subsection{Detección de \emph{hotspots} espacio-temporales}
 \label{sec:ea_hotspots}
 
 La última familia aborda la detección de concentraciones de eventos en el
@@ -163,9 +160,9 @@ conservadora para detectar focos.
 
 En el dominio de los taxis, \cite{Chen2021hotspots} abordaron la detección
 de focos urbanos a partir de las paradas de taxi mediante un criterio de
-densidad máxima local. El umbral de popularidad de cada hotspot se fija
+densidad máxima local. El umbral de popularidad de cada \emph{hotspot} se fija
 mediante una simulación Monte Carlo comparada con un particionamiento de
-head/tail breaks, un procedimiento basado en aleatorización pero sin un
+\emph{head/tail breaks}, un procedimiento basado en aleatorización pero sin un
 nivel de significancia $\alpha$ fijo ni corrección por comparaciones
 múltiples. \cite{Mishra2025}, por su parte, observaron que los métodos que
 solo agrupan zonas de alta demanda concentran los focos en el centro de la
@@ -174,7 +171,7 @@ problema de conjunto dominante de $k$ saltos en el espacio espacio-temporal,
 cubriendo también las zonas de demanda moderada en distintas horas del día,
 y evaluaron su método con datos de taxis de Nueva York.
 % NOTA: verificar año y venue exactos de esta cita. Existe una línea de
-% trabajos muy similares del mismo autor (detección de hotspots de taxi
+% trabajos muy similares del mismo autor (detección de \emph{hotspots} de taxi
 % vía dominating sets) publicados en distintos años; no logré confirmar
 % con certeza cuál corresponde específicamente a 2025.
 
@@ -213,7 +210,7 @@ ante múltiples pruebas o ante el sesgo de selección.
 & \textbf{Estructura local} & \textbf{Criterio estadístico}
 & \textbf{Control de error} \\
 \hline
-\multicolumn{6}{l}{\textit{Co-agrupamiento espacio-temporal y estructuras de bloques flexibles}} \\
+\multicolumn{6}{l}{\textbf{Co-agrupamiento espacio-temporal y estructuras de bloques flexibles}} \\
 \cite{Wu2022}                  & $\checkmark$ & $\checkmark$ & $\times$     & $\times$      & $\times$ \\
 \cite{Neves2022}               & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\times$ \\
 \cite{Yen2020}                 & $\times$     & $\checkmark$ & $\times$     & Bayesiano     & $\times$ \\
@@ -223,13 +220,13 @@ ante múltiples pruebas o ante el sesgo de selección.
 % no queda claro por el resumen si el procedimiento secuencial sobre
 % (K,H) corrige el nivel alfa a lo largo de la secuencia de pruebas.
 \cite{Watanabe2021gof}         & $\times$     & $\checkmark$ & $\times$     & $\checkmark$  & Por verificar \\
-\multicolumn{6}{l}{\textit{Inferencia selectiva para agrupamientos y estructuras de bloques}} \\
+\multicolumn{6}{l}{\textbf{Inferencia selectiva para agrupamientos y estructuras de bloques}} \\
 \cite{Gao2024}                 & $\times$     & $\times$     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \cite{Chen2023}                & $\times$     & $\times$     & $\times$     & $\checkmark$  & $\checkmark$ \\
 \cite{Watanabe2021si}          & $\times$     & $\checkmark$ & $\times$     & $\checkmark$  & $\checkmark$ \\
 \cite{Neufeld2024cs}           & $\times$     & $\times$     & $\times$     & $\checkmark$  & $\checkmark$ \\
 \cite{Neufeld2024dt}           & $\times$     & $\times$     & $\times$     & $\checkmark$  & $\checkmark$ \\
-\multicolumn{6}{l}{\textit{Detección de hotspots espacio-temporales}} \\
+\multicolumn{6}{l}{\textbf{Detección de \emph{hotspots} espacio-temporales}} \\
 \cite{Shiode2022}              & $\checkmark$ & $\times$     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \cite{Chen2021hotspots}        & $\checkmark$ & $\times$     & $\checkmark$ & $\times$ & $\times$ \\
 \cite{Mishra2025}              & $\checkmark$ & $\times$     & $\checkmark$ & $\times$      & $\times$ \\
@@ -253,10 +250,12 @@ para validar estructuras ya formadas. Los métodos de detección de
 partición de co-agrupamiento.
 
 En la revisión realizada no se encontró un trabajo que combine las tres
-características: refinar localmente los bloques de un co-agrupamiento
+características, a saber, refinar localmente los bloques de un co-agrupamiento
 espacio-temporal, decidir cada división mediante una prueba de hipótesis y
 controlar el error a lo largo de la jerarquía. Esta es la brecha que aborda
-la presente tesis.
+la presente tesis, que reúne las tres características en un único procedimiento
+y lo evalúa después tanto con datos sintéticos, donde los patrones locales son
+conocidos, como con los datos reales de taxis de Manhattan.
 
 % ---------------------------------------------------------------------
 \section{Consideraciones Finales}
@@ -272,22 +271,23 @@ entre regiones y horarios que queda dentro de cada bloque; es el objeto que el
 método propuesto intenta detectar, y el estadístico $G^2$ que lo mide es la pieza
 que conecta el marco de \ac{ST-CC} con las pruebas de hipótesis. La parte
 estadística presentó las herramientas para usar ese estadístico como criterio de
-decisión: pruebas por simulación que no dependen de aproximaciones asintóticas,
-incluido el remuestreo de réplicas independientes cuando los conteos no son de
-Poisson, procedimientos jerárquicos para controlar el error a lo largo de un
-árbol, formas de corregir el doble uso de los datos y medidas de tamaño de efecto
-que no crecen con la muestra, junto con la corrección de su sesgo en tablas
-pequeñas. SigTree mostró que el principio de construir una
+decisión. Estas herramientas incluyen las pruebas por simulación que no dependen
+de aproximaciones asintóticas, entre ellas el remuestreo de réplicas
+independientes cuando los conteos no son de Poisson, los procedimientos
+jerárquicos para controlar el error a lo largo de un árbol, las formas de
+corregir el doble uso de los datos y las medidas de tamaño de efecto que no
+crecen con la muestra, junto con la corrección de su sesgo en tablas pequeñas.
+SigTree mostró que el principio de construir una
 partición con pruebas de hipótesis es viable, y sus limitaciones indicaron qué
 debe adaptarse.
 
 La revisión del estado del arte organizó los trabajos recientes en tres familias
-y mostró que ninguno reúne las características de la propuesta: refinar
+y mostró que ninguno reúne las características de la propuesta, que son refinar
 localmente los bloques de un co-agrupamiento espacio-temporal, decidir cada
 división con una prueba de hipótesis y controlar el error a lo largo de la
-jerarquía. Dos lecciones de la revisión orientan además el diseño del método: la
-inferencia post-selección obliga a corregir el sesgo que surge al probar
-divisiones elegidas con los mismos datos, y la inflación de los estadísticos con
-muestras grandes exige complementar la significancia con un umbral de tamaño de
+jerarquía. Dos lecciones de la revisión orientan además el diseño del método. La primera es
+que la inferencia post-selección obliga a corregir el sesgo que surge al probar
+divisiones elegidas con los mismos datos, y la segunda es que la inflación de los
+estadísticos con muestras grandes exige complementar la significancia con un umbral de tamaño de
 efecto. El Capítulo~\ref{chap:propuesta} presenta el método que integra estos
 elementos.
