@@ -1,0 +1,459 @@
+% =====================================================================
+% Diapositivas - Exposición del Plan de Tesis (PFC II), 7 minutos
+% Extensión de ST-CC con refinamiento jerárquico por bloques
+% Compilar con: latexmk -pdf Diapositivas.tex
+% Énfasis pedido en las pautas: problema, objetivos, estado del arte y propuesta.
+% =====================================================================
+\documentclass[aspectratio=169,10pt,t]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[spanish,mexico]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{babel,positioning,arrows.meta,shapes.geometric,calc}
+
+% ---------------------------------------------------------------------
+% Apariencia
+% ---------------------------------------------------------------------
+\definecolor{ucspblue}{HTML}{14325A}
+\definecolor{acc}{HTML}{C8651B}
+\definecolor{okgreen}{HTML}{2E7D4F}
+\definecolor{badred}{HTML}{B3261E}
+\definecolor{softgray}{HTML}{5C6670}
+
+\usefonttheme[onlymath]{serif}
+\setbeamercolor{normal text}{fg=black!85,bg=white}
+\setbeamercolor{structure}{fg=ucspblue}
+\setbeamercolor{frametitle}{fg=ucspblue}
+\setbeamercolor{block title}{fg=white,bg=ucspblue}
+\setbeamercolor{block body}{fg=black!85,bg=ucspblue!7}
+\setbeamercolor{block title alerted}{fg=white,bg=acc}
+\setbeamercolor{block body alerted}{fg=black!85,bg=acc!10}
+\setbeamercolor{alerted text}{fg=acc}
+\setbeamercolor{item}{fg=acc}
+\setbeamercolor{enumerate item}{fg=acc}
+\setbeamercolor{footline}{fg=softgray}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[circle]
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{bibliography item}{}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamerfont{block title}{size=\small,series=\bfseries}
+\setbeamersize{text margin left=1.1cm,text margin right=1.1cm}
+
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \vskip 1.4ex
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=1.1cm,rightskip=1.1cm]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle\par
+    \vskip 0.5ex
+    {\color{acc}\rule{2.2cm}{1.8pt}}\par
+  \end{beamercolorbox}
+  \vskip 0.6ex}
+
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.4ex,dp=1.4ex,leftskip=1.1cm,rightskip=1.1cm]{footline}
+    \scriptsize L. F. Diaz Alvizuri \enspace\textbar\enspace Plan de Tesis \enspace\textbar\enspace UCSP
+    \hfill\insertframenumber
+  \end{beamercolorbox}}
+
+\setlength{\leftmargini}{1.1em}
+\setlength{\itemsep}{0pt}
+\renewcommand{\arraystretch}{1.15}
+
+\newcommand{\ck}{{\color{okgreen}$\checkmark$}}
+\newcommand{\cx}{{\color{badred}$\times$}}
+\newcommand{\BBAC}{BBAC$_I$}
+\newcommand{\STCC}{ST-CC}
+\newcommand{\ASTCC}{AST-CC}
+
+% ---------------------------------------------------------------------
+% Esquema de una matriz región x tiempo (9 x 12, 3 x 3 bloques)
+%   #1 = 0: datos con un foco local
+%        1: tablero de ST-CC (cada bloque promediado)
+%        2: teselación refinada de AST-CC
+%   #2 = tamaño de celda
+% ---------------------------------------------------------------------
+\newcommand{\matriz}[2]{%
+\begin{tikzpicture}[x=#2,y=#2]
+  \foreach \bi in {0,1,2}{%
+    \foreach \bj in {0,1,2}{%
+      \pgfmathtruncatemacro{\lvl}{{70,18,32,24,62,20,14,30,76}[3*\bi+\bj]}%
+      \pgfmathtruncatemacro{\esfoco}{ifthenelse(and(equal(\bi,0),equal(\bj,2)),1,0)}%
+      \ifnum#1=0
+        \foreach \r in {0,1,2}{\foreach \c in {0,1,2,3}{%
+          \pgfmathtruncatemacro{\row}{3*\bi+\r}%
+          \pgfmathtruncatemacro{\col}{4*\bj+\c}%
+          \pgfmathtruncatemacro{\nz}{mod(\row*7+\col*13,5)*3-6}%
+          \pgfmathtruncatemacro{\v}{\lvl+\nz}%
+          \fill[ucspblue!\v] (\col,-\row-1) rectangle ++(1,1);
+        }}%
+      \else
+        \ifnum#1=2\ifnum\esfoco=1\def\hojas{1}\else\def\hojas{0}\fi\else\def\hojas{0}\fi
+        \ifnum\hojas=1
+          \fill[ucspblue!34] (8,0) rectangle (10,-2);
+          \fill[acc!85] (10,0) rectangle (12,-2);
+          \fill[ucspblue!34] (8,-2) rectangle (12,-3);
+          \draw[white,line width=1pt] (10,0) -- (10,-2);
+          \draw[white,line width=1pt] (8,-2) -- (12,-2);
+        \else
+          \pgfmathtruncatemacro{\m}{\lvl+ifthenelse(\esfoco==1,6,0)}%
+          \fill[ucspblue!\m] (4*\bj,-3*\bi) rectangle ++(4,-3);
+        \fi
+      \fi
+    }}%
+  \ifnum#1=0
+    \foreach \k in {1,...,8}{\draw[white,line width=.25pt] (0,-\k) -- (12,-\k);}
+    \foreach \k in {1,...,11}{\draw[white,line width=.25pt] (\k,0) -- (\k,-9);}
+    \fill[acc!85] (10,0) rectangle (12,-2);
+    \draw[white,line width=.25pt] (11,0) -- (11,-2);
+    \draw[white,line width=.25pt] (10,-1) -- (12,-1);
+  \else
+    \foreach \k in {1,2}{%
+      \draw[white,line width=1.4pt] (4*\k,0) -- (4*\k,-9);
+      \draw[white,line width=1.4pt] (0,-3*\k) -- (12,-3*\k);}
+  \fi
+  \draw[black!40,line width=.4pt] (0,0) rectangle (12,-9);
+  \node[rotate=90,font=\scriptsize,anchor=south,text=softgray] at (0,-4.5) {regiones};
+  \node[font=\scriptsize,anchor=south,text=softgray] at (6,0) {intervalos de tiempo};
+  \ifnum#1=1\else
+    \node[font=\scriptsize\bfseries,text=acc,anchor=west] at (12.2,-1) {foco};
+  \fi
+\end{tikzpicture}}
+
+% Barras del gráfico de calibración: fila, nombre, laborable, feriado
+\newcommand{\barra}[4]{%
+  \node[anchor=east,align=right,font=\scriptsize] at (-0.02,-#1*1.7-0.75) {#2};
+  \fill[ucspblue] (0,-#1*1.7) rectangle (#3,-#1*1.7-0.7);
+  \fill[acc] (0,-#1*1.7-0.8) rectangle (#4,-#1*1.7-1.5);
+  \node[anchor=west,font=\scriptsize] at (#3+0.01,-#1*1.7-0.35) {#3};
+  \node[anchor=west,font=\scriptsize] at (#4+0.01,-#1*1.7-1.15) {#4};}
+
+% ---------------------------------------------------------------------
+\title{Extensión de ST-CC con refinamiento jerárquico por bloques para la detección de patrones espacio-temporales locales}
+\author{Luis Fabian Diaz Alvizuri}
+\date{Arequipa, octubre de 2026}
+
+\begin{document}
+
+% ---------------------------------------------------------------------
+% 1. Portada
+% ---------------------------------------------------------------------
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[ucspblue] (current page.south west) rectangle ([yshift=2.7cm]current page.south east);
+    \node[anchor=north west,inner sep=0] at ([xshift=1.1cm,yshift=-0.8cm]current page.north west)
+      {\includegraphics[width=4.6cm]{figs/UCSP_black.pdf}};
+    \node[anchor=north east,align=right,font=\scriptsize\bfseries,text=ucspblue] at ([xshift=-1.1cm,yshift=-0.9cm]current page.north east)
+      {FACULTAD DE INGENIERÍA Y COMPUTACIÓN\\ESCUELA PROFESIONAL DE CIENCIA DE LA COMPUTACIÓN};
+    \node[anchor=west,font=\small\bfseries,text=acc] at ([xshift=1.1cm,yshift=0.6cm]current page.west)
+      {PLAN DE TESIS \textperiodcentered\ PROYECTO DE FIN DE CARRERA II};
+    \node[anchor=north west,text width=13.6cm,font=\Large\bfseries,text=ucspblue,inner sep=0] at ([xshift=1.1cm,yshift=0.25cm]current page.west)
+      {\hyphenpenalty=10000 Extensión de ST-CC con refinamiento jerárquico por bloques para la detección de patrones espacio-temporales locales\par};
+    \node[anchor=west,text=white,font=\normalsize,align=left] at ([xshift=1.1cm,yshift=1.35cm]current page.south west)
+      {\textbf{Luis Fabian Diaz Alvizuri}\\[0.3ex]
+       \footnotesize Asesor: Dr. Erick Mauricio Gómez Nieto};
+    \node[anchor=east,text=white,font=\footnotesize] at ([xshift=-1.1cm,yshift=1.35cm]current page.south east)
+      {Arequipa, octubre de 2026};
+  \end{tikzpicture}
+\end{frame}
+
+% =====================================================================
+% PROBLEMA (diapositivas 2 a 4)
+% =====================================================================
+\begin{frame}{Contexto: ST-CC y el co-agrupamiento en tablero}
+  \begin{columns}[c]
+    \column{0.58\textwidth}
+    \small
+    \begin{itemize}
+      \setlength{\itemsep}{1.2ex}
+      \item Viajes en taxi, sismos y monitoreo ambiental describen \alert{dónde y cuándo} ocurre un
+            fenómeno, y espacio y tiempo no son independientes \cite{Liu2021}.
+      \item El \alert{co-agrupamiento} agrupa filas y columnas a la vez. \cite{Liu2021} proponen
+            \STCC\ sobre una matriz de regiones $\times$ intervalos de tiempo, con \BBAC\
+            \cite{Banerjee2007}.
+      \item El resultado es un tablero de $K_R\times K_T$ bloques rectangulares. En Manhattan
+            (noviembre de 2017) usaron unos 10 millones de viajes, 66 regiones y 12 intervalos de 2 horas.
+      \item Es fácil de interpretar, pero la estructura es \alert{global}.
+    \end{itemize}
+    \column{0.38\textwidth}
+    \centering
+    \matriz{1}{0.34cm}\\[0.8ex]
+    {\scriptsize Tablero de \STCC: cada bloque se resume con un valor}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{La limitación: un detalle local obliga a refinar todo}
+  \centering
+  \matriz{0}{0.31cm}\hspace{1.6cm}\matriz{1}{0.31cm}\\[0.5ex]
+  {\scriptsize\hspace{0.2cm}(a) Datos: un foco local en un bloque \hspace{3.2cm} (b) Tablero de \STCC: el foco queda promediado}
+  \vspace{1.2ex}
+  \begin{itemize}
+    \setlength{\itemsep}{0.6ex}
+    \item Cada corte de filas o columnas atraviesa \alert{toda} la matriz, así que capturar el foco exige
+          aumentar la resolución global y fragmentar zonas sin patrón.
+    \item El paso con K-means de \cite{Liu2021} reagrupa bloques ya formados, pero no subdivide un bloque por dentro.
+    \item Elegir $K_R$ y $K_T$ con una curva o con Cross-Associations \cite{Chakrabarti2004} sigue dando una rejilla global.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Planteamiento del problema}
+  \begin{block}{Problema}
+    ¿Cómo refinar \alert{localmente} y de forma \alert{estadísticamente justificada} la partición de
+    \STCC\ para detectar patrones espacio-temporales locales, manteniendo la interpretabilidad del resultado?
+  \end{block}
+  \vspace{1ex}
+  \begin{columns}[T]
+    \column{0.31\textwidth}
+    \begin{alertblock}{¿Dónde refinar?}
+      \small No hay un criterio que diga si un bloque contiene heterogeneidad real que
+      justifique subdividirlo.
+    \end{alertblock}
+    \column{0.31\textwidth}
+    \begin{alertblock}{¿Cuándo detenerse?}
+      \small Evaluar muchas divisiones sobre los mismos datos produce refinamientos
+      espurios si no se controla la multiplicidad.
+    \end{alertblock}
+    \column{0.31\textwidth}
+    \begin{alertblock}{¿Qué es ruido?}
+      \small La matriz suma varios días con variabilidad mayor que la de Poisson, y con millones
+      de viajes casi todo resulta significativo.
+    \end{alertblock}
+  \end{columns}
+\end{frame}
+
+% =====================================================================
+% OBJETIVOS (diapositiva 5)
+% =====================================================================
+\begin{frame}{Objetivos}
+  \begin{block}{Objetivo general}
+    \small Proponer y validar una extensión de \STCC\ basada en un \alert{refinamiento jerárquico por
+    bloques}, guiado por pruebas de significancia derivadas de la I-divergencia, que detecte patrones
+    espacio-temporales locales y conserve la interpretabilidad del resultado.
+  \end{block}
+  \vspace{0.6ex}
+  \small
+  \begin{enumerate}
+    \setlength{\itemsep}{0.9ex}
+    \item[\textbf{OE1}] Formular el refinamiento como un árbol de bloques anidados desde la partición
+          base de \BBAC, con un criterio de heterogeneidad coherente con la función objetivo de \STCC.
+    \item[\textbf{OE2}] Diseñar la regla de decisión y de parada: prueba global por bloque, mejor corte,
+          calibración con la variabilidad entre días, control de multiplicidad y umbral de tamaño de efecto.
+    \item[\textbf{OE3}] Implementar el método y evaluar su calibración y potencia con datos sintéticos y con
+          datos nulos que reproducen la sobredispersión real.
+    \item[\textbf{OE4}] Aplicarlo a los taxis de Manhattan y compararlo con \STCC\ y rejillas globales en
+          error de reconstrucción por parámetro, estabilidad e interpretabilidad.
+  \end{enumerate}
+\end{frame}
+
+% =====================================================================
+% ESTADO DEL ARTE (diapositivas 6 y 7)
+% =====================================================================
+\begin{frame}{Estado del arte: tres familias de trabajos desde 2020}
+  \small
+  \begin{columns}[T]
+    \column{0.315\textwidth}
+    \begin{block}{Co-agrupamiento y bloques flexibles}
+      \footnotesize
+      Co-clusters coherentes, biclustering con prueba de significancia, modelos de bloques bayesianos
+      y jerárquicos \cite{Wu2022,Neves2022,Yen2020,Sugahara2023,Watanabe2021gof}.\\[0.5ex]
+      \alert{Diferencia.} Tableros globales o pruebas como filtro posterior; ninguno decide por
+      bloque cuándo subdividir.
+    \end{block}
+    \column{0.315\textwidth}
+    \begin{block}{Inferencia selectiva}
+      \footnotesize
+      Pruebas válidas tras agrupar, \emph{count splitting} y \emph{data thinning}
+      \cite{Gao2024,Chen2023,Watanabe2021si,Neufeld2024cs,Neufeld2024dt}.\\[0.5ex]
+      \alert{Diferencia.} Validan estructuras ya estimadas; ninguno construye un refinamiento
+      jerárquico local.
+    \end{block}
+    \column{0.315\textwidth}
+    \begin{block}{Hotspots espacio-temporales}
+      \footnotesize
+      \emph{Space-time NetScan} y detección de focos urbanos en paradas de taxi
+      \cite{Shiode2022,Chen2021hotspots}.\\[0.5ex]
+      \alert{Diferencia.} Buscan zonas de alta intensidad en el espacio, no interacciones dentro de
+      bloques de una matriz región~$\times$~tiempo.
+    \end{block}
+  \end{columns}
+  \vspace{0.8ex}
+  {\footnotesize\alert{Puntos de partida.} \STCC\ \cite{Liu2021} aporta la partición base. SigTree \cite{Hu2025} aporta
+  el principio de construir la partición con pruebas de hipótesis y detenerla cuando ninguna división es significativa.\par}
+\end{frame}
+
+\begin{frame}{Brecha de investigación}
+  \centering\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}l c c c c c@{}}
+    \toprule
+    Trabajo & Esp.-temp. & Filas y col. & Estructura local & Criterio estad. & Control de error \\
+    \midrule
+    \STCC\ \cite{Liu2021}          & \ck & \ck & \cx & \cx & \cx \\
+    SigTree \cite{Hu2025}          & \cx & \cx & \ck & \ck & \ck \\
+    \midrule
+    \cite{Wu2022}                  & \ck & \ck & \cx & \cx & \cx \\
+    \cite{Neves2022}               & \ck & \ck & \ck & \ck & \cx \\
+    \cite{Watanabe2021si}          & \cx & \ck & \cx & \ck & \ck \\
+    \cite{Gao2024}                 & \cx & \cx & \ck & \ck & \ck \\
+    \cite{Shiode2022}              & \ck & \cx & \ck & \ck & \ck \\
+    \midrule
+    \textbf{Propuesta (\ASTCC)}    & \ck & \ck & \ck & \ck & \ck \\
+    \bottomrule
+  \end{tabular}
+  \vspace{1ex}
+  \small
+  \begin{alertblock}{Brecha}
+    No se encontró un trabajo que \alert{refine localmente} los bloques de un co-agrupamiento
+    espacio-temporal, \alert{decida cada división con una prueba de hipótesis} y
+    \alert{controle el error} a lo largo de la jerarquía.
+  \end{alertblock}
+\end{frame}
+
+% =====================================================================
+% PROPUESTA (diapositivas 8 a 11)
+% =====================================================================
+\begin{frame}{AST-CC: refinar mientras haya heterogeneidad detectable y relevante}
+  \begin{columns}[c]
+    \column{0.65\textwidth}
+    \centering
+    \matriz{1}{0.23cm}\hspace{0.4cm}\matriz{2}{0.23cm}\\[0.4ex]
+    {\scriptsize (a) Partición base (\STCC) \hspace{0.8cm} (b) Teselación refinada (\ASTCC)}
+    \column{0.33\textwidth}
+    \begin{alertblock}{Idea central}
+      \footnotesize Con conteos, la I-divergencia de \BBAC\ coincide con la devianza de Poisson. El término
+      que \STCC\ no modela es la interacción \alert{dentro} de cada bloque, medida por $G^2_B$.
+      Cortar un bloque la reparte exactamente:
+      \[ G^2_B=G^2_{B,s}+\sum_{C}G^2_C \]
+    \end{alertblock}
+  \end{columns}
+  \vspace{1.2ex}
+  \centering
+  \begin{tikzpicture}[
+      node distance=0.5cm,
+      etapa/.style={draw=ucspblue,rounded corners=3pt,fill=ucspblue!7,align=center,font=\scriptsize,
+                    minimum height=0.95cm,text width=2.9cm},
+      >={Stealth[length=2mm]}]
+    \node[etapa] (e1) {\textbf{1. Matriz}\\conteos $O$ y días $X_1,\dots,X_D$};
+    \node[etapa,right=of e1] (e2) {\textbf{2. Partición base}\\\BBAC\ con $K_R$, $K_T$};
+    \node[etapa,right=of e2,fill=acc!12,draw=acc] (e3) {\textbf{3. Refinamiento}\\pruebas de hipótesis por bloque};
+    \node[etapa,right=of e3] (e4) {\textbf{4. Resumen}\\hojas, tamaño de efecto y actividad};
+    \draw[->] (e1) -- (e2); \draw[->] (e2) -- (e3); \draw[->] (e3) -- (e4);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Regla de decisión para cada bloque}
+  \centering
+  \begin{tikzpicture}[
+      node distance=0.5cm,
+      box/.style={draw,rounded corners=3pt,align=center,font=\scriptsize,minimum height=0.75cm},
+      dec/.style={box,draw=ucspblue,fill=ucspblue!8,text width=4.4cm},
+      leaf/.style={box,fill=black!8,text width=3.2cm},
+      cut/.style={box,draw=acc,fill=acc!12,text width=3.2cm},
+      >={Stealth[length=2mm]},lab/.style={font=\scriptsize,inner sep=1.5pt}]
+    \node[box,draw=ucspblue] (in) at (0,0) {Bloque $B$ con nivel $\alpha_B$};
+    \node[dec] (d1) at (0,-1.25) {¿Ómnibus significativo\\y $\tilde I_B\ge\delta$?};
+    \node[dec] (d2) at (0,-2.5) {¿Corte de filas o de columnas\\significativo?};
+    \node[dec] (d3) at (0,-3.75) {¿Corte conjunto $2\times2$ significativo?};
+    \node[leaf] (h2) at (0,-5.0) {Hoja heterogénea\\no localizada};
+    \node[leaf] (h1) at (6.1,-1.25) {Hoja homogénea};
+    \node[cut] (c1) at (6.1,-2.5) {Corte 1D de menor p-valor};
+    \node[cut] (c2) at (6.1,-3.75) {Corte conjunto};
+    \node[dec,text width=2.5cm] (g) at (10.4,-3.1) {¿Ganancia\\$\tilde g_{B,s}\ge\delta$?};
+    \node[cut,text width=2.5cm] (r) at (10.4,-1.4) {Recurrir en cada hijo};
+    \draw[->] (in) -- (d1);
+    \draw[->] (d1) -- node[lab,above]{no} (h1);
+    \draw[->] (d1) -- node[lab,left]{sí} (d2);
+    \draw[->] (d2) -- node[lab,above]{sí} (c1);
+    \draw[->] (d2) -- node[lab,left]{no} (d3);
+    \draw[->] (d3) -- node[lab,above]{sí} (c2);
+    \draw[->] (d3) -- node[lab,left]{no} (h2);
+    \draw[->] (c1) -| (g);
+    \draw[->] (c2) -| (g);
+    \draw[->] (g) -- node[lab,right]{sí} (r);
+    \draw[->] (g) |- node[lab,pos=0.2,right]{no} (h2);
+  \end{tikzpicture}
+  {\scriptsize\\Un corte por nivel; el corte conjunto es el último recurso. Distinguir hojas homogéneas de
+  heterogéneas no localizadas evita presentar como uniforme un bloque que no lo es.}
+\end{frame}
+
+\begin{frame}{Calibración, multiplicidad y parada}
+  \begin{columns}[T]
+    \column{0.50\textwidth}
+    \small
+    \begin{itemize}
+      \setlength{\itemsep}{0.9ex}
+      \item \alert{Bootstrap de días.} La varianza entre días es 3 veces la media en días laborables y
+            17 veces en feriados. Se remuestrean los días, lo que conserva la correlación entre celdas.
+      \item \alert{Ajuste min-P} \cite{Westfall1993}. Se repite la búsqueda del mejor corte en cada réplica nula.
+            Sin ello, el error de tipo~I llegó a $0.98$.
+      \item \alert{Nivel por masa.} $\alpha_C=\alpha_B N_C/N_B$ a lo largo del árbol acota el error por
+            familia por $\alpha$.
+      \item \alert{Parada} por significancia \alert{y} tamaño de efecto $\tilde I_B\ge\delta$, que no crece
+            con el número de viajes.
+    \end{itemize}
+    \column{0.46\textwidth}
+    \centering\scriptsize
+    Error de tipo~I al nivel $0.05$ (datos nulos semirreales, media por bloque)\\[2ex]
+    \begin{tikzpicture}[x=4.1cm,y=0.5cm]
+      \barra{0}{Poisson}{0.40}{0.76}
+      \barra{1}{Cuasi-Poisson\\($\hat\varphi$ constante)}{0.03}{0.01}
+      \barra{2}{Gamma--Poisson\\$\mathrm{var}=a\mu^b$}{0.02}{0.06}
+      \barra{3}{Bootstrap de días}{0.04}{0.09}
+      \draw[dashed,black!60] (0.05,0.3) -- (0.05,-6.6);
+      \node[font=\scriptsize,anchor=south west] at (0.05,0.3) {nominal $0.05$};
+      \fill[ucspblue] (0.15,-7.4) rectangle ++(0.04,-0.5);
+      \node[anchor=west,font=\scriptsize] at (0.2,-7.65) {laborable};
+      \fill[acc] (0.55,-7.4) rectangle ++(0.04,-0.5);
+      \node[anchor=west,font=\scriptsize] at (0.6,-7.65) {feriado};
+    \end{tikzpicture}\\[0.4ex]
+    \tiny Con pocos días (feriado), el bootstrap es algo liberal en bloques nocturnos. Es una limitación conocida.
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Resultados esperados y forma de evaluación}
+  \footnotesize
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{5.2cm}@{}}
+    \toprule
+    \textbf{Objetivo} & \textbf{Experimento} & \textbf{Métricas} \\
+    \midrule
+    OE3 \newline Calibración & Datos nulos Poisson y semirreales con la sobredispersión de los días; partición base estimada de los mismos datos
+      & Error de tipo~I y FWER al nivel $0.05$ \\
+    OE3 \newline Potencia & Datos sintéticos con patrones locales plantados y distinta intensidad
+      & Tasa de detección, recuperación del patrón (ARI) y falsos positivos \\
+    OE4 \newline Datos reales & Taxis de Manhattan (noviembre de 2017, laborable y feriado) frente a \STCC\ y rejillas globales con el mismo número de parámetros
+      & Error de reconstrucción por parámetro (BIC), fracción del término (iii) explicada, estabilidad por frecuencia de soporte e interpretabilidad (p.\,ej. Penn Station) \\
+    \bottomrule
+  \end{tabular}
+  \vspace{1.2ex}
+  \begin{alertblock}{Resultados esperados}
+    \small
+    Pruebas calibradas frente a la variabilidad real de los datos; detección de patrones locales que
+    \STCC\ y las rejillas más finas no recuperan; menos parámetros para el mismo ajuste; y hojas que se
+    leen directamente como grupos de regiones y de horarios.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[ucspblue] (current page.south west) rectangle (current page.north east);
+    \node[text=white,font=\Huge\bfseries] at ([yshift=0.5cm]current page.center) {Gracias};
+    \node[text=white!80,font=\large] at ([yshift=-0.7cm]current page.center) {¿Preguntas?};
+    \fill[acc] ([xshift=-1.1cm,yshift=-0.05cm]current page.center) rectangle ++(2.2cm,-0.05cm);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Referencias}
+  \scriptsize
+  \bibliographystyle{apalike}
+  \bibliography{Bibliog}
+\end{frame}
+
+\end{document}

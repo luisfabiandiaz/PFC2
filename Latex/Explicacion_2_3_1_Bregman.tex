@@ -1,0 +1,3332 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,array}
+\usepackage{tikz}
+\usepackage[margin=2.5cm]{geometry}
+
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!50!black]{hyperref}
+
+\newenvironment{idea}{\par\begin{center}\begin{lrbox}{\ideabox}\begin{minipage}{0.9\linewidth}}{\end{minipage}\end{lrbox}\fcolorbox{blue!40!black}{blue!5}{\usebox{\ideabox}}\end{center}}
+\newsavebox{\ideabox}
+
+\title{Sección 2.3: Divergencias de Bregman\\Notas de estudio}
+\author{Plan de tesis, Capítulo 2}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\part{Sección 2.3.1: Definición y propiedades}
+
+\section{Qué es una divergencia}
+
+Al agrupar datos, cada grupo se resume con un \emph{representante}, y hace falta
+medir cuánto se pierde al reemplazar cada dato $x$ por su representante $y$. Esa
+medida de pérdida es una divergencia.
+
+Se parece a una distancia, pero no lo es: en general no es simétrica y no cumple
+la desigualdad triangular. Por eso se la llama divergencia.
+
+La distancia euclídea al cuadrado, $(x-y)^2$, trata igual un error de 10 viajes
+en una celda de 100 y en una de 10\,000. Las divergencias de Bregman permiten
+construir medidas que sí distinguen esos casos: se elige una función $\phi$ según
+el tipo de dato y de ella sale la medida.
+
+\section{El caso de un solo número}
+
+\subsection{Qué es $\phi$ y qué es $\phi'$}
+
+$\phi$ es una función \emph{estrictamente convexa}: una curva en forma de U, sin
+tramos rectos. $\phi'$ es su \emph{derivada}: para cada punto $y$ dice qué tan
+inclinada está la curva en ese punto, es decir, su \emph{pendiente}.
+
+Ejemplo con $\phi(x)=x^2$, cuya derivada es $\phi'(x)=2x$:
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+Punto $y$ & $\phi(y)$ (altura de la curva) & $\phi'(y)$ (pendiente) & Lectura \\
+\midrule
+$0$ & $0$ & $0$ & la curva está plana \\
+$1$ & $1$ & $2$ & sube 2 por cada unidad \\
+$3$ & $9$ & $6$ & más empinada \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{La fórmula se construye en tres pasos}
+
+\begin{enumerate}
+  \item \textbf{La tangente en $y$.} Es la recta que toca la curva solo en $y$ y
+  tiene su misma inclinación. Parte de la altura $\phi(y)$ y sube $\phi'(y)$ por
+  cada unidad que avanzas. Al moverte de $y$ a $x$ (distancia $x-y$), su altura
+  en $x$ es
+  \[
+    \text{tangente}(x)=\phi(y)+\phi'(y)\,(x-y).
+  \]
+  \item \textbf{La curva en $x$} tiene altura $\phi(x)$.
+  \item \textbf{La divergencia} es cuánto queda la curva por encima de la
+  tangente en $x$:
+  \[
+    d_\phi(x,y)=\phi(x)-\bigl[\phi(y)+\phi'(y)(x-y)\bigr].
+  \]
+\end{enumerate}
+Quitando el corchete se obtiene la fórmula de la tesis:
+\begin{equation}\label{eq:b1}
+  d_\phi(x,y)=\phi(x)-\phi(y)-\phi'(y)\,(x-y).
+\end{equation}
+\begin{idea}
+No hay nada más detrás de la fórmula: es una resta entre la curva y la tangente.
+\end{idea}
+
+\subsection{Ejemplo numérico}
+
+Con $\phi(x)=x^2$, representante $y=1$ y dato $x=3$:
+\begin{itemize}
+  \item Curva en $x$: $\phi(3)=9$.
+  \item Tangente en $x$: $\phi(1)+\phi'(1)(3-1)=1+2\cdot 2=5$.
+  \item Divergencia: $9-5=\mathbf{4}$, que es $(3-1)^2$. Es la línea gruesa
+  vertical de la figura de la tesis.
+\end{itemize}
+En general, con $\phi(x)=x^2$:
+$x^2-y^2-2y(x-y)=x^2-2xy+y^2=(x-y)^2$.
+
+\begin{center}
+\begin{tikzpicture}[xscale=1.6, yscale=0.3]
+  \draw[->] (-0.3,0) -- (3.9,0);
+  \draw[->] (0,-1.5) -- (0,11.5);
+  \draw[thick, domain=-0.25:3.3, samples=60] plot (\x,{\x*\x})
+    node[above] {\small $\phi(x)=x^2$};
+  \draw[dashed, domain=-0.25:3.3] plot (\x,{2*\x-1})
+    node[below right] {\small tangente en $y$};
+  \draw[dotted] (1,0) -- (1,1);
+  \draw[dotted] (3,0) -- (3,5);
+  \draw[line width=1.6pt, red!70!black] (3,5) -- (3,9);
+  \node[right] at (3,7) {\small $d_\phi(x,y)=4$};
+  \node[circle, fill, inner sep=1.3pt] at (1,1) {};
+  \node[circle, fill, inner sep=1.3pt] at (3,9) {};
+  \node[circle, fill, inner sep=1.3pt] at (3,5) {};
+  \node[left] at (3,9) {\small 9};
+  \node[left] at (3,5) {\small 5};
+  \node[below] at (1,0) {\small $y=1$};
+  \node[below] at (3,0) {\small $x=3$};
+\end{tikzpicture}
+\end{center}
+
+\subsection{Por qué nunca es negativa}
+
+Porque $\phi$ es una U: siempre queda \emph{por encima} de cualquiera de sus
+tangentes. Por eso curva $-$ tangente $\ge 0$, y vale $0$ solo cuando $x=y$
+(ahí curva y tangente se tocan). Convexidad implica divergencia no negativa.
+
+\section{El caso de vectores y matrices}
+
+\subsection{Una matriz es un vector largo}
+
+Una matriz de conteos $2\times 2$ (origen $\times$ hora), por ejemplo
+$\begin{pmatrix}100&20\\30&50\end{pmatrix}$, se aplana en un vector con 4
+componentes: $x=(100,20,30,50)$. Lo mismo se hace con el representante $y$ (la
+aproximación por bloques). Cada celda es una componente.
+
+\subsection{Qué cambia}
+
+\begin{itemize}
+  \item \textbf{$\phi$ recibe un vector} y devuelve un número. Ya no es una curva
+  sino una superficie (un \guillemotleft{}cuenco\guillemotright{} en más dimensiones).
+  \item \textbf{Hay una pendiente por componente.} En una superficie puedes
+  moverte en cada dirección y la inclinación es distinta en cada una. El vector
+  de pendientes es el \emph{gradiente}
+  \[
+    \nabla\phi(y)=\Bigl(\tfrac{\partial\phi}{\partial y_1},\dots,
+    \tfrac{\partial\phi}{\partial y_p}\Bigr),
+  \]
+  donde cada entrada es la derivada de $\phi$ respecto a esa componente dejando
+  las demás fijas. Es la generalización de $\phi'$.
+  \item \textbf{La tangente es un plano} (hiperplano). Su altura en $x$ es
+  $\phi(y)+\sum_k (x_k-y_k)\,\partial\phi/\partial y_k$.
+  \item La suma $\sum_k a_k b_k$ se escribe $\langle a,b\rangle$ y se llama
+  producto interno: multiplica componente a componente y suma.
+\end{itemize}
+La idea es la misma, curva $-$ plano tangente:
+\begin{equation}\label{eq:bn}
+  d_\phi(x,y)=\phi(x)-\phi(y)-\langle x-y,\nabla\phi(y)\rangle .
+\end{equation}
+Con una sola componente, \eqref{eq:bn} coincide con \eqref{eq:b1}.
+
+\subsection{Ejemplo numérico con la matriz}
+
+Sea $\phi(x)=\sum_k x_k^2$, de modo que $\partial\phi/\partial y_k=2y_k$. Con
+$y=(60,60,60,60)$ y $x=(100,20,30,50)$:
+\begin{itemize}
+  \item $\phi(x)=10\,000+400+900+2\,500=13\,800$.
+  \item $\phi(y)=4\cdot 3\,600=14\,400$.
+  \item $\nabla\phi(y)=(120,120,120,120)$.
+  \item $x-y=(40,-40,-30,-10)$, cuya suma es $-40$.
+  \item $\langle x-y,\nabla\phi(y)\rangle=120\cdot(-40)=-4\,800$.
+  \item $d=13\,800-14\,400-(-4\,800)=\mathbf{4\,200}$.
+\end{itemize}
+Comprobación: $\sum_k (x_k-y_k)^2=1\,600+1\,600+900+100=4\,200$. Coincide con la
+distancia euclídea al cuadrado.
+
+\subsection{Por qué se puede sumar celda por celda}
+
+Si $\phi$ es una suma de una misma función $\psi$ aplicada a cada celda,
+$\phi(x)=\sum_k\psi(x_k)$, entonces $\partial\phi/\partial y_k=\psi'(y_k)$ solo
+depende de la celda $k$. Al sustituir, todo se separa:
+\[
+  d_\phi(x,y)=\sum_k\Bigl[\psi(x_k)-\psi(y_k)-\psi'(y_k)(x_k-y_k)\Bigr]
+  =\sum_k d_\psi(x_k,y_k).
+\]
+Por eso la discrepancia entre dos matrices se calcula como la suma de la
+divergencia escalar de cada celda.
+
+\section{Propiedades}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.2cm}>{\raggedright\arraybackslash}p{9.4cm}@{}}
+\toprule
+\textbf{Propiedad} & \textbf{Por qué} \\
+\midrule
+$d\ge 0$, y $d=0$ solo si $x=y$ & La tangente está bajo la curva y $\phi$ es estrictamente convexa. \\
+\midrule
+Convexa en el primer argumento $x$ & $\phi(x)$ es convexa y el resto es lineal en $x$. En el segundo argumento no lo es en general. \\
+\midrule
+No simétrica: $d(x,y)\ne d(y,x)$ & La tangente se traza en $y$ (el representante), no en $x$ (el dato). \\
+\midrule
+No cumple la desigualdad triangular & Por eso no es una métrica y se llama divergencia. \\
+\midrule
+Aditiva por componentes & Si $\phi(x)=\sum\psi(x_k)$, entonces $d(x,y)=\sum d(x_k,y_k)$. Permite sumar celda por celda. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Los tres casos de la tabla y por qué esos $\phi$}
+
+No hay nada mágico en esos tres: \textbf{$\phi$ es una elección de modelado}. Se
+elige la curva según cómo se comporta el error en los datos. Cada $\phi$
+corresponde a un supuesto distinto sobre cómo varía el error con la magnitud del
+dato.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\toprule
+$\phi(x)$ & $d_\phi(x,y)$ & Qué supone sobre el error & Tipo de dato \\
+\midrule
+$x^2$ & $(x-y)^2$ & Constante en todas partes (varianza constante, como una gaussiana) & Medidas continuas \\
+\midrule
+$x\log x-x$ & $x\log\frac{x}{y}-(x-y)$ & Crece con el tamaño de la celda (varianza proporcional a la media, como Poisson) & Conteos \\
+\midrule
+$\sum_k x_k\log x_k$ & $\sum_k x_k\log\frac{x_k}{y_k}$ & Igual que el anterior, pero con datos que suman 1 & Distribuciones de probabilidad \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Cómo sale la I-divergencia}
+
+Con $\phi(x)=x\log x-x$, la derivada es $\phi'(x)=\log x$ (la derivada de
+$x\log x$ es $\log x+1$ y la de $-x$ es $-1$, que se cancelan). Sustituyendo en
+\eqref{eq:b1}:
+\begin{align*}
+  d(x,y)&=x\log x-x-(y\log y-y)-\log y\,(x-y)\\
+        &=x\log x-x-y\log y+y-x\log y+y\log y\\
+        &=x\log\frac{x}{y}-(x-y).
+\end{align*}
+El caso de Kullback--Leibler es el mismo cálculo sobre el símplex: como
+$\sum_k x_k=\sum_k y_k=1$, el término $-(x-y)$ se anula al sumar.
+
+\subsection{Por qué la I-divergencia pondera por magnitud}
+
+Una diferencia de 10 viajes (dato 110, representante 100):
+\[
+  d=110\ln 1.1-10=10.484-10\approx\mathbf{0.48}.
+\]
+La misma diferencia en una celda grande (dato 10\,010, representante 10\,000):
+\[
+  d=10\,010\ln 1.001-10\approx\mathbf{0.005}.
+\]
+La distancia euclídea da 100 en ambos casos. Atención: la divergencia no es
+simétrica; con dato 90 y representante 100 el primer valor sería $0.52$, por eso
+conviene decir siempre cuál es el dato y cuál el representante.
+
+La razón de fondo es que, cerca de $y$, la divergencia se comporta como
+\[
+  d_\phi(x,y)\approx\tfrac12\,\phi''(y)\,(x-y)^2 .
+\]
+La segunda derivada de $\phi$ es el \guillemotleft{}peso\guillemotright{} que se da al error en cada punto:
+para $x^2$ es constante ($\phi''=2$); para $x\log x-x$ es $\phi''=1/x$, que
+disminuye cuando $x$ crece. Ese es el comportamiento de un modelo de Poisson,
+donde la varianza crece con la media.
+
+\subsection{Por qué estos tres en la tesis}
+
+\begin{itemize}
+  \item \textbf{Euclídea:} referencia clásica ($k$-means), sirve para comparar.
+  \item \textbf{I-divergencia:} la que se usa de verdad, porque los datos son
+  conteos de viajes; corresponde exactamente al modelo de Poisson
+  (Sección~2.3.3).
+  \item \textbf{Kullback--Leibler:} caso particular de la I-divergencia con datos
+  que suman 1; es la que aparece en la literatura de co-agrupamiento.
+\end{itemize}
+Existen más divergencias de Bregman (Itakura--Saito, Mahalanobis, \dots), pero la
+tesis se queda con las tres que necesita.
+
+\section{Homogeneidad de la I-divergencia}
+
+Si dato y representante se multiplican por una misma constante $c>0$, la
+divergencia queda multiplicada por $c$:
+\[
+  d_I(cx,cy)=cx\log\frac{x}{y}-c(x-y)=c\,d_I(x,y).
+\]
+Esto se usa más adelante para comparar conteos y promedios (sección \guillemotleft{}Escala de
+los datos\guillemotright{}).
+
+\section{De dónde viene Kullback--Leibler}
+
+KL (Kullback--Leibler) es una divergencia pensada para \textbf{comparar dos
+distribuciones de probabilidad}, es decir, dos listas de números que suman 1.
+Responde a esta pregunta: si la realidad es $x$ y se la describe con el modelo
+$y$, ¿cuánto se pierde?
+\[
+  KL(x\,\|\,y)=\sum_k x_k\log\frac{x_k}{y_k}.
+\]
+
+\subsection{Cómo sale de Bregman}
+
+Se elige $\phi(x)=\sum_k x_k\log x_k$. Su derivada respecto a cada componente es
+$\log x_k+1$. Sustituyendo en la definición:
+\[
+  d(x,y)=\sum_k x_k\log x_k-\sum_k y_k\log y_k-\sum_k (x_k-y_k)(\log y_k+1).
+\]
+Se desarrolla el último término, $\sum_k (x_k-y_k)\log y_k+\sum_k (x_k-y_k)$. Al
+restarlo, los términos con $y\log y$ se cancelan y queda
+\[
+  d(x,y)=\sum_k x_k\log\frac{x_k}{y_k}-\sum_k (x_k-y_k).
+\]
+Si $x$ e $y$ son distribuciones, ambas suman 1, así que
+$\sum_k (x_k-y_k)=1-1=0$ y el último término desaparece. Queda exactamente KL.
+Por eso KL es la I-divergencia cuando los datos suman 1: es el mismo cálculo, solo
+que aquí el término $-(x-y)$ se anula.
+
+\subsection{Qué mide, con un ejemplo}
+
+La realidad $x$ es un dado cargado y el modelo $y$ es un dado justo:
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+Cara & 1 & 2 & 3 y 4 \\
+\midrule
+Real $x$ & 0.5 & 0.5 & 0 \\
+Modelo $y$ & 0.25 & 0.25 & 0.25 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\[
+  KL(x\|y)=0.5\ln\frac{0.5}{0.25}+0.5\ln\frac{0.5}{0.25}=\ln 2\approx 0.693.
+\]
+Las caras 3 y 4 no aportan porque $x=0$ ahí y se usa la convención
+$0\log 0=0$. Si $y=x$, todos los $\log(x/y)$ valen 0 y KL $=0$; cuanto más se
+parece el modelo a la realidad, menor es KL. Otra lectura equivalente: KL es el
+número extra de bits que se gastan al codificar los datos con el código del modelo
+$y$ en lugar del código óptimo para $x$.
+
+\subsection{Por qué no es simétrica}
+
+Con los mismos números, $KL(y\|x)$ falla porque $x$ vale 0 donde $y$ no: aparece
+$\log(0.25/0)$, que es infinito. Entonces $KL(x\|y)\ne KL(y\|x)$, igual que ocurre
+con las divergencias de Bregman en general.
+
+\begin{idea}
+KL compara dos distribuciones. Sale de Bregman con $\phi=\sum x\log x$. Vale 0 si
+son iguales y crece cuanto más se alejan.
+\end{idea}
+
+\section{Cuándo se usa cada divergencia}
+
+Cada una cumple un papel distinto en la tesis. Solo una es la que se aplica a los
+datos; las otras dos están por referencia y por teoría.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{5.0cm}@{}}
+\toprule
+\textbf{Divergencia} & \textbf{Papel en la tesis} & \textbf{Dónde aparece} \\
+\midrule
+\textbf{I-divergencia} & Es la que se aplica a los datos reales. & Base de co-agrupamiento (C5 adoptada, C2 como variante) y vínculo con Poisson \\
+\midrule
+\textbf{Kullback--Leibler} & Conecta con la literatura del co-agrupamiento por información mutua. & Función objetivo declarada por Liu et al. (2021), la pérdida de información mutua \\
+\midrule
+\textbf{Euclídea} & Es el caso clásico y la referencia para comparar. & K-means, varianza, bloques constantes (Cho et al., 2004) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{I-divergencia: la que se usa con los datos}
+
+La matriz de co-ocurrencia son \textbf{conteos de viajes}, no medidas continuas.
+Para conteos, la I-divergencia es la apropiada por dos razones: pondera el error
+según el tamaño de la celda (una diferencia de 10 viajes pesa mucho en una celda
+de 100 y casi nada en una de 10\,000) y es exactamente la divergencia del modelo
+de Poisson, de modo que minimizarla equivale a maximizar la verosimilitud de
+Poisson (Parte~\ref{sec:parte-expfam}).
+
+\subsection{KL: el puente con la literatura}
+
+KL es la I-divergencia cuando los datos suman 1. Se necesita porque la función
+objetivo que declaran Liu et al.\ es la pérdida de información mutua
+$I(R;T)-I(\hat R;\hat T)$, y la información mutua se define con KL. Sin KL no se
+podría explicar la diferencia entre lo que declara ese trabajo (base C5) y lo que
+parece implementar su código (base C2).
+
+\subsection{Euclídea: la referencia}
+
+No es la apropiada para conteos, pero cumple tres papeles: es el punto de partida
+didáctico (la que todo el mundo conoce), es la divergencia con la que se explican
+primero K-means, la media como mejor representante y la varianza, y es la que usa
+el co-agrupamiento clásico de bloques constantes.
+
+\begin{idea}
+I-divergencia: los datos. KL: la literatura de información mutua. Euclídea: la
+intuición y la comparación.
+\end{idea}
+
+% =====================================================================
+\part{Sección 2.3.2: La media como mejor representante}
+
+\section{Qué pregunta responde}
+
+Cada grupo de datos se resume con \textbf{un solo número}, el representante. La
+pregunta es: ¿qué número elegir para que, en promedio, el error al reemplazar cada
+dato por él sea el menor posible? La respuesta de esta sección es que, para
+\emph{cualquier} divergencia de Bregman, el mejor representante es la media del
+grupo.
+
+Esto importa porque hace posible un algoritmo tipo K-means: se asigna cada dato al
+representante más cercano y luego se recalcula cada representante como la media de
+su grupo. Sin esta propiedad no habría una forma simple de recalcular los
+centroides.
+
+\section{La ecuación, símbolo por símbolo}
+
+\[
+  \mathrm{E}[d_\phi(X,s)]=\mathrm{E}[d_\phi(X,\mu)]+d_\phi(\mu,s).
+\]
+
+\subsection{El escenario}
+
+Un grupo de datos: las celdas $1$, $2$ y $6$ de un bloque. Se quiere resumirlo con
+un solo número.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{6.4cm}>{\raggedright\arraybackslash}p{5.2cm}@{}}
+\toprule
+\textbf{Símbolo} & \textbf{Qué significa} & \textbf{En el ejemplo} \\
+\midrule
+$X$ & Un dato del grupo, tomado al azar & Puede ser 1, 2 o 6, cada uno con probabilidad $1/3$ \\
+\midrule
+$\mu$ & La media del grupo, $\mu=\mathrm{E}[X]$ & $(1+2+6)/3=3$ \\
+\midrule
+$s$ & Cualquier candidato a representante & 2, 3, 4, 10\dots lo que se quiera probar \\
+\midrule
+$d_\phi(a,b)$ & El error de reemplazar $a$ por $b$ (Sección 2.3.1) & Con $\phi=x^2$ es $(a-b)^2$ \\
+\midrule
+$\mathrm{E}[\cdots]$ & El promedio sobre todos los datos del grupo & Se suma el error de cada dato y se divide entre 3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+$\mathrm{E}[X]$ es el promedio de los datos y $\mathrm{E}[d(X,s)]$ es el promedio de
+los errores: primero se calcula el error de cada dato y luego se promedian.
+
+\subsection{Cada una de las tres partes}
+
+\textbf{Lado izquierdo, $\mathrm{E}[d_\phi(X,s)]$: el error promedio si se elige
+$s$.} Con $\phi=x^2$ y $s=2$:
+\begin{itemize}
+  \item dato 1: $(1-2)^2=1$; dato 2: $(2-2)^2=0$; dato 6: $(6-2)^2=16$;
+  \item promedio: $(1+0+16)/3=\mathbf{17/3\approx 5.67}$.
+\end{itemize}
+
+\textbf{Primer término de la derecha, $\mathrm{E}[d_\phi(X,\mu)]$: el error
+promedio si se elige la media.} Con $\mu=3$:
+\begin{itemize}
+  \item $(1-3)^2=4$; $(2-3)^2=1$; $(6-3)^2=9$;
+  \item promedio: $(4+1+9)/3=\mathbf{14/3\approx 4.67}$, menor que 5.67.
+\end{itemize}
+
+\textbf{Segundo término de la derecha, $d_\phi(\mu,s)$: el error de reemplazar la
+media por el candidato.} Aquí ya no hay promedio ni datos individuales: es un solo
+número, qué tan lejos está el candidato de la media. $(\mu-s)^2=(3-2)^2=\mathbf{1}$.
+
+\subsection{Lo que dice la ecuación}
+
+\[
+  \underbrace{\tfrac{17}{3}}_{\text{error con } s=2}
+  =\underbrace{\tfrac{14}{3}}_{\text{error con la media}}
+  +\underbrace{1}_{\text{lejanía de } s \text{ a la media}}.
+\]
+\begin{idea}
+El error de usar cualquier representante $s$ es el error de usar la media más un
+castigo por haberse alejado de ella.
+\end{idea}
+
+\subsection{Por qué esto implica que la media es la mejor}
+
+El castigo $d_\phi(\mu,s)$ es una divergencia: nunca es negativa y vale 0 solo
+cuando sus dos argumentos son iguales. Si $s=\mu$, el castigo es 0 y el error es
+el mínimo posible. Si $s\neq\mu$, el castigo es positivo y el error es mayor.
+
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Candidato $s$ & Error promedio & Castigo $(\mu-s)^2$ \\
+\midrule
+1 & $(0+1+25)/3=8.67$ & 4 \\
+2 & $(1+0+16)/3=5.67$ & 1 \\
+\textbf{3 (la media)} & $\mathbf{(4+1+9)/3=4.67}$ & \textbf{0} \\
+4 & $(9+4+4)/3=5.67$ & 1 \\
+5 & $(16+9+1)/3=8.67$ & 4 \\
+\bottomrule
+\end{tabular}
+\end{center}
+En cada fila, error $=4.67+$ castigo. La media es la única que no paga castigo.
+
+\subsection{Lo sorprendente: vale para cualquier $\phi$}
+
+Con la I-divergencia los números cambian: el error con la media es $0.750$ y con
+$s=2$ es $0.966$. La diferencia es $0.216$, que es $d_I(3,2)=3\ln1.5-1=0.216$. La
+forma es idéntica: error con $s$ = error con la media + castigo.
+
+\section{La demostración paso a paso}
+
+(Esta parte es para entender por qué se cumple; no va en la tesis.) Se abre cada
+divergencia con la definición
+$d_\phi(a,b)=\phi(a)-\phi(b)-\langle a-b,\nabla\phi(b)\rangle$. Solo hace falta
+que el promedio es lineal y que las constantes salen del promedio.
+
+\textbf{Paso 1, lado izquierdo.}
+$\mathrm{E}[d_\phi(X,s)]=\mathrm{E}\bigl[\phi(X)-\phi(s)-\langle X-s,\nabla\phi(s)\rangle\bigr]$.
+Se promedia cada pedazo: $\mathrm{E}[\phi(X)]$ queda igual; $\phi(s)$ es fijo; y
+$\mathrm{E}[\langle X-s,\nabla\phi(s)\rangle]=\langle\mu-s,\nabla\phi(s)\rangle$.
+\[
+  \textbf{(A)}\quad \mathrm{E}[d_\phi(X,s)]=\mathrm{E}[\phi(X)]-\phi(s)-\langle\mu-s,\nabla\phi(s)\rangle .
+\]
+
+\textbf{Paso 2, primer término de la derecha.}
+$\mathrm{E}[d_\phi(X,\mu)]=\mathrm{E}\bigl[\phi(X)-\phi(\mu)-\langle X-\mu,\nabla\phi(\mu)\rangle\bigr]$.
+El último pedazo es $\langle \mathrm{E}[X]-\mu,\nabla\phi(\mu)\rangle=\langle0,\nabla\phi(\mu)\rangle=0$.
+Este es el momento clave: desaparece porque el promedio de $X$ es justamente
+$\mu$, así que $\mathrm{E}[X-\mu]=0$. Es la única vez que se usa que $\mu$ es la
+media.
+\[
+  \textbf{(B)}\quad \mathrm{E}[d_\phi(X,\mu)]=\mathrm{E}[\phi(X)]-\phi(\mu).
+\]
+
+\textbf{Paso 3, segundo término de la derecha.} Sin promedio, solo la definición:
+\[
+  \textbf{(C)}\quad d_\phi(\mu,s)=\phi(\mu)-\phi(s)-\langle\mu-s,\nabla\phi(s)\rangle .
+\]
+
+\textbf{Paso 4.} Al sumar (B) y (C), los términos $-\phi(\mu)$ y $+\phi(\mu)$ se
+cancelan y queda $\mathrm{E}[\phi(X)]-\phi(s)-\langle\mu-s,\nabla\phi(s)\rangle$,
+que es exactamente (A).
+
+\textbf{Comprobación numérica} ($\phi=x^2$, datos 1, 2, 6, $\mu=3$, $s=2$):
+$\mathrm{E}[\phi(X)]=41/3\approx13.67$, $\phi(s)=4$ y
+$\langle\mu-s,\nabla\phi(s)\rangle=1\cdot4=4$. Entonces (A) $=13.67-4-4=5.67$,
+(B) $=13.67-9=4.67$, (C) $=9-4-4=1$, y (B)+(C) $=5.67=$ (A).
+
+\begin{idea}
+El truco es que en (B) el término lineal se hace cero, y eso solo ocurre cuando el
+centro del promedio es la media: es el único punto alrededor del cual los desvíos
+$X-\mu$ se compensan.
+\end{idea}
+
+\section{Consecuencia: K-means generalizado}
+
+El algoritmo alterna dos pasos: \textbf{asignar} cada dato al representante con
+menor $d_\phi(x,\text{representante})$ y \textbf{actualizar} cada representante
+como la media de su grupo. El segundo paso baja el error (la media es el mejor
+representante) y el primero también, por lo que el algoritmo converge para
+cualquier divergencia de Bregman. El recíproco (Banerjee et al.) dice que esto
+solo ocurre con las divergencias de Bregman: bajo condiciones suaves, ninguna otra
+pérdida tiene a la media como predictor óptimo.
+
+\section{Información de Bregman}
+
+\[
+  I_\phi(X)=\mathrm{E}\bigl[d_\phi(X,\mathrm{E}[X])\bigr].
+\]
+
+\subsection{Qué es}
+
+Es el error que queda \textbf{incluso usando el mejor representante}, la media. Es
+el término ``error promedio con la media'' de la ecuación anterior, al que solo se
+le da nombre. Mide cuánta variabilidad tiene el grupo. Si todos los datos son
+iguales, la media los representa sin error y $I=0$; si están muy dispersos, $I$ es
+grande.
+
+\subsection{Con la distancia euclídea es la varianza}
+
+Datos $1$, $2$, $6$, media 3, $\phi=x^2$:
+\[
+  I_\phi(X)=\frac{(1-3)^2+(2-3)^2+(6-3)^2}{3}=\frac{4+1+9}{3}=\frac{14}{3}\approx4.67.
+\]
+Ese cálculo es la definición de varianza: el promedio de los desvíos al cuadrado
+respecto de la media. Con la I-divergencia, los mismos datos dan $I\approx0.750$:
+una ``varianza'' medida con otra regla, que pondera menos las diferencias en
+valores grandes.
+
+\subsection{Con KL es la información mutua}
+
+Aquí $X$ no es un número sino una distribución de probabilidad. Hay dos orígenes,
+$u_1$ y $u_2$, igual de frecuentes, y un destino $Y$ que puede ser A o B:
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Origen & $P(A)$ & $P(B)$ \\
+\midrule
+$u_1$ & 0.9 & 0.1 \\
+$u_2$ & 0.1 & 0.9 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Cada fila es una distribución condicional $p(Y\mid U=u)$, y esos son los datos $X$,
+cada uno con probabilidad $1/2$. La \textbf{media} de esos datos es la
+distribución marginal $p(Y)$, el promedio de las filas: $(0.5,0.5)$. El error de
+cada fila contra la media, con KL, es
+\[
+  0.9\ln\frac{0.9}{0.5}+0.1\ln\frac{0.1}{0.5}=0.529-0.161=0.368,
+\]
+y por simetría lo mismo para $u_2$. El promedio es $I=0.368$, que es la
+\textbf{información mutua} $I(U;Y)$: cuánto dice saber el origen sobre el destino.
+Se verifica con la fórmula clásica $H(Y)-H(Y\mid U)=0.693-0.325=0.368$. Si los dos
+orígenes tuvieran el mismo reparto de destinos, las filas serían iguales a su media
+y $I=0$.
+
+\subsection{Por qué importa para la tesis}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{7.2cm}cc@{}}
+\toprule
+\textbf{Problema} & $\phi$ & \textbf{Qué se minimiza} \\
+\midrule
+K-means (agrupamiento por mínima varianza) & $x^2$ & Varianza dentro de grupos \\
+\midrule
+Co-agrupamiento de Dhillon et al. & KL & Pérdida de información mutua \\
+\bottomrule
+\end{tabular}
+\end{center}
+Esa doble lectura justifica usar un solo marco, el de Bregman, para ambos
+problemas.
+
+\begin{idea}
+La información de Bregman es el error que queda al usar el mejor representante
+(la media). Con la distancia euclídea es la varianza; con KL es la información
+mutua.
+\end{idea}
+
+% =====================================================================
+\part{Sección 2.3.3: Relación con las familias exponenciales}\label{sec:parte-expfam}
+
+\section{Por qué existe esta sección}
+
+Hasta ahora se dijo que la I-divergencia es la apropiada para conteos, pero eso es
+un argumento de sentido común: pondera el error según el tamaño de la celda. Un
+jurado puede preguntar por qué esa y no otra función que también pese por tamaño.
+La respuesta estadística de esta sección es:
+
+\begin{idea}
+Minimizar la I-divergencia es exactamente lo mismo que maximizar la verosimilitud
+de un modelo de Poisson.
+\end{idea}
+
+Eso cambia el estatus del método: deja de ser una regla de ajuste elegida a ojo y
+pasa a ser el ajuste de un modelo estadístico con un supuesto claro, que los
+conteos de cada celda son Poisson. Tiene tres consecuencias:
+\begin{itemize}
+  \item \textbf{Justificación:} se elige la I-divergencia porque corresponde al
+  modelo natural para conteos.
+  \item \textbf{Lectura de los resultados:} un bloque deja de ser ``un grupo de
+  celdas parecidas'' y es una región donde los viajes se explican con una
+  intensidad media común. Es lo que se usa en la Sección 2.5 y en la descomposición
+  de la divergencia.
+  \item \textbf{Conexión con el capítulo de estadística:} el modelo de Poisson con
+  interacción (log-lineal) es el marco para decir qué es ``interacción
+  espacio-temporal''.
+\end{itemize}
+
+\section{Qué es una familia exponencial}
+
+Es una colección de distribuciones que comparten una forma matemática: la normal,
+la Poisson, la binomial, la gamma. No hace falta la forma general. Lo que importa
+es que \textbf{cada una tiene un parámetro de media $\mu$}, el valor promedio de
+los datos, y que la probabilidad de un dato depende de qué tan cerca está de esa
+media.
+
+\section{El resultado de Banerjee et al.\ (2005)}
+
+Existe una \textbf{correspondencia uno a uno} entre divergencias de Bregman y
+familias exponenciales. Para cada familia hay una $\phi$, y la densidad se escribe
+\[
+  p(x\mid\mu)=\exp\{-d_\phi(x,\mu)\}\;b_\phi(x).
+\]
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{10.6cm}@{}}
+\toprule
+\textbf{Símbolo} & \textbf{Qué es} \\
+\midrule
+$p(x\mid\mu)$ & Probabilidad de observar $x$ si la media verdadera es $\mu$ \\
+\midrule
+$d_\phi(x,\mu)$ & La divergencia entre el dato y la media \\
+\midrule
+$\exp\{-d\}$ & Una función que baja cuando $d$ sube: más lejos de la media, menos probable \\
+\midrule
+$b_\phi(x)$ & Un factor que depende solo del dato, no de $\mu$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+La lectura es directa: un dato es probable cuando está cerca de la media, y
+``cerca'' se mide con la divergencia de Bregman de esa familia. Cada familia
+tiene su propia regla de cercanía:
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Familia & $\phi$ & Divergencia \\
+\midrule
+Normal (varianza $\sigma^2$ fija) & $x^2/(2\sigma^2)$ & $(x-\mu)^2/(2\sigma^2)$, la euclídea escalada \\
+\midrule
+Poisson & $x\log x-x$ & la I-divergencia \\
+\bottomrule
+\end{tabular}
+\end{center}
+Esto prolonga la idea de la Sección 2.3.1, ``cada $\phi$ corresponde a un supuesto
+sobre cómo varía el error'': ahora el supuesto tiene nombre. La euclídea es el
+error normal y la I-divergencia es el error Poisson.
+
+\section{Verificación para Poisson}
+
+Si $x\sim\mathrm{Poisson}(\mu)$, la probabilidad es $p(x\mid\mu)=e^{-\mu}\mu^x/x!$
+y, tomando logaritmo,
+\[
+  \log p(x\mid\mu)=x\log\mu-\mu-\log x!.
+\]
+La I-divergencia desarrollada es $d_I(x,\mu)=x\log x-x\log\mu-x+\mu$, así que
+$-d_I(x,\mu)=-x\log x+x\log\mu+x-\mu$. Sumando y restando $x\log x-x-\log x!$ se
+obtiene la fórmula de Poisson:
+\[
+  \log p(x\mid\mu)=-d_I(x,\mu)+\underbrace{\bigl(x\log x-x-\log x!\bigr)}_{\text{no depende de }\mu}.
+\]
+El último paréntesis solo depende del dato, así que no influye al elegir $\mu$.
+
+\textbf{Con números}, $x=4$ y $\mu=3$:
+\begin{itemize}
+  \item Probabilidad: $e^{-3}\cdot3^4/4!=0.168$, y $\log p=-1.784$.
+  \item $d_I(4,3)=4\ln(4/3)-1=0.151$.
+  \item Parte constante: $4\ln4-4-\ln24=-1.633$.
+  \item $-0.151-1.633=-1.784$. \checkmark
+\end{itemize}
+
+\section{Por qué minimizar la divergencia equivale a maximizar la verosimilitud}
+
+En la fórmula anterior, para elegir el mejor $\mu$ el término constante no
+importa; lo que cambia con $\mu$ es solo $-d_I(x,\mu)$. Mayor verosimilitud
+significa mayor $\log p$, es decir, mayor $-d_I$, es decir, menor $d_I$. Con
+$x=4$ y dos medias candidatas:
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+$\mu$ & $d_I(4,\mu)$ & $\log p$ \\
+\midrule
+3 & 0.151 & $-1.784$ \\
+5 & 0.107 & $-1.740$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+$\mu=5$ tiene menor divergencia y mayor verosimilitud: el orden es el mismo en las
+dos columnas, siempre.
+
+\section{Para una matriz completa}
+
+Si cada celda es un conteo Poisson independiente, $O_{ij}\sim\mathrm{Poisson}(\mu_{ij})$,
+el logaritmo de la probabilidad conjunta es la suma de las celdas. Como la
+I-divergencia es aditiva por celda,
+\[
+  D_I(O\,\|\,\mu)=\sum_{i,j}d_I(O_{ij},\mu_{ij})=\tfrac12\,\mathrm{Dev}(\mu),
+\]
+donde $\mathrm{Dev}(\mu)$ es la \textbf{devianza} del modelo de Poisson, la medida
+estándar de qué tan mal ajusta un modelo a los conteos (Agresti, 2013). Aquí
+$\mu_{ij}$ es lo que predice el modelo para cada celda, en esta tesis la media del
+bloque al que pertenece; $D_I$ mide el desajuste entre los conteos reales y esa
+predicción. Elegir los bloques que minimizan $D_I$ es elegir el modelo de Poisson
+por bloques que mejor explica los datos.
+
+\begin{idea}
+La I-divergencia no es una elección arbitraria: es la divergencia que corresponde
+al modelo de Poisson. Por eso el co-agrupamiento con I-divergencia se puede leer
+como el ajuste de un modelo estadístico a los conteos.
+\end{idea}
+
+% =====================================================================
+\part{Sección 2.4: Co-agrupamiento de Bregman}
+
+\section{Por qué existe esta sección}
+
+Hasta ahora hay dos piezas separadas: las \textbf{divergencias de Bregman} (2.3),
+una forma de medir el error al reemplazar un dato por un representante, y el
+\textbf{co-agrupamiento} (2.2), que agrupa a la vez las filas (regiones) y las
+columnas (intervalos de tiempo) y forma un tablero de bloques. La pregunta que las
+une es: ¿cómo se reconstruye la matriz a partir de los bloques y cómo se mide qué
+tan buena es esa reconstrucción?
+
+\begin{idea}
+Se resume la matriz con unos pocos promedios, se reconstruye una matriz aproximada
+a partir de ellos y se eligen los grupos que hacen mínimo el error de la
+aproximación, medido con una divergencia de Bregman.
+\end{idea}
+
+Es la sección que convierte la teoría de la 2.3 en un método concreto, el que luego
+usan ST-CC y la tesis.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{9.6cm}@{}}
+\toprule
+\textbf{Subsección} & \textbf{Pregunta que responde} \\
+\midrule
+2.4.1 Notación & ¿Cómo se escribe un co-agrupamiento? \\
+\midrule
+2.4.2 Aproximación y MBI & ¿Qué promedios se conservan y cómo se reconstruye la matriz? \\
+\midrule
+2.4.3 Las seis bases & ¿Qué opciones hay para elegir los promedios? \\
+\midrule
+2.4.4 Algoritmo & ¿Cómo se encuentran los grupos? \\
+\bottomrule
+\end{tabular}
+\end{center}
+Estas notas cubren 2.4.1 y 2.4.2, que son las que más cuestan.
+
+\section{Ejemplo que se usa}
+
+Una matriz de 4 regiones por 4 intervalos, agrupadas de dos en dos:
+\[
+  O=\begin{pmatrix}
+    12 & 8 & 3 & 1\\
+    8 & 12 & 1 & 3\\
+    2 & 2 & 10 & 6\\
+    2 & 2 & 6 & 10
+  \end{pmatrix}.
+\]
+Las regiones $r_1,r_2$ forman el grupo 1 de filas y $r_3,r_4$ el grupo 2. Los
+intervalos $t_1,t_2$ forman el grupo 1 de columnas y $t_3,t_4$ el grupo 2. Es un
+tablero de $2\times2$ bloques.
+
+\section{2.4.1 Notación}
+
+\subsection{Las funciones $\rho$ y $\tau$}
+
+$\rho$ asigna cada fila a un grupo de filas: $\rho(r_1)=\rho(r_2)=1$ y
+$\rho(r_3)=\rho(r_4)=2$. $\tau$ hace lo mismo con las columnas. Un co-agrupamiento
+es el par $(\rho,\tau)$, y $K_R$ y $K_T$ son cuántos grupos hay de cada tipo (aquí
+2 y 2).
+
+\subsection{Los bloques}
+
+$I_g$ es el conjunto de filas del grupo $g$, $J_h$ el de columnas del grupo $h$, y
+$B_{gh}=I_g\times J_h$ es el bloque que forman. Por ejemplo, $B_{11}$ son las
+cuatro celdas de arriba a la izquierda.
+
+\subsection{La lectura probabilística}
+
+Para escribir los promedios de forma compacta, Banerjee et al.\ eligen una celda
+de la matriz \textbf{al azar} y llaman $U$ a la fila elegida y $V$ a la columna
+elegida (cada una uniforme), $Z=O_{UV}$ al valor de esa celda (una variable
+aleatoria), y $\hat U=\rho(U)$, $\hat V=\tau(V)$ a los grupos de la fila y la
+columna elegidas. Con eso, cada promedio es una \emph{esperanza condicional}: el
+promedio de $Z$ restringido a lo que se indica.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{3.4cm}@{}}
+\toprule
+\textbf{Notación} & \textbf{Significado} & \textbf{En el ejemplo} \\
+\midrule
+$\mathrm{E}[Z]$ & Promedio de toda la matriz & $88/16=5.5$ \\
+\midrule
+$\mathrm{E}[Z\mid U=i]$ & Media de la fila $i$ & Fila $r_1$: $24/4=6$ \\
+\midrule
+$\mathrm{E}[Z\mid\hat U=g,\hat V=h]$ & Media del bloque $B_{gh}$ & $B_{11}$: $40/4=10$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+No hay nada profundo aquí: es una forma de escribir ``promedio de las celdas que
+cumplen esta condición'' con una sola notación. La ventaja es que la información de
+Bregman y la media como mejor representante (2.3.2) se aplican directamente.
+
+Medias de los cuatro bloques del ejemplo:
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Bloque & Celdas & Media \\
+\midrule
+$B_{11}$ & 12, 8, 8, 12 & 10 \\
+$B_{12}$ & 3, 1, 1, 3 & 2 \\
+$B_{21}$ & 2, 2, 2, 2 & 2 \\
+$B_{22}$ & 10, 6, 6, 10 & 8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{2.4.2 Aproximación y principio de mínima información de Bregman}
+
+\subsection{La pregunta}
+
+Un co-agrupamiento resume la matriz con un conjunto de promedios. Hay que decidir
+cuáles promedios conservar y cómo reconstruir la matriz a partir de ellos. Banerjee
+et al.\ responden con dos elementos.
+
+\subsection{Elemento 1: la base $\mathcal C$}
+
+Es la lista de promedios que se conservan. Cada elemento es un conjunto de
+variables tomadas de $\{U,V,\hat U,\hat V\}$. La base $\{\hat U,\hat V\}$ conserva
+la media de cada bloque (es la más simple, C2). La base $\{\hat U\},\{\hat V\}$
+conserva solo la media de cada grupo de filas y la de cada grupo de columnas, sin
+saber qué pasa en cada bloque (C1). Hay seis bases en total, que se ven en 2.4.3.
+
+\subsection{Elemento 2: el principio MBI}
+
+Con los promedios fijados hay muchas matrices que los respetan, y hay que elegir
+una. La regla es: entre todas las matrices que conservan los promedios de la base,
+se elige la de \textbf{menor información de Bregman}. Recuerda de la 2.3.2 que la
+información de Bregman mide cuánta variabilidad hay. Elegir la de menor
+información es elegir la matriz más simple compatible con los promedios: no
+inventa estructura que los promedios no exigen. Es el mismo espíritu que la máxima
+entropía, y con la I-divergencia o KL coinciden.
+
+\subsection{Cómo se ve en el ejemplo}
+
+\textbf{Base C2} (media de cada bloque): la matriz más simple compatible rellena
+cada bloque con su media,
+\[
+  \hat O=\begin{pmatrix}
+    10 & 10 & 2 & 2\\
+    10 & 10 & 2 & 2\\
+    2 & 2 & 8 & 8\\
+    2 & 2 & 8 & 8
+  \end{pmatrix}.
+\]
+
+\textbf{Base C1} (solo media por grupo de filas y por grupo de columnas): el MBI
+con I-divergencia da la fórmula multiplicativa
+$\mathrm{E}[Z\mid\hat U]\,\mathrm{E}[Z\mid\hat V]/\mathrm{E}[Z]$. Las medias por
+grupo de filas son 6 y 5, las de columnas son 6 y 5, y $\mathrm{E}[Z]=5.5$:
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Bloque & Cálculo & Aproximación \\
+\midrule
+$B_{11}$ & $6\cdot6/5.5$ & 6.55 \\
+$B_{12}$ & $6\cdot5/5.5$ & 5.45 \\
+$B_{21}$ & $5\cdot6/5.5$ & 5.45 \\
+$B_{22}$ & $5\cdot5/5.5$ & 4.55 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Es el modelo de independencia: las medias de fila y de columna se multiplican. Esta
+matriz respeta las medias por grupo (la media del grupo 1 de filas es
+$(6.55+5.45)/2=6$) pero no ve que el bloque $B_{11}$ es mucho más alto que
+$B_{12}$. La base elige qué estructura puede capturar la aproximación: C2 captura
+diferencias entre bloques; C1 solo captura efectos de fila y de columna por
+separado.
+
+\subsection{Propiedades que se mencionan, sin demostrar}
+
+La solución MBI, $\hat Z_{\mathcal C}$, es además la mejor aproximación en
+divergencia esperada entre las de su misma forma, y cumple una propiedad
+pitagórica que se usa en la Sección 2.5 para descomponer la divergencia.
+
+\section{La función objetivo}
+
+\[
+  (\rho^*,\tau^*)=\arg\min_{\rho,\tau}\;\mathrm{E}\bigl[d_\phi\bigl(Z,\hat Z_{\mathcal C}(\rho,\tau)\bigr)\bigr].
+\]
+Se lee: entre todos los co-agrupamientos posibles, se elige el que hace mínimo el
+error promedio entre la matriz real y su aproximación. Con medida uniforme es
+proporcional a $\sum_{i,j}d_\phi(O_{ij},\hat O_{ij})$, la suma de errores celda por
+celda, como en la 2.3.1.
+
+\textbf{Con números} (base C2, I-divergencia, los grupos del ejemplo):
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Bloque & Media & Suma de $d_I$ celda por celda \\
+\midrule
+$B_{11}$ & 10 & 0.805 \\
+$B_{12}$ & 2 & 1.047 \\
+$B_{21}$ & 2 & 0 (todas valen 2) \\
+$B_{22}$ & 8 & 1.011 \\
+\midrule
+\textbf{Total} & & $\approx 2.86$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+El algoritmo busca la partición que haga ese total lo más chico posible.
+
+\begin{idea}
+Un co-agrupamiento resume la matriz con promedios (la base). El MBI reconstruye la
+matriz más simple que respeta esos promedios. Se elige la partición cuya
+reconstrucción se parece más a los datos, medido con una divergencia de Bregman.
+\end{idea}
+
+\section{2.4.3 Las seis bases}
+
+\subsection{Por qué existe esta subsección}
+
+En la 2.4.2 se vio que hay que decidir qué promedios conservar (la base), y que
+cada opción produce una aproximación distinta. Banerjee et al.\ demuestran que en
+dos dimensiones solo hay \textbf{seis bases distintas}: las demás son triviales (no
+resumen nada) o redundantes (equivalen a alguna de estas). Cada base responde a la
+pregunta: además de dividir en bloques, ¿cuánto detalle de la matriz se quiere
+conservar?
+
+\subsection{Cómo leer la notación}
+
+$U$ y $V$ son una fila y una columna \textbf{individuales}; $\hat U$ y $\hat V$
+son el \textbf{grupo} de esa fila y de esa columna. Un conjunto como
+$\{\hat U,\hat V\}$ significa ``conserva la media de cada pareja (grupo de filas,
+grupo de columnas)'', es decir, cada bloque; $\{U\}$ significa ``conserva la media
+de cada fila individual''.
+
+\subsection{Las seis bases en palabras}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{5.6cm}>{\raggedright\arraybackslash}p{2.4cm}@{}}
+\toprule
+\textbf{Base} & \textbf{Qué conserva} & \textbf{Qué dice la aproximación} & \textbf{Familia} \\
+\midrule
+C1 & Media por grupo de filas y por grupo de columnas & Independencia entre filas y columnas, sin bloques & Sin bloques \\
+\midrule
+C2 & Media de cada bloque & Todas las celdas de un bloque valen lo mismo & Bloques \\
+\midrule
+C3 & Bloque y cada fila & Bloque, corregido por cuánto más grande es la fila que su grupo & Bloques y volumen de fila \\
+\midrule
+C4 & Bloque y cada columna & Bloque, corregido por el volumen de la columna & Bloques y volumen de columna \\
+\midrule
+C5 & Bloque, cada fila y cada columna & Bloque, corregido por el volumen de la fila y de la columna & Bloques y ambos volúmenes \\
+\midrule
+C6 & Cada fila dentro de cada grupo de columnas, y cada columna dentro de cada grupo de filas & Perfiles internos de cada bloque & Más fino \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{La idea de las fórmulas con I-divergencia}
+
+La más fácil de leer es C5:
+\[
+  \hat O_{ij}=\frac{\mathrm{E}[Z|U]\,\mathrm{E}[Z|V]\,\mathrm{E}[Z|\hat U,\hat V]}
+  {\mathrm{E}[Z|\hat U]\,\mathrm{E}[Z|\hat V]}.
+\]
+Reagrupada:
+\[
+  \hat O_{ij}=\underbrace{\mathrm{E}[Z|\hat U,\hat V]}_{\text{media del bloque}}
+  \times\underbrace{\frac{\mathrm{E}[Z|U]}{\mathrm{E}[Z|\hat U]}}_{\text{factor de fila}}
+  \times\underbrace{\frac{\mathrm{E}[Z|V]}{\mathrm{E}[Z|\hat V]}}_{\text{factor de columna}}.
+\]
+Cada factor compara una fila (o columna) con \emph{su grupo}: si una región tiene
+el doble de viajes que el promedio de su grupo, el factor de fila es 2. La
+aproximación toma la media del bloque y la escala por esos dos factores. Por eso
+C5 distingue entre ``esta región es más grande'' y ``esta región tiene un patrón
+distinto''. C3 aplica solo el factor de fila, C4 solo el de columna y C2 ninguno.
+
+\subsection{Ejemplo: la diferencia entre C2 y C5}
+
+Para verla hace falta una matriz donde las filas tengan distinto volumen. Una
+matriz con un solo bloque (todo en un grupo):
+\[
+  \begin{pmatrix}2&4\\6&12\end{pmatrix}.
+\]
+La fila 2 tiene el triple de viajes que la fila 1, con el mismo perfil. Las medias
+de fila son 3 y 9, las de columna 4 y 8, y la global 6.
+
+\textbf{Con C2} (media del bloque) todas las celdas valen 6. La I-divergencia
+suma $d(2,6)=1.80$, $d(4,6)=0.38$, $d(6,6)=0$ y $d(12,6)=2.32$, es decir,
+$\approx\mathbf{4.50}$.
+
+\textbf{Con C5}, con un solo bloque la fórmula queda
+$\mathrm{E}[Z|U]\,\mathrm{E}[Z|V]/\mathrm{E}[Z]$. Celda $(1,1)$: $3\cdot4/6=2$;
+$(1,2)$: $3\cdot8/6=4$; $(2,1)$: $9\cdot4/6=6$; $(2,2)$: $9\cdot8/6=12$.
+Reproduce la matriz exacta: pérdida \textbf{0}.
+
+La matriz es un patrón único multiplicado por el volumen de cada fila y de cada
+columna. C2 lo ve como un error grande; C5 lo explica entero porque descuenta el
+volumen. Esta es la diferencia que la tesis usa para justificar C5: las
+diferencias de volumen entre regiones no son interacción espacio-temporal.
+
+\subsection{Casos particulares conocidos}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{9.4cm}@{}}
+\toprule
+\textbf{Base y divergencia} & \textbf{Método conocido} \\
+\midrule
+C2 + euclídea & Co-agrupamiento clásico de bloques constantes (primer residuo de Cho et al., 2004) \\
+\midrule
+C6 + euclídea & Residuo cuadrático mínimo de Cho et al. (segundo residuo); sobre él se construye el BCC\_MSSR de Wu et al.\ (2022) \\
+\midrule
+C5 + I-divergencia & ITCC de Dhillon et al.\ (2003): con distribuciones conjuntas la I-divergencia es KL, y minimiza la pérdida de información mutua \\
+\bottomrule
+\end{tabular}
+\end{center}
+Esto respalda la idea de la 2.3: un solo marco generaliza métodos que parecían
+distintos.
+
+\subsection{La nota sobre C6}
+
+C6 aparece en dos contextos con la misma estructura y distinta combinación. Con la
+euclídea combina las marginales del bloque \emph{sumando} (el residuo de Cho). Con
+la I-divergencia las combina \emph{multiplicando} (la prueba de independencia
+dentro del bloque de la Sección 2.5). Es la misma idea con dos álgebras: la
+euclídea trabaja con diferencias y la I-divergencia con razones, igual que en la
+2.3.1 la euclídea mide diferencias y la I-divergencia pondera por tamaño.
+
+\begin{idea}
+Las seis bases son seis niveles de detalle para reconstruir la matriz. C2 conserva
+solo bloques; C5 añade el volumen de cada fila y columna; C6 conserva más
+estructura interna. Cada una, con una divergencia, reproduce un método clásico.
+\end{idea}
+
+\section{2.4.4 Algoritmo}
+
+\subsection{Por qué existe esta subsección}
+
+Ya se sabe qué se quiere: la partición $(\rho,\tau)$ que haga mínimo el error entre
+la matriz y su aproximación. Falta \textbf{cómo encontrarla}. La tentación es
+probar todas las particiones, pero es inviable: solo asignar 100 filas a 5 grupos
+admite unas $5^{100}\approx10^{70}$ posibilidades, sin contar las columnas.
+
+El texto lo dice con un término técnico: el problema es \textbf{NP-difícil}, por
+reducción desde K-means. Significa que no se conoce un método eficiente que
+garantice la mejor partición. Por eso Banerjee et al.\ proponen un método que no
+garantiza el óptimo pero llega a una buena solución rápido: la
+\textbf{minimización alternante}.
+
+\subsection{La idea}
+
+Es la misma que K-means (2.3.2): alternar entre dos pasos sencillos. Con los
+\textbf{grupos fijos}, calcular los mejores promedios (los de la base); con los
+\textbf{promedios fijos}, mejorar los grupos. Aquí hay dos tipos de grupos (filas
+y columnas), así que se alterna entre tres cosas: promedios, filas y columnas.
+
+\subsection{Los pasos}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}c>{\raggedright\arraybackslash}p{6.4cm}>{\raggedright\arraybackslash}p{6.4cm}@{}}
+\toprule
+\textbf{Paso} & \textbf{Qué hace} & \textbf{En palabras} \\
+\midrule
+1 & Inicializa $\rho$ y $\tau$ al azar & Empieza con grupos cualesquiera \\
+\midrule
+2 & Calcula los estadísticos de la base y la aproximación $\hat O$ & Con los grupos actuales, calcula los promedios y reconstruye la matriz \\
+\midrule
+3 & Reasigna cada fila al grupo $g$ que minimiza $\sum_j d_\phi(O_{ij},\hat O_{ij})$ calculada como si $i$ perteneciera a $g$; recalcula los estadísticos & Cada fila se muda al grupo que mejor la explica \\
+\midrule
+4 & Repite el paso 3 con las columnas, con $\rho$ fija & Lo mismo para las columnas \\
+\midrule
+5 & Si la reducción de la divergencia es menor que $\varepsilon$, termina; si no, vuelve al paso 3 & Para cuando casi no mejora \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+El paso 3 es el que cuesta. Para decidir dónde va la fila $i$, se prueba cada
+grupo $g$ y se calcula el error de la fila si estuviera ahí, usando los promedios
+de ese grupo. Se elige el grupo de menor error. Es el equivalente a ``asignar cada
+punto al centroide más cercano'' de K-means, solo que el ``centroide'' ahora es un
+conjunto de promedios por bloque.
+
+\subsection{Ejemplo con la matriz 4$\times$4}
+
+Matriz de la 2.4.2, base C2 e I-divergencia:
+\[
+  O=\begin{pmatrix}
+    12 & 8 & 3 & 1\\
+    8 & 12 & 1 & 3\\
+    2 & 2 & 10 & 6\\
+    2 & 2 & 6 & 10
+  \end{pmatrix}.
+\]
+
+\textbf{Paso 1.} Se supone que $\tau$ ya es correcta (columnas 1, 2 y 3, 4) y que
+$\rho$ empieza mal: las filas $r_1,r_2,r_3$ en el grupo 1 y $r_4$ sola en el
+grupo 2. El error total de esa partición es $\approx\mathbf{15.6}$.
+
+\textbf{Paso 2.} Promedios de los bloques:
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Bloque & Celdas & Media \\
+\midrule
+Grupo 1, columnas 1--2 & 12, 8, 8, 12, 2, 2 & 7.33 \\
+Grupo 1, columnas 3--4 & 3, 1, 1, 3, 10, 6 & 4 \\
+Grupo 2, columnas 1--2 & 2, 2 & 2 \\
+Grupo 2, columnas 3--4 & 6, 10 & 8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Paso 3.} Se mira la fila $r_3=(2,2,10,6)$. Si se queda en el grupo 1, se
+la compara con $(7.33,7.33,4,4)$ y el error es $2.73+2.73+3.16+0.43\approx
+\mathbf{9.07}$. Si pasa al grupo 2, se la compara con $(2,2,8,8)$ y el error es
+$0+0+0.23+0.27\approx\mathbf{0.51}$. Se muda al grupo 2. Las filas $r_1$ y $r_2$
+prefieren claramente el grupo 1 (error $\approx3$ frente a $\approx24$) y $r_4$ se
+queda donde está. La partición de filas queda $\{r_1,r_2\},\{r_3,r_4\}$: la
+correcta, con error total $\approx\mathbf{2.86}$.
+
+\textbf{Paso 4.} Con $\rho$ ya correcta, ninguna columna mejora cambiando de grupo.
+
+\textbf{Paso 5.} El error bajó de 15.6 a 2.86 en el paso 3 y en el paso 4 no
+cambió. La mejora es menor que $\varepsilon$ y el algoritmo termina.
+
+\subsection{Por qué converge}
+
+\begin{itemize}
+  \item \textbf{Cada paso no aumenta el error.} Al recalcular los promedios, la
+  media es el mejor representante de cada grupo (esto es la 2.3.2). Al reasignar
+  filas, cada una elige el grupo que menos error le da.
+  \item \textbf{Hay un número finito de particiones.} Como el error nunca sube y
+  no hay infinitos estados, el algoritmo no puede dar vueltas para siempre: se
+  detiene en un número finito de iteraciones.
+\end{itemize}
+
+\subsection{La limitación: mínimo local}
+
+Converger no significa llegar a la mejor solución. El algoritmo termina en un
+\textbf{mínimo local}: una partición que no mejora cambiando las filas, las
+columnas o los promedios, pero que podría ser peor que otra partición lejana. Es
+como un excursionista que baja una montaña por el camino más empinado: llega a un
+valle, pero puede haber otro valle más profundo al otro lado.
+
+Tres precauciones que menciona el texto:
+\begin{enumerate}
+  \item \textbf{Varias inicializaciones.} Se ejecuta con muchos arranques al azar
+  y se conserva el mejor resultado. Liu et al.\ usaron 200.
+  \item \textbf{Búsqueda local.} Cho et al.\ muestran que, después de converger,
+  mover filas o columnas de una en una puede seguir bajando el error. El algoritmo
+  básico mueve todas a la vez (por lotes), y por eso hay mejoras que se le
+  escapan.
+  \item \textbf{Costo.} Cada iteración cuesta $O\bigl(mn(K_R+K_T)\bigr)$
+  operaciones: proporcional al tamaño de la matriz por el número de grupos.
+\end{enumerate}
+
+\begin{idea}
+Como probar todas las particiones es imposible, se alterna entre calcular
+promedios y reasignar filas y columnas. Cada paso baja el error, así que converge,
+pero a un mínimo local, por lo que se repite con muchos arranques.
+\end{idea}
+
+% =====================================================================
+\part{Sección 2.5: La I-divergencia y el modelo de Poisson}
+
+\section{Por qué existe esta sección}
+
+El marco de Bregman (2.4) funciona con cualquier divergencia. Pero la tesis usa una
+sola, la I-divergencia, con conteos de viajes. Esta sección particulariza todo a
+ese caso y obtiene tres cosas que solo existen ahí:
+\begin{enumerate}
+  \item \textbf{Fórmulas explícitas} para las bases C2, C5 y C6 con totales de
+  fila, columna y bloque.
+  \item \textbf{Lectura estadística:} cada base es un modelo de Poisson concreto,
+  y tres de ellas están anidadas (C2 $\subset$ C5 $\subset$ C6).
+  \item \textbf{Una descomposición} de la divergencia en tres términos con
+  interpretación propia, que justifica el estadístico de heterogeneidad $G^2$ del
+  método propuesto.
+\end{enumerate}
+
+\begin{idea}
+La 2.4 dice cómo se hace el co-agrupamiento; la 2.5 dice qué significa lo que se
+mide y por qué $G^2$ es la herramienta adecuada para buscar patrones locales.
+\end{idea}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}p{8.4cm}@{}}
+\toprule
+\textbf{Subsección} & \textbf{Pregunta} \\
+\midrule
+2.5.1 Tres bases en notación matricial & ¿Cómo se calculan C2, C5 y C6 con totales? \\
+\midrule
+2.5.2 Modelos log-lineales de Poisson & ¿Qué modelo estadístico es cada base? \\
+\midrule
+2.5.3 Descomposición & ¿De qué partes se compone el error? \\
+\midrule
+2.5.4 Escala & ¿Importa si se usan conteos o promedios? \\
+\bottomrule
+\end{tabular}
+\end{center}
+Estas notas cubren toda la sección 2.5.
+
+\section{2.5.1 Tres bases en notación matricial}
+
+\subsection{Los totales que se necesitan}
+
+Con la matriz de conteos $O$ de 4$\times$4 de la 2.4.2:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{7.0cm}>{\raggedright\arraybackslash}p{3.8cm}@{}}
+\toprule
+\textbf{Símbolo} & \textbf{Significado} & \textbf{Ejemplo} \\
+\midrule
+$O_{i\cdot}$ & Total de la fila $i$ & $r_1=24$, $r_3=20$ \\
+\midrule
+$O_{\cdot j}$ & Total de la columna $j$ & $c_1=24$, $c_3=20$ \\
+\midrule
+$N$ & Total general & 88 \\
+\midrule
+$O_{g\cdot},O_{\cdot h}$ & Total del grupo de filas $g$ y del grupo de columnas $h$ & 48 y 40 \\
+\midrule
+$N_{gh}$ & Total del bloque & 40, 8, 8, 32 \\
+\midrule
+$O_{ih}$ & Total de la fila $i$ \emph{dentro} del grupo de columnas $h$ & $r_1$ en columnas 1--2: 20 \\
+\midrule
+$O_{gj}$ & Total de la columna $j$ \emph{dentro} del grupo de filas $g$ & $c_1$ en filas 1--2: 20 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Son los mismos promedios de la 2.4, escritos como sumas (promedio por número de
+celdas).
+
+\subsection{Las tres fórmulas}
+
+\[
+  \hat O^{\mathrm{C2}}_{ij}=\frac{N_{gh}}{|I_g||J_h|},\qquad
+  \hat O^{\mathrm{C5}}_{ij}=\frac{O_{i\cdot}O_{\cdot j}N_{gh}}{O_{g\cdot}O_{\cdot h}},\qquad
+  \hat O^{\mathrm{C6}}_{ij}=\frac{O_{ih}O_{gj}}{N_{gh}}.
+\]
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{12.4cm}@{}}
+\toprule
+\textbf{Base} & \textbf{Lectura} \\
+\midrule
+C2 & Todas las celdas del bloque valen la media del bloque \\
+\midrule
+C5 & Reparte el total del bloque en proporción al volumen global de cada región y cada intervalo \\
+\midrule
+C6 & Trata cada bloque como una tabla de contingencia \emph{independiente}: lo esperado si filas y columnas no estuvieran asociadas \emph{dentro del bloque} \\
+\bottomrule
+\end{tabular}
+\end{center}
+Con el ejemplo $\begin{pmatrix}2&4\\6&12\end{pmatrix}$ de un solo bloque, C5 da en
+la celda $(1,1)$: $6\cdot8\cdot24/(24\cdot24)=2$, el dato exacto.
+
+\subsection{C5 y la información mutua}
+
+\[
+  D_I(O\,\|\,\hat O^{\mathrm{C5}})=N\,\bigl[I(R;T)-I(\hat R;\hat T)\bigr].
+\]
+Con C5, el error de la aproximación es \textbf{la información mutua que se pierde}
+al agrupar las regiones y los intervalos ($R$, $T$ son filas y columnas; $\hat R$,
+$\hat T$ sus grupos), multiplicada por $N$. Es la conexión con Dhillon (ITCC) vista
+en la 2.3: la información de Bregman con KL es información mutua.
+
+\subsection{C6 y la prueba de independencia}
+
+\[
+  D_I(O\,\|\,\hat O^{\mathrm{C6}})=\tfrac12\sum_{g,h}G^2_{gh},\qquad
+  G^2_{gh}=2\sum_{(i,j)\in B_{gh}}O_{ij}\log\frac{O_{ij}N_{gh}}{O_{ih}O_{gj}}.
+\]
+$G^2$ es el estadístico de razón de verosimilitud de la \textbf{prueba de
+independencia} de una tabla de contingencia, el que se usa en estadística clásica
+para ver si dos variables están asociadas. También se escribe
+$G^2_{gh}=2N_{gh}\hat I_{gh}(R;T)$: la información mutua dentro del bloque,
+escalada por su masa.
+
+\textbf{Ejemplo con un bloque con patrón.} Sea el bloque
+$\begin{pmatrix}6&2\\2&6\end{pmatrix}$. Los totales de fila y de columna son 8 y
+$N=16$, así que lo esperado bajo independencia es $8\cdot8/16=4$ en cada celda.
+Pero los datos son 6, 2, 2, 6: hay asociación (la diagonal pesa más).
+\[
+  G^2=2\bigl[2\cdot6\ln1.5+2\cdot2\ln0.5\bigr]=2[4.866-2.773]\approx\mathbf{4.19}.
+\]
+Un bloque sin asociación (todas las celdas valen 4) daría $G^2=0$. Se verifica con
+la I-divergencia: $d(6,4)=0.433$ y $d(2,4)=0.614$, y $2(0.433+0.614)=2.093=G^2/2$.
+
+\begin{idea}
+$G^2$ mide cuánta asociación entre regiones y horarios queda dentro del bloque.
+Este es el patrón local que busca la tesis.
+\end{idea}
+
+\section{2.5.2 Equivalencia con modelos log-lineales de Poisson}
+
+\subsection{De dónde viene}
+
+En la 2.3.3 se vio que minimizar la I-divergencia es maximizar la verosimilitud de
+Poisson. Falta saber \textbf{qué modelo} de Poisson. Cada base define uno, para las
+medias $\mu_{ij}$ de las celdas:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.2cm}>{\raggedright\arraybackslash}p{6.4cm}@{}}
+\toprule
+\textbf{Base} & \textbf{Modelo} & \textbf{Lectura} \\
+\midrule
+C2 & $\log\mu_{ij}=\lambda_{\rho(i)\tau(j)}$ & Un nivel por bloque \\
+\midrule
+C5 & $\log\mu_{ij}=\alpha_i+\beta_j+\lambda_{\rho(i)\tau(j)}$ & Un nivel por bloque, más un efecto de fila y uno de columna \\
+\midrule
+C6 & $\log\mu_{ij}=\alpha_{i,\tau(j)}+\beta_{\rho(i),j}$ & El efecto de cada fila cambia según el grupo de columnas, y el de cada columna según el grupo de filas \\
+\bottomrule
+\end{tabular}
+\end{center}
+Un modelo \textbf{log-lineal} suma efectos en el logaritmo, y al deshacer el
+logaritmo los efectos se \textbf{multiplican}. Por eso C5 es ``media del bloque
+$\times$ factor de fila $\times$ factor de columna'': es exactamente la fórmula
+reagrupada de la 2.4.3. Aquí se ve de dónde sale esa forma.
+
+\subsection{Las aproximaciones son los estimadores de máxima verosimilitud}
+
+En un modelo log-lineal de Poisson, las medias ajustadas deben reproducir los
+totales observados de cada término del modelo. Esos totales son justamente los
+promedios que conserva cada base. Entonces las fórmulas de la 2.5.1
+\textbf{son} las estimaciones de máxima verosimilitud de esos modelos. Eso cierra
+el círculo con el principio MBI de la 2.4.2: la matriz más simple que respeta los
+promedios es la que maximiza la verosimilitud de Poisson. El resultado de Birch
+garantiza que existe un único conjunto de valores ajustados que cumple el modelo y
+reproduce esos totales.
+
+\subsection{Modelos anidados}
+
+Para una partición fija, $\mathrm{C2}\subset\mathrm{C5}\subset\mathrm{C6}$: cada
+modelo contiene al anterior como caso particular. C2 es C5 con $\alpha=\beta=0$, y
+C5 es C6 reescribiendo los efectos de modo que no dependan del grupo. Es la misma
+cadena de la 2.4.3 (de menos a más detalle), ahora vista como modelos
+estadísticos.
+
+\subsection{Parámetros libres}
+
+Con $m=n=4$ y $K_R=K_T=2$ (la matriz del ejemplo):
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Modelo & Fórmula & Valor \\
+\midrule
+C2 & $K_RK_T$ & 4 \\
+C5 & $K_RK_T+(m-K_R)+(n-K_T)$ & 8 \\
+C6 & $K_Tm+K_Rn-K_RK_T$ & 12 \\
+Saturado & $mn$ & 16 \\
+\bottomrule
+\end{tabular}
+\end{center}
+A más parámetros, más flexible el modelo y menor el error, pero más riesgo de
+ajustarse al ruido. La diferencia entre el saturado y C6 es
+$\sum(|I_g|-1)(|J_h|-1)=4$, igual que los grados de libertad de las pruebas de
+independencia por bloque ($16-12=4$).
+
+\begin{idea}
+Con I-divergencia, cada base es un modelo de Poisson: C2 un nivel por bloque, C5
+añade volumen de fila y columna, C6 permite perfiles propios por bloque. Los tres
+están anidados, y $G^2$ mide la asociación que queda dentro de cada bloque.
+\end{idea}
+
+\section{2.5.3 Descomposición de la divergencia}
+
+\subsection{Por qué existe esta subsección}
+
+En la 2.5.2 se vio que C2, C5 y C6 son tres modelos anidados, de menos a más
+detalle. Cada uno deja un error distinto al aproximar la matriz. La pregunta que
+responde esta subsección es: cuando una partición deja un error grande, ¿de qué
+está hecho ese error? Es la parte central de la sección, porque justifica por qué
+el método de la tesis mide la heterogeneidad con $G^2$ y no con un criterio más
+simple.
+
+\subsection{La descomposición}
+
+\[
+  D_I(O\|\hat O^{\mathrm{C2}})=
+  \underbrace{D_I(\hat O^{\mathrm{C5}}\|\hat O^{\mathrm{C2}})}_{\text{(i) efectos marginales}}+
+  \underbrace{D_I(\hat O^{\mathrm{C6}}\|\hat O^{\mathrm{C5}})}_{\text{(ii) marginales por bloque}}+
+  \underbrace{\tfrac12\sum_{g,h}G^2_{gh}}_{\text{(iii) interacción local}}.
+\]
+
+\textbf{De dónde sale la idea.} Es una propiedad tipo Pitágoras. Si hay dos
+modelos anidados, uno simple y uno complejo, ajustados por máxima verosimilitud,
+el error del simple se parte en dos:
+\begin{center}
+error del simple $=$ error del complejo $+$ distancia entre los dos modelos.
+\end{center}
+Es la misma estructura de la 2.3.2: error con $s$ = error con la media + castigo
+por alejarse. Aplicada dos veces a la cadena $\mathrm{C2}\subset\mathrm{C5}\subset\mathrm{C6}$,
+y sabiendo que el error de C6 es $\tfrac12\sum G^2$, sale la fórmula.
+
+\subsection{Qué mide cada término}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{6.8cm}>{\raggedright\arraybackslash}p{4.4cm}@{}}
+\toprule
+\textbf{Término} & \textbf{Qué mide} & \textbf{Pregunta} \\
+\midrule
+(i) $D(\hat O^{\mathrm{C5}}\|\hat O^{\mathrm{C2}})$ & Cuánto del error se explica solo porque unas regiones e intervalos tienen más volumen que otros & ¿Es heterogeneidad real o solo diferencia de tamaño? \\
+\midrule
+(ii) $D(\hat O^{\mathrm{C6}}\|\hat O^{\mathrm{C5}})$ & Cuánto cambia el peso relativo de una región según el grupo de horarios (o de un intervalo según el grupo de regiones) & ¿Una región se comporta distinto en bloques distintos? \\
+\midrule
+(iii) $\tfrac12\sum G^2_{gh}$ & La asociación que queda dentro de cada bloque cuando ya se conocen sus propias marginales & ¿Hay un patrón local dentro del bloque? \\
+\bottomrule
+\end{tabular}
+\end{center}
+Ejemplo para (i): una zona de Midtown genera más viajes que una del norte de
+Manhattan \emph{a cualquier hora}; eso es volumen, no interacción espacio-temporal.
+Ejemplo para (ii): una región que pesa más en los horarios de oficina que en los
+nocturnos, aunque su volumen total sea el mismo.
+
+\subsection{Dos ejemplos que aíslan los términos}
+
+\textbf{Ejemplo A: todo es volumen (término i).} La matriz de un solo bloque
+$\begin{pmatrix}2&4\\6&12\end{pmatrix}$:
+\begin{itemize}
+  \item con C2 (todas las celdas valen 6) el error es $\mathbf{4.50}$;
+  \item C5 la reproduce exacta, así que el error de C5 es 0;
+  \item con un solo bloque, C6 $=$ C5, así que (ii) $=0$ y $G^2=0$;
+  \item descomposición: \textbf{(i) $=4.50$, (ii) $=0$, (iii) $=0$.}
+\end{itemize}
+La matriz parece ``heterogénea'' para un criterio basado en C2, pero no hay ningún
+patrón: es un único perfil multiplicado por el volumen de cada fila y columna.
+
+\textbf{Ejemplo B: todo es interacción local (término iii).} La matriz 4$\times$4
+de la 2.4:
+\begin{itemize}
+  \item C5 y C6 coinciden con C2 (las filas de un mismo grupo tienen el mismo
+  total), por lo que (i) $=0$ y (ii) $=0$;
+  \item $G^2$ por bloque: $1.61$, $2.09$, $0$ y $2.02$, y $\tfrac12\sum G^2=2.86$;
+  \item descomposición: \textbf{(i) $=0$, (ii) $=0$, (iii) $=2.86$}, que es justo
+  el error total de la 2.4.2.
+\end{itemize}
+Aquí todo el error es asociación dentro de los bloques: los viajes se concentran
+en la diagonal.
+
+\subsection{Por qué esto justifica $G^2$}
+
+\begin{itemize}
+  \item Un criterio basado en la constancia del bloque (el implícito en C2) mezcla
+  los tres términos. En datos de movilidad con volúmenes muy desiguales, casi todos
+  los bloques parecerían heterogéneos solo por el término (i): es el Ejemplo A.
+  \item $G^2$ aísla el término (iii), que es lo que se busca: patrones locales de
+  asociación.
+\end{itemize}
+Un bloque de Midtown no es interesante por ser grande; lo es si dentro de él
+ciertas regiones se activan en ciertos horarios de forma distinta al resto.
+
+\subsection{La advertencia sobre la prueba $\chi^2$}
+
+$G^2$ tiene, bajo ciertas condiciones, una distribución conocida, la $\chi^2$ con
+$(|I_g|-1)(|J_h|-1)$ grados de libertad, que permitiría calcular un valor-p. Por
+ejemplo, el bloque $\begin{pmatrix}6&2\\2&6\end{pmatrix}$ tiene $G^2=4.19$ con 1
+grado de libertad, lo que daría $p\approx0.04$ y parecería ``significativo''. Pero
+esa lectura falla por tres razones:
+\begin{enumerate}
+  \item \textbf{Conteos pequeños.} La aproximación exige conteos esperados grandes
+  y es poco fiable en bloques con poca actividad.
+  \item \textbf{La partición se estima con los mismos datos que se prueban.} Se
+  eligieron los bloques para que parezcan estructurados y después se pregunta si
+  lo son. Eso infla la evidencia (es como elegir el mejor resultado de muchos
+  intentos y calcular su significancia como si fuera el único).
+  \item \textbf{Sobredispersión.} Los conteos reales de viajes varían más de lo que
+  predice Poisson.
+\end{enumerate}
+Por eso la tesis usa otra forma de calibrar las pruebas.
+
+\begin{idea}
+El error de una partición C2 se descompone en volumen (i), cambios de peso por
+bloque (ii) e interacción local (iii). $G^2$ aísla el tercero, que es el patrón que
+busca la tesis.
+\end{idea}
+
+\section{2.5.4 Escala de los datos: conteos frente a promedios}
+
+\subsection{Dos hechos}
+
+\begin{itemize}
+  \item \textbf{El co-agrupamiento no depende de la escala.} Por la homogeneidad
+  de la I-divergencia (2.3.1), multiplicar $O$ por una constante $c>0$ multiplica
+  el error por $c$ y no cambia la mejor partición.
+  \item \textbf{La interpretación estadística sí depende de ella.} La equivalencia
+  con la devianza de Poisson solo vale si las celdas son \textbf{conteos}.
+\end{itemize}
+
+\subsection{Por qué importa: promedios diarios}
+
+Si la matriz contiene promedios diarios, $O=S/D$, donde $S$ son los conteos
+totales de $D$ días, entonces $G^2(O)=G^2(S)/D$. Comparar eso con una $\chi^2$
+subestima la evidencia por un factor $D$.
+
+\textbf{Con números.} El bloque $\begin{pmatrix}6&2\\2&6\end{pmatrix}$ con
+$G^2=4.19$ podría venir de promedios sobre $D=30$ días. Los conteos totales serían
+$\begin{pmatrix}180&60\\60&180\end{pmatrix}$ y su $G^2$ sería
+$30\times4.19\approx126$. Con 4.19 la evidencia parece débil ($p\approx0.04$); con
+126 es abrumadora. Es el mismo patrón, pero la escala cambia por completo la
+lectura.
+
+Por eso los resultados de Liu et al.\ (2021), que construyen la matriz con
+volúmenes promedio, no permiten una lectura estadística directa. La tesis
+construye la matriz con \textbf{conteos totales}, o hace explícito el factor de
+escala antes de cualquier prueba.
+
+\begin{idea}
+Para que la lectura estadística sea válida, la matriz debe contener conteos
+totales, no promedios.
+\end{idea}
+
+% =====================================================================
+\part{Sección 2.6: El marco ST-CC}
+
+\section{Por qué existe en el capítulo 2}
+
+ST-CC es el marco de Liu et al.\ (2021). \textbf{No es el método de la tesis}: es
+el punto de partida que el método propuesto (AST-CC, Capítulo 3) refina. Para
+entender qué aporta AST-CC hay que saber qué hace ST-CC y dónde falla. Sus
+limitaciones son la motivación de la tesis.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}p{4.6cm}@{}}
+\toprule
+ & \textbf{ST-CC} & \textbf{AST-CC (la tesis)} \\
+\midrule
+Qué es & El marco de Liu et al.\ (2021) & El método propuesto \\
+\midrule
+Qué hace & Co-agrupa en tablero con BBAC y reagrupa los bloques con K-means & Parte del tablero de ST-CC y refina cada bloque con pruebas de hipótesis \\
+\midrule
+Dónde está & Sección 2.6 (marco teórico) & Capítulo 3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Idea general de ST-CC}
+
+Dos etapas, con una matriz región $\times$ intervalo de tiempo:
+\begin{enumerate}
+  \item \textbf{Co-agrupar en tablero} (con BBAC, 2.4): agrupa filas y columnas a la
+  vez y forma bloques.
+  \item \textbf{Reagrupar los bloques con K-means}: junta bloques parecidos aunque
+  no sean vecinos.
+\end{enumerate}
+El aporte de los autores no es un algoritmo nuevo, sino la forma de combinar
+métodos existentes para interpretar los datos.
+
+\section{2.6.1 Datos y matriz}
+
+\begin{itemize}
+  \item \textbf{Datos:} viajes de taxis de Nueva York (noviembre de 2017, unos diez
+  millones), por lugar de bajada.
+  \item \textbf{Filas:} 66 zonas de Manhattan. \textbf{Columnas:} 12 intervalos de
+  dos horas.
+  \item \textbf{Dos matrices de $66\times12$:} días laborables (12 días) y
+  feriados (9 días).
+  \item \textbf{Cada celda:} el \emph{volumen promedio} de bajadas de esa zona en
+  ese intervalo.
+\end{itemize}
+El punto delicado, visto en la 2.5.4: usar promedios no altera la partición, pero
+impide la lectura estadística como conteos de Poisson. Por eso AST-CC usa conteos
+totales.
+
+\section{2.6.2 Primera etapa: co-agrupamiento en tablero}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{7.4cm}>{\raggedright\arraybackslash}p{6.2cm}@{}}
+\toprule
+\textbf{Decisión} & \textbf{Valor} \\
+\midrule
+Grupos de tiempo $K_T$ & 4 (probaron 4 a 8; el algoritmo devolvía siempre 4) \\
+\midrule
+Grupos de regiones $K_R$ & 8 (laborables) y 6 (feriados), donde la curva del objetivo se estabiliza \\
+\midrule
+Inicializaciones & 200 por ejecución \\
+\midrule
+Convergencia & umbral $10^{-6}$, máximo 2000 iteraciones \\
+\bottomrule
+\end{tabular}
+\end{center}
+Resultado: tableros de $8\times4$ y $6\times4$ bloques. En días laborables, los
+cuatro grupos de tiempo son madrugada, baja actividad, horario diurno y noche.
+Aunque el algoritmo no usa la ubicación, los grupos de regiones salen
+espacialmente compactos.
+
+Los valores de $K$ se eligen \textbf{mirando una curva}, sin criterio estadístico.
+Esa es una de las limitaciones que ataca la tesis.
+
+\section{2.6.3 Segunda etapa: reagrupar los bloques}
+
+\textbf{El problema:} al asignar filas y columnas completas, bloques distintos
+tienen valores parecidos (casi toda la ciudad está tranquila de madrugada).
+
+\textbf{La solución:} cada bloque se describe con \textbf{dos números}, la media y
+la desviación estándar de sus celdas (la media resume el nivel de actividad y la
+desviación, cuán dispersas están las celdas), y los 32 bloques (laborables) o 24
+(feriados) se agrupan con K-means. El número de grupos se elige entre 3 y 8 con
+silueta y codo, y sale $K=4$ en ambos periodos. Los cuatro grupos se leen como
+niveles de actividad: muy bajo, bajo, medio y alto.
+
+\textbf{Consecuencia:} un grupo reúne bloques de distintas filas y columnas, así
+que el resultado deja de ser una rejilla regular. Los autores lo llaman
+co-agrupamiento \emph{no en tablero}.
+
+\section{2.6.4 Lectura de los resultados}
+
+\begin{itemize}
+  \item \textbf{Patrón espacial:} cómo se distribuyen los niveles de actividad
+  sobre todas las regiones dentro de un grupo de horarios. Son a lo sumo cuatro por
+  periodo, y su sucesión describe la dinámica del día.
+  \item \textbf{Patrón temporal:} la secuencia de niveles que sigue un conjunto de
+  regiones a lo largo del día. Encuentran 6 en laborables y 5 en feriados.
+  \item \textbf{Hallazgos:} los días laborables son más dinámicos y rítmicos, los
+  feriados más estáticos y aleatorios, y Penn Station solo alcanza actividad alta
+  en feriados.
+\end{itemize}
+
+\section{2.6.5 Limitaciones: las que motivan la tesis}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{6.6cm}>{\raggedright\arraybackslash}p{6.4cm}@{}}
+\toprule
+\textbf{Limitación de ST-CC} & \textbf{Qué hace AST-CC} \\
+\midrule
+K-means fusiona bloques parecidos pero nunca divide uno; la heterogeneidad dentro de un bloque no se recupera & Refinamiento jerárquico: divide los bloques que lo necesitan \\
+\midrule
+Los números de grupos se eligen con criterios heurísticos (curva, silueta, codo), sin interpretación estadística & Pruebas de hipótesis \\
+\midrule
+Comparar bloques con media y desviación supone distribuciones semejantes, algo que habría que verificar & Modelo nulo local de cada bloque \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{2.6.6 Base de co-agrupamiento: ST-CC y esta tesis}
+
+Esta subsección resuelve una ambigüedad en Liu et al.:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{7.2cm}c@{}}
+\toprule
+\textbf{Qué dicen} & \textbf{Base} \\
+\midrule
+El nombre del algoritmo (BBAC con I-divergencia) & C2 \\
+\midrule
+La función objetivo que declaran (pérdida de información mutua) & C5 \\
+\midrule
+Lo que realmente hace su paquete de código & C2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Entonces ST-CC declara C5 pero implementa C2. Las dos dan un tablero de bloques,
+pero no son equivalentes. Por la descomposición de la 2.5.3, C2 mezcla el término
+(i) de volumen, así que tiende a agrupar regiones \textbf{por volumen}, mientras
+que C5 lo excluye y agrupa \textbf{por forma de perfil}.
+
+La tesis adopta \textbf{C5}, porque el volumen no es interacción espacio-temporal
+y porque es lo que los autores declaran. C2 se reporta como variante en los
+experimentos. A partir de aquí la subsección deja de describir a Liu et al.\ y
+recoge una decisión de la tesis. Sigue pendiente confirmarla con el asesor.
+
+\begin{idea}
+ST-CC es el punto de partida: co-agrupa en tablero y reagrupa bloques con K-means.
+Sus tres limitaciones son exactamente lo que AST-CC resuelve en el Capítulo 3.
+\end{idea}
+
+% =====================================================================
+\part{Sección 2.7: Pruebas de hipótesis para tablas de conteo}
+
+\section{Por qué existe esta sección}
+
+En la 2.5 se vio que $G^2$ mide la interacción que queda dentro de un bloque. El
+método de la tesis (AST-CC) lo usa para decidir si un bloque se divide. Para eso
+hay que resolver tres problemas, y las secciones 2.7 y 2.8 son el kit de
+herramientas.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{9.0cm}>{\raggedright\arraybackslash}p{4.6cm}@{}}
+\toprule
+\textbf{Problema} & \textbf{Subsección} \\
+\midrule
+¿Cómo obtener una distribución de referencia \emph{válida} (tablas pequeñas, sobredispersión, grupos elegidos con los mismos datos)? & 2.7.1 a 2.7.3, 2.7.5 \\
+\midrule
+¿Cómo controlar el error al hacer \emph{muchas pruebas} (una por bloque del árbol)? & 2.7.4 \\
+\midrule
+¿Cómo evitar que con millones de viajes \emph{cualquier diferencia} resulte significativa? & 2.7.6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+La Sección 2.8 presenta SigTree, el método del que la propuesta toma la idea
+central: dividir con pruebas de hipótesis y detenerse cuando ninguna división es
+significativa. Estas notas cubren 2.7.1 a 2.7.6.
+
+\section{2.7.1 Pruebas de independencia}
+
+\subsection{Los conteos esperados}
+
+La hipótesis nula es que filas y columnas son independientes. Entonces el conteo
+esperado de cada celda es
+\[
+  \hat E_{ij}=\frac{x_{i+}\,x_{+j}}{x_{++}},
+\]
+es decir, total de la fila por total de la columna entre el total general. Es la
+misma fórmula del modelo de independencia de la 2.4.
+
+\subsection{Dos estadísticos}
+
+\begin{itemize}
+  \item \textbf{Pearson:} $X^2=\sum_{i,j}\dfrac{(x_{ij}-\hat E_{ij})^2}{\hat E_{ij}}$.
+  \item \textbf{Razón de verosimilitud:}
+  $G^2=2\sum_{i,j}x_{ij}\log\dfrac{x_{ij}}{\hat E_{ij}}$.
+\end{itemize}
+Bajo la hipótesis nula y con conteos esperados grandes, ambos siguen aproximadamente
+una $\chi^2$ con $(a-1)(b-1)$ grados de libertad. La regla práctica es que la
+mayoría de los esperados sean al menos 5.
+
+\textbf{Con el bloque $\begin{pmatrix}6&2\\2&6\end{pmatrix}$:} todos los esperados
+valen 4 (menos de 5, ya es una señal de alerta). $X^2=4/4+4/4+4/4+4/4=4$ y
+$G^2=4.19$ (calculado en la 2.5). Son parecidos, como se espera. Con 1 grado de
+libertad dan $p\approx0.046$ y $p\approx0.041$.
+
+\subsection{Por qué la tesis prefiere $G^2$}
+
+\begin{enumerate}
+  \item \textbf{Conecta con Bregman:} $G^2=2D_I(x\|\hat E)$ y
+  $G^2=2N\hat I(R;T)$, la información mutua escalada por la masa. Es el mismo
+  objeto de la 2.5.
+  \item \textbf{Se parte de forma exacta.} Si se agrupan filas, el $G^2$ de la
+  tabla completa es igual al $G^2$ de la tabla colapsada más los $G^2$ dentro de
+  cada grupo. Pearson no cumple esto.
+\end{enumerate}
+
+\textbf{Ejemplo de la propiedad 2.} La tabla con filas $(8,2)$, $(8,2)$ y $(2,8)$
+tiene $G^2=10.36$. Se agrupan las dos primeras filas, que son idénticas:
+\begin{itemize}
+  \item tabla colapsada $\begin{pmatrix}16&4\\2&8\end{pmatrix}$: $G^2=10.36$;
+  \item dentro del grupo $\{r_1,r_2\}$: filas idénticas, $G^2=0$; la fila $r_3$
+  sola: $G^2=0$;
+  \item suma: $10.36+0+0=10.36$. \checkmark
+\end{itemize}
+Todo lo asociado se explica con ese corte, y no queda nada dentro de los hijos.
+Esta es la base de la ``ganancia de un corte'' del Capítulo 3.
+
+\section{2.7.2 Pruebas condicionales y p-valores por simulación}
+
+\subsection{El problema de la $\chi^2$}
+
+La $\chi^2$ es una aproximación y falla en tablas pequeñas, que son frecuentes en
+bloques de poca actividad. Hace falta una prueba cuya validez no dependa del
+tamaño.
+
+\subsection{La idea: condicionar sobre los totales}
+
+Bajo independencia, si se fijan los totales de fila y de columna, la tabla se
+reparte al azar de una forma conocida (la \textbf{hipergeométrica multivariada}: la
+forma de repartir los conteos al azar manteniendo esos totales). Esa distribución
+no depende de parámetros desconocidos. El p-valor exacto es la probabilidad de
+obtener un estadístico al menos tan extremo como el observado. En tablas
+$2\times2$ es la prueba exacta de Fisher.
+
+\textbf{Con el mismo bloque $\begin{pmatrix}6&2\\2&6\end{pmatrix}$} (todos los
+totales valen 8, $N=16$): las tablas igual o más extremas son las que tienen 0, 1,
+2, 6, 7 u 8 en la primera celda. Su probabilidad total es
+$1698/12\,870\approx0.13$.
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+Método & p-valor \\
+\midrule
+$\chi^2$ (aproximación) & $\approx0.04$ \\
+Fisher (exacto) & $\approx\mathbf{0.13}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+La aproximación decía ``significativo'' y la prueba exacta dice que no hay
+evidencia al 5\,\%. Esta es la razón concreta por la que el plan insiste en no
+fiarse de la $\chi^2$ en bloques chicos.
+
+\subsection{Simulación (Patefield)}
+
+Enumerar todas las tablas es inviable salvo en tablas muy pequeñas, así que se
+simulan $B$ tablas con los mismos totales y se calcula
+\[
+  \hat p=\frac{1+\#\{k:\,t_k\ge t_{\mathrm{obs}}\}}{1+B}.
+\]
+El ``+1'' no es un arreglo arbitrario (Phipson y Smyth): la tabla observada es,
+bajo la nula, una realización más, y con la corrección la prueba es exacta.
+Consecuencias:
+\begin{itemize}
+  \item el menor p-valor posible es $1/(B+1)$;
+  \item para probar a nivel $\alpha$ hace falta $B\ge1/\alpha-1$: $B\ge19$ para
+  $\alpha=0.05$ y $B\ge99$ para $\alpha=0.01$;
+  \item \textbf{ejemplo:} con $B=99$ y 4 tablas simuladas por encima del observado,
+  $\hat p=(1+4)/100=0.05$.
+\end{itemize}
+
+\subsection{Simulación secuencial (Besag y Clifford)}
+
+Si hay muchas pruebas y casi todas tienen p grande, simular $B$ tablas en cada una
+desperdicia cómputo. Se simula hasta que $h$ tablas superen al observado y se
+detiene. Si se detiene tras $l$ tablas, el p-valor es $h/l$. Mantiene la validez y
+para pronto en los casos claramente no significativos.
+
+\subsection{El estadístico puede ser cualquiera}
+
+El estadístico puede ser cualquier función de la tabla, incluida una que haga una
+búsqueda, por ejemplo el máximo de $G^2$ sobre varias divisiones candidatas. El
+p-valor sigue siendo válido siempre que en cada tabla simulada \textbf{se repita la
+misma búsqueda}. Es la base del ajuste por selección de la 2.7.5 y del corte
+``min-P'' del Capítulo 3.
+
+\section{2.7.3 Remuestreo de réplicas independientes}
+
+\subsection{Por qué hace falta otro método}
+
+La prueba condicional es exacta solo si los conteos son Poisson. Con sobredispersión
+no lo son. Hace falta una distribución de referencia que refleje la variabilidad
+real, sin suponer un modelo.
+
+\subsection{El bootstrap}
+
+La tabla observada es la suma de $D$ réplicas independientes (los días):
+$x=\sum_d x_d$. El bootstrap remuestrea $D$ días \textbf{con reemplazo} y recalcula
+el estadístico sobre su suma. Repetido muchas veces, aproxima la distribución del
+estadístico.
+
+\textbf{Ejemplo:} con 12 días laborables, cada réplica del bootstrap elige 12 días
+al azar con reemplazo (algunos se repiten, otros no salen) y suma esas matrices
+diarias.
+
+\subsection{Tres detalles}
+
+\begin{enumerate}
+  \item \textbf{Debe hacerse bajo la hipótesis nula.} Aunque los datos no la
+  cumplan, se desplazan o reescalan las réplicas para que su media sea la del nulo.
+  Si no, la referencia incluiría el efecto que se quiere detectar y la prueba
+  perdería potencia.
+  \item \textbf{Corrección con pocas réplicas.} La varianza empírica de $D$ réplicas
+  subestima la real por el factor $(D-1)/D$, así que las desviaciones se multiplican
+  por $\sqrt{D/(D-1)}$.
+  \item \textbf{Supuesto que no se puede eludir:} las réplicas deben ser
+  \textbf{independientes}. Dos días consecutivos con el mismo episodio de clima no
+  lo son, y el remuestreo subestima la variabilidad.
+\end{enumerate}
+
+\begin{idea}
+$G^2$ se parte de forma exacta y conecta con Bregman, por eso se usa. La $\chi^2$
+falla en bloques pequeños ($p\approx0.04$ frente a $0.13$ exacto), así que se usan
+pruebas por simulación. Y como los conteos reales están sobredispersos, la
+referencia se obtiene remuestreando días.
+\end{idea}
+
+\section{2.7.4 Comparaciones múltiples}
+
+\subsection{El problema}
+
+El método hace \textbf{una prueba por cada bloque} del árbol. Si cada una se hace al
+nivel $\alpha=0.05$, la probabilidad de equivocarse al menos una vez crece rápido
+con el número de pruebas $M$:
+\[
+  P(\text{al menos un falso rechazo})=1-(1-\alpha)^M.
+\]
+\begin{center}
+\begin{tabular}{cc}
+\toprule
+$M$ & Probabilidad \\
+\midrule
+1 & 0.05 \\
+20 & 0.64 \\
+100 & 0.994 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Con 20 pruebas ya es más probable equivocarse que no, aunque no haya ningún efecto
+real.
+
+\subsection{Dos formas de medir el error}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{6.4cm}>{\raggedright\arraybackslash}p{4.2cm}@{}}
+\toprule
+\textbf{Medida} & \textbf{Qué controla} & \textbf{Ejemplo} \\
+\midrule
+FWER & La probabilidad de cometer \emph{al menos un} falso rechazo & Estricta \\
+\midrule
+FDR & La \emph{proporción esperada} de falsos rechazos entre los rechazos & Con 100 rechazos y FDR 5\,\%, se esperan unos 5 falsos \\
+\bottomrule
+\end{tabular}
+\end{center}
+La FWER es más estricta. La FDR tolera algunos falsos a cambio de más potencia, y
+suele ser preferible cuando se exploran muchas hipótesis.
+
+\subsection{Las correcciones}
+
+\begin{itemize}
+  \item \textbf{Bonferroni:} prueba cada hipótesis al nivel $\alpha/M$. Con $M=20$
+  y $\alpha=0.05$, cada prueba usa $0.0025$. Controla la FWER sin supuestos, pero
+  es \textbf{muy conservadora} cuando las pruebas están correlacionadas: las
+  divisiones candidatas de un mismo bloque comparten casi todos sus datos, así que
+  no son 20 pruebas independientes.
+  \item \textbf{Min-P (Westfall y Young):} en vez de dividir $\alpha$ entre $M$,
+  compara el menor p-valor (o el mayor estadístico) con su distribución nula
+  \emph{conjunta}, obtenida por simulación. Tiene en cuenta a la vez el número de
+  pruebas y su correlación. Es la que retoma el Capítulo 3.
+  \item \textbf{Benjamini y Hochberg:} controla la FDR ordenando los p-valores.
+  Vale cuando las pruebas son independientes.
+\end{itemize}
+
+\subsection{Pruebas jerárquicas}
+
+Cuando las hipótesis forman un árbol (la de un nodo solo tiene sentido si la del
+padre se rechazó), no hace falta corregir por todas las pruebas posibles, sino solo
+por las que se hacen. Tres antecedentes:
+\begin{itemize}
+  \item \textbf{Meinshausen (2008):} de arriba abajo, con un nivel por grupo
+  proporcional a su tamaño. Un hijo con el 60\,\% de las variables de su padre
+  recibe el 60\,\% del nivel. Controla la FWER sobre toda la jerarquía.
+  \item \textbf{Kimes (2017):} lo aplica al agrupamiento jerárquico, recorriendo el
+  dendrograma desde la raíz y probando en cada nodo con simulación.
+  \item \textbf{Yekutieli (2008):} para FDR, aplica Benjamini y Hochberg dentro de
+  cada familia de hijos de una hipótesis rechazada.
+\end{itemize}
+
+\subsection{La estructura que usa este problema}
+
+Si la independencia es cierta en un bloque, es cierta en todos sus sub-bloques:
+cualquier subtabla de una tabla con medias factorizadas también las tiene
+factorizadas. Entonces las hipótesis nulas verdaderas forman \textbf{subárboles
+completos}, y un falso rechazo solo puede ocurrir \textbf{por primera vez en la
+raíz} de uno de ellos. Por eso basta con controlar ese primer error y no el total
+de pruebas.
+
+\section{2.7.5 Inferencia después de la selección}
+
+\subsection{El problema del doble uso de los datos}
+
+Las garantías anteriores suponen que las hipótesis se fijan \textbf{antes} de ver
+los datos. En agrupamiento no es así: los grupos, y las hipótesis sobre ellos, se
+eligen con los mismos datos.
+
+Gao et al.\ (2024) mostraron que, si los grupos se definen agrupando, una prueba
+clásica de diferencia de medias tiene un error de tipo I \textbf{extremadamente
+inflado}, y que el problema persiste aunque se usen dos conjuntos de datos
+independientes. La razón es que el agrupamiento \textbf{encuentra grupos distintos
+incluso cuando no hay estructura}. Si se generan datos de puro ruido, se agrupan en
+dos y se prueba si los grupos difieren, la prueba casi siempre sale significativa.
+
+\subsection{Tres remedios}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}p{4.4cm}@{}}
+\toprule
+\textbf{Enfoque} & \textbf{Cómo funciona} & \textbf{Límite} \\
+\midrule
+1. Incluir la selección en la simulación & En cada réplica nula se repite el procedimiento de selección completo & El p-valor vale para la nula \emph{global}, no para hipótesis más específicas \\
+\midrule
+2. Inferencia selectiva & Se calcula el p-valor condicionando al evento de que el procedimiento produjo esos grupos (Gao 2024, Watanabe 2021) & Garantías formales, pero casi siempre para datos gaussianos y costoso \\
+\midrule
+3. División de cada observación (count splitting) & Ver abajo & Falla con sobredispersión \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Count splitting (Neufeld et al., 2024)}
+
+Cada conteo se divide en dos partes, $x=x^{(1)}+x^{(2)}$, con
+$x^{(1)}\mid x\sim\mathrm{Binomial}(x,\varepsilon)$. Si $x\sim\mathrm{Poisson}(\mu)$,
+las dos partes son \textbf{independientes} y Poisson, con medias $\varepsilon\mu$ y
+$(1-\varepsilon)\mu$. La estructura se elige con $x^{(1)}$ y se prueba con
+$x^{(2)}$, como si se hubiera fijado de antemano.
+
+\textbf{Ejemplo:} una celda con $\mu=10$ y $\varepsilon=0.5$ produce
+$x^{(1)}\sim\mathrm{Poisson}(5)$ y $x^{(2)}\sim\mathrm{Poisson}(5)$, independientes.
+Se elige el corte con la primera mitad y se prueba con la segunda.
+
+Es lo que distingue este enfoque de dividir las \emph{filas} en dos grupos de datos,
+que no funciona según Gao: aquí cada conteo se parte, no cada fila. Pero si los
+conteos están sobredispersos, las dos partes dejan de ser independientes y la
+garantía se debilita. \emph{Data thinning} generaliza la idea a otras familias.
+
+\section{2.7.6 Tamaño de efecto y sobredispersión}
+
+\subsection{Tamaño de efecto: el problema de los millones de viajes}
+
+Con muestras grandes, una prueba detecta desviaciones mínimas. Como
+$G^2=2N\hat I(R;T)$, si la información mutua poblacional es positiva, aunque sea
+ínfima, $G^2$ crece \textbf{proporcional a $N$} y el p-valor tiende a 0.
+
+\textbf{Ejemplo:} con $\hat I=0.001$ nats, $G^2=2$ con $N=1\,000$, pero
+$G^2=2\,000$ con $N=1\,000\,000$. Misma asociación diminuta; con un millón de viajes
+es ``altamente significativa''. Los autores de SigTree reconocen este fenómeno como
+limitación.
+
+La solución es acompañar la significancia con una medida de tamaño de efecto que no
+crezca con $N$:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{5.2cm}>{\raggedright\arraybackslash}p{3.6cm}@{}}
+\toprule
+\textbf{Medida} & \textbf{Fórmula} & \textbf{Rango} \\
+\midrule
+Información mutua por observación & $\hat I=G^2/(2N)$ (nats) & Conecta con la función objetivo \\
+\midrule
+$V$ de Cramér & $\sqrt{X^2/(N\min(a-1,b-1))}$ & 0 (independencia) a 1 (asociación perfecta) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Con números.} El bloque $\begin{pmatrix}6&2\\2&6\end{pmatrix}$: $X^2=4$,
+$N=16$, $\min=1$, así que $V=\sqrt{4/16}=0.5$ e $\hat I=4.19/32=0.131$. Multiplicado
+por 100, $\begin{pmatrix}600&200\\200&600\end{pmatrix}$: $G^2=419$ (100 veces
+mayor), pero $V=0.5$ e $\hat I=0.131$ \textbf{iguales}. La significancia explota con
+$N$; el tamaño de efecto no.
+
+\subsection{El sesgo de la información mutua empírica}
+
+Aunque la población sea independiente, $G^2$ sigue una $\chi^2$ con
+$\nu=(a-1)(b-1)$ grados de libertad, cuya media es $\nu$. Entonces
+$\mathrm{E}[\hat I]\approx\nu/(2N)>0$. Es el sesgo que corrige Miller y Madow para
+estimadores de información mutua.
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+Tabla & $\nu$ & $N$ & Sesgo esperado de $\hat I$ \\
+\midrule
+$2\times2$ & 1 & 100 & 0.005 \\
+$5\times5$ & 16 & 100 & 0.08 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Un umbral sobre $\hat I$ sin corregir favorecería a las tablas con pocas
+observaciones y muchas celdas, porque tendrían un $\hat I$ ``alto'' solo por azar.
+
+\subsection{Sobredispersión}
+
+Poisson impone que la varianza sea igual a la media. En datos reales es mayor,
+$\mathrm{Var}=\varphi\mu$ con $\varphi>1$, porque los eventos no son
+independientes: el día de la semana, el clima, eventos puntuales. Entonces $X^2$ y
+$G^2$ se \textbf{inflan por el factor $\varphi$} y la prueba rechaza demasiado.
+
+\textbf{Corrección por cuasi-verosimilitud} (ajusta la varianza sin suponer una
+distribución completa): dividir el estadístico entre una estimación de $\varphi$
+(por ejemplo, el cociente de Pearson entre sus grados de libertad).
+
+\textbf{Ejemplo:} con $\varphi=4$, un estadístico de 8 con 1 grado de libertad
+($p\approx0.005$) se corrige a 2 ($p\approx0.16$). Pasa de ``muy significativo'' a
+``no significativo''.
+
+\subsection{Funciones de varianza}
+
+Un único $\varphi$ supone varianza proporcional a la media. Hay formas más generales
+$\mathrm{Var}=V(\mu)$:
+\begin{itemize}
+  \item \textbf{Binomial negativa:} $V(\mu)=\mu+\mu^2/k$. La sobredispersión crece
+  con la media. Con $k=50$: $\mu=10$ da varianza 12 ($\varphi=1.2$), pero $\mu=100$
+  da 300 ($\varphi=3$).
+  \item \textbf{Ley de potencia de Taylor:} $V(\mu)=a\mu^b$, que contiene como casos
+  particulares Poisson ($a=b=1$) y $\varphi$ constante ($b=1$).
+\end{itemize}
+
+\subsection{El límite de todos estos modelos}
+
+Todas describen la varianza de \textbf{cada celda por separado}. Cuando la
+variabilidad viene de factores que actúan sobre muchas celdas a la vez (el clima de
+un día), las celdas dejan de ser independientes entre sí, y ningún modelo de
+varianza por celda lo captura. Si hay réplicas independientes (los días), la
+correlación se reproduce \textbf{remuestreando} (el bootstrap de la 2.7.3) en lugar
+de modelarla.
+
+\begin{idea}
+Con muchas pruebas el error se acumula (64\,\% con 20), y como los bloques de un
+árbol están anidados basta con controlar el primer rechazo falso. Elegir grupos con
+los mismos datos infla el error y se corrige repitiendo la selección en la
+simulación o partiendo cada conteo. Con millones de viajes todo es significativo,
+así que se exige además un tamaño de efecto corregido por sesgo. La sobredispersión
+infla los estadísticos y se corrige remuestreando días.
+\end{idea}
+
+% =====================================================================
+\part{Sección 2.8: SigTree}
+
+\section{Por qué existe esta sección}
+
+SigTree (Hu et al., 2025) es el método del que la propuesta toma su idea central:
+\textbf{construir una partición con pruebas de hipótesis y detenerse cuando ninguna
+división es significativa}. Importa por una razón concreta. En ST-CC (2.6) el
+número de grupos se elige mirando una curva, sin criterio estadístico. SigTree no
+necesita fijar el número de grupos: tiene un solo parámetro, el nivel $\alpha$, con
+interpretación estadística clara. Eso es justo lo que busca la tesis.
+
+La sección tiene dos funciones: explica cómo funciona SigTree y deja claro qué hay
+que adaptar para trasladarlo al problema de la tesis (bloques de una matriz de
+conteos en vez de muestras con atributos categóricos). Las herramientas de la 2.7
+son las piezas con las que se hace esa adaptación.
+
+\subsection{Antecedente: CHAID}
+
+Usar pruebas de hipótesis para decidir divisiones de un árbol no es nuevo.
+\textbf{CHAID} (Kass, 1980) lo hace en el caso \textbf{supervisado}: elige cada
+división con una prueba $\chi^2$ entre la división candidata y la variable de
+clase. SigTree traslada la idea al caso \textbf{no supervisado}, donde no hay
+variable de clase.
+
+\section{2.8.1 Divisiones candidatas y pseudo-clases}
+
+\textbf{El escenario.} $n$ muestras descritas por $m$ atributos categóricos (el
+atributo $q$ con $k_q$ categorías).
+
+\textbf{La división candidata.} En cada nodo, cada categoría $c$ de cada atributo
+$j$ define una división: separa las muestras con valor $c$ en el atributo $j$ de las
+que no. Se representa con una variable binaria $Z=\mathbb 1[x_j=c]$.
+
+\textbf{El problema:} no hay variable de clase contra la cual probar la división.
+\textbf{La solución:} cada uno de los otros $m-1$ atributos hace de
+\textbf{pseudo-clase}, es decir, de etiqueta provisional.
+\begin{itemize}
+  \item \textbf{Hipótesis nula de cada prueba:} $Z$ es independiente del atributo
+  $q$.
+  \item \textbf{Hipótesis nula global:} $Z$ es independiente de todos los demás
+  atributos.
+  \item \textbf{Intuición:} si las muestras del nodo no tienen estructura de
+  grupos, ninguna división candidata estará asociada con la mayoría de las
+  pseudo-clases. Si sí hay grupos, una buena división separará a la vez muchos
+  atributos.
+\end{itemize}
+
+\section{2.8.2 Estadístico y criterio de división}
+
+Para cada par (división $Z$, atributo $q\ne j$):
+\begin{enumerate}
+  \item se construye la tabla de contingencia $2\times k_q$;
+  \item se calcula el estadístico de Pearson $X^2(Z,q)$; en tablas $2\times2$ con
+  algún esperado menor que 5 se aplica la \textbf{corrección de Yates}, un ajuste
+  que evita sobrestimar el estadístico con conteos pequeños;
+  \item se suman todos los atributos:
+  \[
+    X^2(Z)=\sum_{q\ne j}X^2(Z,q),\qquad \mathrm{gl}(Z)=\sum_{q\ne j}(k_q-1);
+  \]
+  \item el p-valor se obtiene de la $\chi^2$ con $\mathrm{gl}(Z)$ grados de
+  libertad, suponiendo que las pruebas individuales son independientes;
+  \item en cada nodo se elige la división de \textbf{menor p-valor}.
+\end{enumerate}
+
+\subsection{Ejemplo numérico}
+
+Un nodo con 100 muestras y tres atributos binarios $A$, $B$ y $C$. Se prueba la
+división $Z=\mathbb 1[A=1]$: 50 muestras tienen $A=1$ y 50 no.
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Pseudo-clase & Tabla $Z\times$ atributo & Esperados & $X^2$ \\
+\midrule
+$B$ & $\begin{pmatrix}40&10\\10&40\end{pmatrix}$ & 25 en cada celda & $4\cdot15^2/25=\mathbf{36}$ \\
+\midrule
+$C$ & $\begin{pmatrix}30&20\\20&30\end{pmatrix}$ & 25 en cada celda & $4\cdot5^2/25=\mathbf{4}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+La suma es $X^2(Z)=36+4=40$ con $\mathrm{gl}=1+1=2$. El p-valor de la $\chi^2$ con 2
+grados de libertad es $e^{-20}\approx2\cdot10^{-9}$, muy pequeño. La división
+$A=1$ está fuertemente asociada con $B$ y débilmente con $C$, y la suma lo recoge.
+SigTree compara este p-valor con el de las demás candidatas y se queda con la menor.
+
+\section{2.8.3 Criterios de parada}
+
+La división elegida solo se aplica si su p-valor es menor o igual que un nivel
+ajustado
+\[
+  \alpha^\ast=\frac{\alpha}{|Q|},
+\]
+donde $|Q|$ es el número total de categorías de todos los atributos. Es una
+corrección de Bonferroni con un divisor \textbf{constante}, igual en todos los nodos
+(2.7.4). En el ejemplo, con tres atributos binarios, $|Q|=6$ y
+$\alpha^\ast=0.05/6\approx0.0083$. Como $2\cdot10^{-9}<0.0083$, la división se
+acepta.
+
+Además hay dos reglas triviales: no se dividen nodos con 5 muestras o menos, y no
+se aceptan divisiones que produzcan un hijo con menos de 3 muestras. El crecimiento
+termina cuando ninguna hoja admite una división significativa, y las hojas son los
+grupos finales. El resultado es un algoritmo con \textbf{un solo parámetro}
+interpretable, el nivel $\alpha$, que \textbf{no requiere fijar el número de
+grupos}.
+
+\section{2.8.4 Limitaciones}
+
+\textbf{Las tres que reconocen los autores:}
+\begin{enumerate}
+  \item Evaluar todas las divisiones candidatas en cada nodo es costoso.
+  \item No optimiza una función objetivo explícita, así que no hay garantía de que
+  el árbol sea el mejor posible.
+  \item El estadístico $\chi^2$ crece con el número de muestras y de atributos, lo
+  que empuja los p-valores a cero y dificulta controlar los falsos descubrimientos
+  con ese umbral (el problema de la 2.7.6).
+\end{enumerate}
+\textbf{Dos que se añaden desde la 2.7:}
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item El p-valor de la división elegida se calcula \emph{como si esa división se
+  hubiera fijado de antemano}, sin tener en cuenta que se eligió por ser la de menor
+  p-valor (el problema de la 2.7.5).
+  \item La suma de estadísticos supone independencia entre pruebas que
+  \emph{comparten la misma variable} $Z$, lo que no es cierto.
+\end{enumerate}
+
+\section{2.8.5 Relación con la propuesta}
+
+La tabla compara componente por componente. Leída con lo visto en la 2.7, cada fila
+apunta a una herramienta:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.7cm}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\toprule
+\textbf{Componente} & \textbf{SigTree} & \textbf{Propuesta} & \textbf{Herramienta (2.7)} \\
+\midrule
+Objeto que se divide & Muestras con atributos categóricos & Bloque de una matriz de conteos región $\times$ tiempo & (adaptación al problema) \\
+\midrule
+División candidata & Presencia o ausencia de una categoría & Bipartición de las filas, de las columnas o de ambas & (adaptación) \\
+\midrule
+Qué se prueba & Asociación entre la división y los demás atributos & Asociación entre la división y la \emph{otra dimensión} del bloque & 2.7.1 \\
+\midrule
+Estadístico & Suma de $X^2$ & $G^2$ de la tabla colapsada, coherente con la I-divergencia & 2.7.1 ($G^2$ se parte de forma exacta) \\
+\midrule
+Distribución de referencia & $\chi^2$ asintótica & \emph{Bootstrap} de los días alrededor de la independencia del bloque, repitiendo la búsqueda & 2.7.3 y 2.7.5 \\
+\midrule
+Comparaciones múltiples & Bonferroni uniforme & Reparto jerárquico del nivel a lo largo del árbol & 2.7.4 \\
+\midrule
+Criterio de parada & Significancia y reglas triviales & Significancia, tamaño de efecto corregido por sesgo y reglas triviales & 2.7.6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Las limitaciones de ambos métodos orientan el diseño. La elección heurística de
+$K_R$ y $K_T$ en ST-CC motiva que la resolución final no dependa solo de esos
+números, y la inflación del estadístico de SigTree con muestras grandes motiva
+complementar la significancia con un umbral de tamaño de efecto.
+
+\begin{idea}
+SigTree divide un árbol con pruebas de hipótesis y para cuando nada es
+significativo, sin fijar el número de grupos. La propuesta conserva ese principio y
+cambia cada pieza: $G^2$ en lugar de la suma de $X^2$, \emph{bootstrap} de días en
+lugar de $\chi^2$, reparto jerárquico del nivel en lugar de Bonferroni uniforme, y
+tamaño de efecto además de significancia.
+\end{idea}
+
+% =====================================================================
+\part{Capítulo 3, bloque 1: visión general y formulación}
+
+\section{Por qué existe el capítulo}
+
+El Capítulo 2 dejó un problema abierto. ST-CC resume cada bloque de su tablero con
+un solo valor, así que la interacción entre regiones y horarios que queda
+\emph{dentro} de los bloques, el término (iii) de la descomposición de la
+sección 2.5, no se modela. Un patrón local, por ejemplo unas pocas regiones que se
+activan solo en la tarde, queda diluido en un bloque que parece uniforme. Para
+recuperarlo hacen falta dos cosas, una forma de subdividir un bloque sin tocar el
+resto de la matriz y un criterio estadístico para decidir si la subdivisión es
+real y cuándo parar. El Capítulo 2 aportó las herramientas ($G^2$, pruebas por
+simulación, control jerárquico, tamaño de efecto) y el Capítulo 3 las junta.
+
+\section{3.1 Visión general}
+
+La idea cabe en una frase. Se refina mientras haya heterogeneidad local detectable
+y de tamaño relevante, y se para cuando todas las hojas sean indistinguibles de su
+modelo nulo. Es el principio de SigTree llevado a una matriz. El método tiene
+cuatro etapas, que son construir la matriz $O$ con sus $D$ matrices diarias,
+obtener la partición base con BBAC$_I$ y la base C5, refinar cada bloque
+(dividir por filas, por columnas, de forma conjunta, o dejarlo como hoja) y
+resumir las hojas con su tamaño de efecto y su nivel de actividad.
+
+La diferencia con subir $K_R$ y $K_T$ es que un corte global atraviesa toda la
+matriz y fragmenta también las zonas sin patrón, mientras que un corte de AST-CC
+afecta solo al bloque donde se detectó la heterogeneidad. Los parámetros crecen
+con la estructura local encontrada y no con la resolución global.
+
+\section{3.2 Formulación}
+
+\subsection{Notación y la cantidad central}
+
+Un bloque es $B=I\times J$, con $I$ un subconjunto de regiones y $J$ uno de
+horarios. Se calcula su tabla esperada bajo independencia,
+$E^B_{ij}=O^B_{i\cdot}O^B_{\cdot j}/N_B$, y su estadístico
+$G^2_B=2\sum O_{ij}\log(O_{ij}/E^B_{ij})$, que es la sección 2.5 aplicada a un
+bloque. La información mutua empírica es $\hat I_B=G^2_B/(2N_B)$.
+
+\paragraph{Ejemplo.} Sea el bloque de cuatro regiones y dos horarios
+\[
+\begin{array}{c|cc}
+ & \text{mañana} & \text{tarde}\\\hline
+A & 30 & 10\\ B & 28 & 12\\ C & 10 & 30\\ D & 12 & 28
+\end{array}
+\]
+Cada fila suma 40 y cada columna 80, con $N_B=160$, así que todos los esperados
+valen 20. Entonces
+$G^2_B=2\sum O\ln(O/20)\approx 34.10$ con $(4-1)(2-1)=3$ grados de libertad, y
+$\hat I_B=34.10/320\approx 0.107$ nats por viaje. Se ve que $A$ y $B$ se parecen,
+que $C$ y $D$ también, y que los dos pares son opuestos.
+
+\subsection{Corte, árbol y modelo local}
+
+Un corte parte un bloque de tres maneras, de filas (dos hijos), de columnas (dos
+hijos) o conjunto (cuatro hijos). El árbol de refinamiento tiene como hijos de la
+raíz los $K_RK_T$ bloques base, y debajo los cortes. Las hojas forman siempre una
+partición de la matriz con estructura de guillotina, porque cada corte actúa solo
+dentro de su bloque, y si no se corta nada coinciden con el tablero de ST-CC.
+
+Cada hoja se aproxima con el modelo de independencia de su propio bloque,
+$\hat O=E^L$. La ventaja es que cada hoja tiene sus propios efectos de fila y de
+columna, así que las diferencias de volumen entre regiones no cuentan como patrón.
+El número de parámetros es $\sum_L(|I_L|+|J_L|-1)$.
+
+\subsection{La proposición clave}
+
+Tiene tres partes. En (a), la divergencia del árbol es la mitad de la suma de las
+$G^2$ de sus hojas. En (b), si se corta $B$ con $s$, entonces
+$G^2_B=G^2_{B,s}+\sum_{C}G^2_C$, un reparto exacto entre lo que explica el corte y
+lo que queda dentro de los hijos. En (c), cortar reduce la divergencia en
+exactamente $\tfrac12G^2_{B,s}$, y $G^2_{B,s}$ es un estadístico de razón de
+verosimilitud con grados de libertad conocidos ($|J|-1$ para filas, $|I|-1$ para
+columnas, $|I|+|J|-3$ para conjunto).
+
+\paragraph{Ejemplo con el bloque anterior.} Se cortan las filas en $\{A,B\}$ y
+$\{C,D\}$. La tabla colapsada es
+\[
+\begin{array}{c|cc}
+ & \text{mañana} & \text{tarde}\\\hline
+\{A,B\} & 58 & 22\\ \{C,D\} & 22 & 58
+\end{array}
+\]
+con esperados 40. Con la fórmula de la proposición,
+$\log\frac{O_{rj}N_B}{N_rO^B_{\cdot j}}=\log\frac{58\cdot160}{80\cdot80}=\ln1.45$,
+y
+\[
+G^2_{B,s}=2\cdot2\,[58\ln1.45+22\ln0.55]\approx 33.59
+\]
+con $|J|-1=1$ grado de libertad. Cada hijo es casi homogéneo, por ejemplo
+$(30,10;\,28,12)$ con esperados $(29,11)$ y $G^2_C\approx0.25$; los dos suman
+$0.51$. Se comprueba el reparto, $33.59+0.51\approx34.10=G^2_B$. El corte explica el
+98.5\,\% de la heterogeneidad ($33.59/34.10$) con un solo parámetro más, pues
+antes hay $4+2-1=5$ parámetros y después $3+3=6$.
+
+\paragraph{Por qué importan los grados de libertad.} Un corte de columnas separa
+las dos columnas y explica el 100\,\%, pero con $|I|-1=3$ grados de libertad.
+Con $G^2$ crudo parecería mejor, y por eso la comparación entre tipos de corte se
+hace con p-valores calibrados.
+
+\paragraph{Lectura informacional.} Dividiendo el reparto entre $2N_B$ se obtiene la
+regla de la cadena de la información mutua, así que la asociación del bloque se
+reparte sin pérdida ni duplicación entre lo que explica el corte y lo que queda en
+los hijos.
+
+\paragraph{Por qué funciona (no va en la tesis).} Dentro de cada hoja, la
+aproximación reproduce el total, así que los términos lineales de la I-divergencia
+se cancelan y queda $\sum O\log(O/E)=\tfrac12G^2_L$. Para el reparto se usa la
+misma identidad pitagórica de la sección 2.5, aplicada a dos modelos anidados, el
+de independencia en $B$ y el del corte. Su diferencia es la ganancia
+$G^2_{B,s}$, que resulta ser el $G^2$ de la tabla colapsada porque, tras un corte de
+filas, los totales de fila de cada hijo coinciden con los de $B$.
+
+\subsection{Relación con ST-CC (el corolario)}
+
+ST-CC deja sin modelar el término (iii), la suma de las $G^2$ de los bloques base.
+AST-CC lo reparte en una parte \emph{explicada} (las ganancias de los cortes
+aceptados) y una parte \emph{residual} (lo que queda en las hojas). Cada corte
+aceptado traslada $\tfrac12G^2_{B,s}$ de la segunda a la primera. El reparto
+depende solo de la partición y no de la base con que se obtuvo, así que vale con C2
+y con C5, y el criterio de refinamiento y el objetivo de ST-CC son la misma
+cantidad a distintas escalas.
+
+\subsection{Planteamiento del problema}
+
+El problema es minimizar la divergencia del árbol sujeto a que ninguna hoja tenga
+heterogeneidad significativa y relevante. No se resuelve de forma exacta porque el
+árbol se construye de forma voraz, de arriba abajo. La proposición garantiza que
+cada decisión local es coherente con el objetivo global, no que el árbol final sea
+óptimo. La versión penalizada tipo BIC, con $\lambda=\tfrac12\log N$, no construye
+el árbol sino que sirve para comparar en una misma escala árboles de AST-CC con
+rejillas globales de distinto tamaño.
+
+\begin{idea}
+Cortar un bloque reparte su $G^2$ de forma exacta entre lo que explica el corte y lo
+que queda en los hijos. Por eso cada corte se puede decidir con la información de
+su propio bloque sin perder coherencia con el objetivo global, y su ganancia es un
+estadístico de razón de verosimilitud al que se le puede aplicar una prueba de
+hipótesis.
+\end{idea}
+
+% =====================================================================
+\part{Capítulo 3, bloque 2: estadísticos y regla de decisión}
+
+\section{Por qué existen estas secciones}
+
+La sección 3.2 mostró que cortar un bloque reparte su $G^2$ de forma exacta, pero
+no dijo cuándo conviene cortar ni dónde. La 3.3 define las preguntas estadísticas
+que se le hacen a cada bloque, y la 3.4 las junta en una regla que termina en una de
+tres decisiones, que son cortar, dejar el bloque como hoja homogénea o dejarlo como
+hoja heterogénea no localizada.
+
+\section{3.3 Estadísticos de heterogeneidad}
+
+\subsection{3.3.1 Elección del modelo nulo}
+
+Hay dos candidatos para lo que se considera comportamiento esperado dentro de un
+bloque. La \emph{constancia} supone que todas las celdas valen lo mismo,
+$\mu_{ij}=\theta$, y es el nulo implícito en la base C2. La \emph{independencia}
+supone $\mu_{ij}=a_ib_j$, un efecto de región multiplicado por un efecto de horario.
+
+\paragraph{Ejemplo.} Sea el bloque con filas $(80,20)$ y $(40,10)$, con $N=150$. La
+segunda región tiene la mitad del volumen de la primera pero el mismo perfil, pues
+ambas ponen el 80\,\% en la mañana. No hay ningún patrón local.
+\begin{itemize}
+\item Bajo constancia el esperado es $37.5$ en todas las celdas y
+$G^2=2\,[80\ln\tfrac{80}{37.5}+20\ln\tfrac{20}{37.5}+40\ln\tfrac{40}{37.5}+10\ln\tfrac{10}{37.5}]\approx74.8$
+con 3 grados de libertad, que se rechaza con claridad.
+\item Bajo independencia los esperados son exactamente $(80,20)$ y $(40,10)$, así
+que $G^2=0$.
+\end{itemize}
+Con datos de movilidad, donde las zonas tienen volúmenes muy distintos, la
+constancia rechazaría casi todos los bloques solo por el volumen, que son los
+términos (i) y (ii) de la descomposición. La independencia aísla el término (iii),
+y rechazarla significa que algunas regiones se activan en algunos horarios de forma
+distinta al resto, que es la definición operativa de patrón local de esta tesis.
+
+\subsection{3.3.2 Prueba ómnibus}
+
+La primera pregunta es si el bloque contiene algo que refinar, y se responde con
+$G^2_B$. Con conteos de Poisson independientes bastaría una simulación condicionada
+a los totales, pero los taxis tienen una varianza entre días mucho mayor que la
+media. Con var/media $\approx3$, el valor típico de $G^2_B$ bajo el nulo ronda
+$3\nu$ en lugar de $\nu$. Con $\nu=12$ serían unas 36 unidades en lugar de 12, y una
+prueba $\chi^2$ con 12 grados de libertad daría $p<0.001$ en un bloque que no tiene
+nada. Por eso el nulo se genera remuestreando los días reales (sección 3.5).
+
+\subsection{3.3.3 Pruebas dirigidas}
+
+Si el ómnibus rechaza, la segunda pregunta es qué corte captura la estructura. Para
+cada tipo se toma el máximo de la ganancia $G^2_{B,s}$ sobre los candidatos. Dentro
+de un tipo todos los candidatos tienen los mismos grados de libertad, así que el de
+mayor $G^2$ es el de menor p-valor, igual que SigTree elige la división de menor
+p-valor.
+
+\paragraph{La observación del nulo común.} El bloque es independiente si y solo si
+todas sus filas tienen el mismo perfil sobre las columnas, de modo que el ómnibus y
+las dirigidas contrastan la misma hipótesis con estadísticos de distinta potencia.
+Las dirigidas solo se hacen si el ómnibus rechazó, así que para que un bloque nulo
+se refine hay que rechazar primero el ómnibus, lo que ocurre con probabilidad a lo
+sumo $\alpha_B$. Las dirigidas localizan la estructura y no añaden oportunidades de
+falso rechazo.
+
+\paragraph{Un caso que parece problemático.} Sean las filas $(30,10)$, $(10,30)$,
+$(30,10)$ y $(10,30)$. Todos los totales de fila valen 40 y los de columna 80, así
+que las marginales no muestran nada. Sin embargo el corte $\{1,3\}$ frente a
+$\{2,4\}$ colapsa el bloque en $(60,20)$ y $(20,60)$, con esperados 40, y
+\[
+G^2_{B,s}=2\cdot2\,[60\ln1.5+20\ln0.5]\approx41.9 .
+\]
+El corte compara los perfiles completos de los grupos y no sus totales. Por eso los
+cortes unidimensionales bastan para la mayoría de las estructuras, y el conjunto se
+reserva para cuando la evidencia está repartida entre ambas dimensiones.
+
+\subsection{3.3.4 Generación de cortes candidatos}
+
+Un bloque con $|I|$ filas admite $2^{|I|-1}-1$ biparticiones. Con 4 filas son 7,
+con 14 son 8191 y con 15 serían 16383, así que cada fila adicional duplica el
+número de candidatos.
+
+\paragraph{Columnas.} Con $n=12$ hay a lo sumo $2^{11}-1=2047$ biparticiones, y se
+enumeran todas.
+
+\paragraph{Filas.} Si $|I|\le14$ se enumeran. Por encima se usa un 2-medias con
+divergencia KL ponderada. Maximizar la ganancia de un corte de filas equivale a
+minimizar $\sum_iO^B_{i\cdot}\,\mathrm{KL}(p(\cdot|i)\,\|\,p(\cdot|r(i)))$, donde
+$p(\cdot|i)$ es el perfil horario de la fila $i$. Es un K-means de dos grupos que
+agrupa las filas por la forma de su perfil y no por su volumen, y es el paso de filas
+del co-agrupamiento de Dhillon con dos grupos. Cada fila va al grupo cuyo perfil
+promedio se parece más al suyo, y se repite hasta que nadie cambia, desde
+$R_{\mathrm{ini}}=10$ inicios aleatorios.
+
+\paragraph{Conjunto.} La ganancia de un corte conjunto equivale a minimizar la suma
+de las $G^2$ de los cuatro hijos. Si $|J|\le6$ y $|I|\le14$ se recorren todos los
+cortes de columnas y, para cada uno, se elige el mejor de filas, lo que da el óptimo
+exacto. En bloques mayores se alternan ambos pasos.
+
+\paragraph{Una búsqueda heurística no invalida la prueba.} Siempre que el mismo
+procedimiento se repita en cada réplica nula, el p-valor es válido para el estadístico
+que efectivamente se calcula, aunque no sea el máximo exacto. Lo que se pierde es
+potencia, y por eso se prefiere enumerar siempre que se pueda.
+
+\section{Por qué el límite es 14 filas}
+
+El 14 no es un número teórico sino un compromiso entre exactitud y costo, y
+conviene tener claras sus tres piezas.
+
+\paragraph{1. Por qué enumerar.} El 2-medias es una heurística que puede quedarse en
+un mínimo local. En una comprobación sobre 40 tablas de $8\times5$, en las que el
+óptimo se calcula enumerando, lo alcanzó en alrededor del 92\,\% de los casos con
+diez inicios, y nunca lo superó, porque una heurística no puede ganarle al óptimo.
+Ese 8\,\% de fallos es lo que justifica enumerar siempre que se pueda. Importa
+porque el p-valor compara el máximo observado con el máximo bajo el nulo, y un
+máximo mal encontrado resta potencia.
+
+\paragraph{2. Por qué no enumerar siempre.} Cada fila adicional duplica los
+candidatos, y la búsqueda no se hace una vez sino en cada réplica nula. Con
+$|I|=14$ son 8191 candidatos, cada uno una tabla colapsada $2\times|J|$. Con las
+$B_{\mathrm{perm}}$ réplicas, que van de 199 a 20\,000 según el nivel del bloque, y
+las tres búsquedas (filas, columnas y conjunta), el trabajo ya es considerable. Con
+15 filas se duplicaría, y con 20 filas serían más de medio millón de candidatos por
+réplica. Además la implementación procesa las réplicas por lotes en memoria, y el
+lote que cabe se reduce a la mitad por cada fila adicional.
+
+\paragraph{3. Por qué 14 y no 13 o 15.} El valor concreto es una elección práctica,
+no un umbral que salga de una fórmula. Es el tamaño hasta el cual la enumeración
+sigue siendo manejable con el número de réplicas de referencia. Lo que sí se
+comprobó es que, con este límite, todos los bloques base de los datos de esta tesis,
+que tienen a lo sumo quince filas, se resuelven de forma casi siempre exacta, pues
+solo los de quince filas, si los hay, usan la heurística.
+
+\paragraph{Advertencia honesta.} El 92\,\% se midió con tablas de ocho filas, no
+de quince. Con más filas el 2-medias podría fallar algo más, y eso es lo que
+justifica no extender la heurística a bloques grandes. Si el jurado pregunta, la
+respuesta es que 14 es un compromiso de costo, que el fallo de la heurística se
+midió en tablas pequeñas, y que la validez de la prueba no depende de que la búsqueda
+sea exacta, solo de que se repita igual en las réplicas.
+
+\section{3.4 Regla de decisión}
+
+La regla combina el ómnibus, las dirigidas y el umbral de tamaño de efecto $\delta$,
+con $\alpha_B$ el nivel asignado al bloque.
+\begin{enumerate}
+\item \textbf{Puerta ómnibus.} Si $p_{\mathrm{omn}}>\alpha_B$ o $\tilde I_B<\delta$,
+el bloque es una hoja homogénea.
+\item \textbf{Cortes unidimensionales.} Si solo uno de $p_{\mathrm{fil}}$,
+$p_{\mathrm{col}}$ es $\le\alpha_B$, se aplica el mejor corte de esa dimensión. Si lo
+son los dos, se aplica el de menor p-valor y la recursión decide sobre la otra. Los
+empates se resuelven con $z=(G^2-\nu)/\sqrt{2\nu}$.
+\item \textbf{Corte conjunto.} Si ninguno es significativo pero el ómnibus sí lo fue,
+se evalúa el $2\times2$. Si $p_{\mathrm{conj}}\le\alpha_B$ se aplica, y si no, el
+bloque es una hoja heterogénea no localizada.
+\item \textbf{Ganancia mínima.} El corte elegido solo se acepta si
+$\tilde g_{B,s}\ge\delta$. Si no, el bloque también queda como hoja heterogénea no
+localizada.
+\end{enumerate}
+
+\paragraph{Cuatro trayectorias con números.} Sea $\alpha_B=0.01$ y $\delta=0.005$.
+\begin{itemize}
+\item \textbf{A.} $p_{\mathrm{omn}}=0.2$. El ómnibus no rechaza y el bloque es hoja
+homogénea.
+\item \textbf{B.} $p_{\mathrm{omn}}=0.002$, $\tilde I_B=0.03\ge\delta$,
+$p_{\mathrm{fil}}=0.004$ y $p_{\mathrm{col}}=0.3$. Solo el corte de filas es
+significativo, se aplica, y si $\tilde g\ge\delta$ se recurre en cada hijo.
+\item \textbf{C.} Ambos p-valores valen $0.001$, el mínimo con 999 réplicas. El
+corte de filas tiene $G^2=60$ con $\nu=5$ y el de columnas $G^2=45$ con $\nu=9$.
+Entonces $z_{\mathrm{fil}}=55/\sqrt{10}\approx17.4$ y
+$z_{\mathrm{col}}=36/\sqrt{18}\approx8.5$, y gana el corte de filas.
+\item \textbf{D.} El ómnibus rechaza pero ni los cortes unidimensionales ni el
+conjunto son significativos. El bloque queda como hoja heterogénea no localizada.
+\end{itemize}
+
+\paragraph{Las tres decisiones de diseño.}
+\begin{itemize}
+\item \emph{Un corte por nivel.} Cortar ambas dimensiones a la vez pasaría de uno a
+cuatro bloques cuando quizá bastan dos. Cortar una por nivel añade menos parámetros
+y da una lectura direccional, pues si el bloque se divide por filas la
+heterogeneidad es espacial, y si se divide por columnas, temporal.
+\item \emph{El corte conjunto como recurso.} Su modelo contiene a los de filas y de
+columnas, así que su estadístico es al menos tan grande como cualquiera de ellos y
+puede alcanzar significancia cuando la estructura está repartida entre ambas
+dimensiones.
+\item \emph{Dos tipos de hoja.} La homogénea no muestra interacción. La heterogénea
+no localizada sí la muestra, pero ningún corte simple la captura. Reportarlas por
+separado evita presentar como homogéneo un bloque que no lo es.
+\end{itemize}
+
+\begin{idea}
+La regla es una cascada de puertas. Primero se pregunta si hay algo (ómnibus y
+tamaño de efecto), luego dónde (filas, columnas, conjunto) y por último si vale la
+pena (ganancia mínima). El error de tipo I lo controla la primera puerta, y las
+demás solo localizan. El límite de 14 filas es un compromiso entre exactitud de la
+búsqueda y costo, y no afecta la validez de la prueba.
+\end{idea}
+
+% =====================================================================
+\part{Capítulo 3, bloque 3: calibración de las pruebas}
+
+\section{Por qué existe esta sección}
+
+Todas las pruebas de la 3.3 y la 3.4 terminan pidiendo un p-valor, y un p-valor solo
+vale si se sabe cómo se comporta el estadístico cuando no hay patrón. Con conteos
+de Poisson independientes esa distribución se conoce, pero los datos de taxis no lo
+son. La sección responde a una pregunta práctica, que es cómo fabricar tablas nulas
+que se parezcan a los datos reales salvo por la ausencia de interacción. Tiene tres
+partes: medir qué tan lejos está Poisson de la realidad, construir la nula con
+\emph{bootstrap} de días y corregir que el corte probado fue elegido como el mejor.
+
+\section{3.5.1 Variabilidad entre días}
+
+La matriz es la suma de $D$ días, así que cada celda tiene réplicas diarias
+$X_{dij}$ y se puede contrastar Poisson directamente. Con Poisson, var/media valdría
+1 en todas las celdas.
+
+\begin{center}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & Laborable ($D=12$) & Feriado ($D=9$) \\
+\midrule
+Mediana de var/media & 3.2 & 17.1 \\
+Con media diaria en $[5,50)$ & 2.0 & 2.8 \\
+Con media diaria $\ge500$ & 4.3 & 49.1 \\
+Exponente $b$ de $\mathrm{var}=a\mu^b$ & 1.22 & 1.81 \\
+Dispersión de Pearson tras quitar efectos día--región y día--intervalo & 2.1 & 6.7 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Hecho 1: la sobredispersión es sustancial.} Una celda típica tiene
+varianza 3 veces su media en día laborable y 17 veces en feriado. Con la nula de
+Poisson, la prueba rechazaría la independencia solo por esto.
+
+\paragraph{Hecho 2: no es constante y crece con el volumen.} Un modelo
+cuasi-Poisson usa un único factor $\varphi$. Con $\varphi=17.1$, la mediana del
+feriado, una celda poco activa con razón $2.8$ se corrige de más unas 6 veces
+($17.1/2.8$), y una muy activa con razón $49.1$ se corrige de menos casi 3 veces
+($49.1/17.1$). Las muy activas son las que concentran la masa del bloque.
+
+\paragraph{Hecho 3: una parte no afecta a la prueba y otra es correlacionada.} Si un
+día multiplica la intensidad de toda una región por un factor, la suma sobre los
+días sigue siendo un producto de efecto de fila por efecto de columna.
+
+\emph{Ejemplo.} Sea $a=(1,2)$ para dos regiones y $b=(10,20)$ para dos horarios. El
+día 1 tiene $\gamma=(1,1)$ y el día 2 tiene $\gamma=(2,0.5)$, es decir, en el día 2 la
+región 1 está muy activa y la 2 poco. Sumando los dos días, la región 1 queda con
+$1\cdot(1+2)\cdot(10,20)=(30,60)$ y la región 2 con $2\cdot(1+0.5)\cdot(10,20)=(30,60)$.
+Las filas son proporcionales, así que el bloque sigue siendo independiente y no hay
+patrón falso.
+
+Lo que sí queda es la combinación de efectos día--región y día--intervalo, que
+produce desviaciones correlacionadas entre las celdas de un bloque con forma de
+interacción, y cuyo peso en $G^2$ crece con la masa del bloque. Una nula que trate
+cada celda por separado no puede reproducirlas, y por eso se remuestrean días
+completos.
+
+\section{3.5.2 \emph{Bootstrap} de días}
+
+\paragraph{El p-valor.} Se generan $B$ réplicas nulas y se cuenta cuántas tienen un
+estadístico mayor o igual al observado, $p=(1+\#)/(1+B)$. Con $B=199$ y 4 réplicas
+por encima, $p=5/200=0.025$. Si ninguna supera, $p=1/200=0.005$. Nunca vale 0, y
+el mínimo posible es $1/(B+1)$.
+
+\paragraph{La réplica.} Para cada celda con media diaria $\bar X\ge0.5$ se calcula
+la fluctuación de cada día, $F_d=X_d/\bar X$, y luego se corrige,
+$\tilde F=\max\{0,\,1+\sqrt{D/(D-1)}\,(F-1)\}$. La corrección compensa que la
+varianza empírica de $D$ días subestima la poblacional.
+
+\emph{Ejemplo.} Una celda con $D=4$ días y conteos $(80,100,90,130)$, con media 100.
+Las fluctuaciones son $F=(0.8,1.0,0.9,1.3)$. El factor es $\sqrt{4/3}=1.1547$ y las
+corregidas quedan $\tilde F=(0.769,\,1.0,\,0.885,\,1.346)$. Las desviaciones al
+cuadrado suman $0.14$, que dividido entre $D$ da $0.035$ y dividido entre $D-1$ da
+$0.0467$. La corrección multiplica la varianza por $4/3$ y la deja insesgada.
+
+\emph{Una réplica.} Se sortean 4 días con reemplazo, por ejemplo los días
+$(4,1,4,2)$. La suma de sus $\tilde F$ es $1.346+0.769+1.346+1.0=4.461$. Si la
+esperada de independencia del bloque es $E^B=400$, la réplica vale
+$400/4\cdot4.461=446.1$, y se redondea de forma estocástica a 446 o 447 sin sesgo.
+
+\paragraph{Por qué es una nula válida.} La media de $\tilde F$ sobre los días es
+exactamente 1, así que la media de las réplicas es $E^B$ y se cumple el nulo. Si un
+día solo difiere por un factor común a una región o a un intervalo, su fluctuación
+es de rango uno y la réplica sigue siendo independiente. La combinación de efectos y
+la variación propia de cada celda se trasladan tal como aparecen en los datos. El
+método no supone ninguna forma para la varianza ni para la correlación, pero sí que
+los días son independientes y que $E^B$ estima bien las medias.
+
+\paragraph{Evidencia de calibración.} Para cada bloque base, 300 réplicas generadas
+con la fórmula anterior cumplen la independencia por construcción y conservan la
+variabilidad real. Error de tipo~I al nivel 0.05, como media sobre los 24 bloques.
+
+\begin{center}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Nula & Laborable & Feriado \\
+\midrule
+Poisson & 0.40 & 0.76 \\
+Cuasi-Poisson & 0.03 & 0.01 \\
+Gamma--Poisson & 0.02 & 0.06 \\
+\emph{Bootstrap} sin corrección & 0.06 & 0.11 \\
+\emph{Bootstrap} con corrección & \textbf{0.04} & \textbf{0.09} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Poisson rechaza una independencia verdadera en el 40\,\% y el 76\,\% de los casos.
+Las nulas por celda son conservadoras en la mayoría de los bloques y liberales en los
+de mayor volumen. El \emph{bootstrap} corregido es el único centrado en el nominal en
+el periodo laborable.
+
+\paragraph{El feriado.} El generador mezcla al azar sábados, domingos y el Día de
+Acción de Gracias, mientras la matriz real tiene siempre la misma composición. Con un
+generador que la respeta, el error medio baja a 0.045, aunque 5 de los 24 bloques,
+casi todos nocturnos, siguen por encima, con máximo 0.30. Remuestrear dentro de cada
+tipo de día empeora a 0.11, porque con solo cuatro sábados y cuatro domingos no hay
+datos suficientes. Por eso se usa el \emph{bootstrap} sin estratos y la liberalidad
+residual se declara como limitación. Como estos datos nulos comparten mecanismo con
+el \emph{bootstrap}, lo que podría favorecerlo, la calibración final se medirá
+también con datos sintéticos de otro mecanismo.
+
+\section{3.5.3 Corrección por la búsqueda del mejor corte}
+
+El corte que se prueba se eligió porque maximiza la separación. Si su $G^2$ se
+comparara con una $\chi^2$ de un corte fijado de antemano, el p-valor estaría
+sesgado hacia cero.
+
+\paragraph{Intuición.} Con 7 cortes candidatos independientes de 1 grado de
+libertad, la probabilidad de que al menos uno supere el umbral del 5\,\% de una
+$\chi^2$ es $1-0.95^7\approx\mathbf{0.30}$ y no $0.05$. Los candidatos reales están
+correlacionados, así que es menos, pero el sesgo sigue ahí, y con las 2047
+biparticiones de columnas es mucho mayor. Es el doble uso de los datos que
+documentan Gao y colaboradores en el agrupamiento jerárquico.
+
+\paragraph{La corrección tipo \emph{min-P}.} En cada réplica nula se repite la
+búsqueda completa del mejor corte y se registra su máximo. El p-valor compara el
+máximo observado con la distribución del máximo bajo el nulo. Ajusta a la vez por el
+número de candidatos y por su correlación, con más potencia que Bonferroni. En la
+comprobación preliminar, comparar el mejor corte con una $\chi^2$ fija dio errores de
+tipo~I de hasta 0.98 al nivel 0.05, y con \emph{min-P} el error medio fue 0.050. Las
+pruebas dirigidas reutilizan las mismas réplicas del ómnibus, así que el costo de
+generarlas se paga una sola vez por bloque.
+
+\section{3.5.4 Alcance de la corrección}
+
+La repetición de la búsqueda corrige la selección del corte dentro de un nodo, pero
+no la selección del propio nodo. Los bloques base vienen de BBAC$_I$, que arma los
+grupos de modo que sean lo más distintos posible entre sí, y los hijos vienen de
+cortes elegidos por separar bien los mismos datos con que luego se prueban. Aunque
+cada prueba individual esté bien calibrada, el error del método completo puede
+ser mayor que el nominal, y por eso el capítulo de resultados incluye un experimento
+sobre datos nulos que mide cuántos refinamientos espurios produce el método completo.
+
+\begin{idea}
+El p-valor solo es honesto si la nula se parece a los datos reales. Remuestrear días
+completos conserva la correlación entre celdas que Poisson y las nulas por celda
+pierden, y repetir la búsqueda del mejor corte en cada réplica evita el sesgo de
+haberlo elegido con los mismos datos. Lo que queda sin corregir es la selección de
+los propios nodos, y eso solo lo mide el experimento con datos nulos.
+\end{idea}
+
+% =====================================================================
+\part{Capítulo 3, bloque 4: comparaciones múltiples y criterios de parada}
+
+\section{Por qué existen estas secciones}
+
+Un árbol de refinamiento no hace una prueba sino muchas, una por cada bloque base y,
+en cascada, una por cada hijo. Si todas usan $\alpha=0.05$, la probabilidad de algún
+falso refinamiento crece rápido. La sección 3.6 reparte el nivel de significancia
+para que el árbol completo tenga un error global controlado. La 3.7 resuelve otro
+problema, que es que con millones de viajes casi cualquier desviación resulta
+significativa, y por eso se exige además un tamaño de efecto mínimo y se fijan reglas
+para detenerse.
+
+\section{3.6 Control de comparaciones múltiples}
+
+\paragraph{El problema.} Con 20 pruebas independientes al 5\,\%, la probabilidad de
+al menos un falso rechazo es $1-0.95^{20}\approx64$\,\%. SigTree divide $\alpha$
+entre el número de pruebas (Bonferroni), pero ignora la estructura jerárquica y
+resulta demasiado conservador.
+
+\paragraph{El reparto por masa.} El nivel global se reparte de arriba abajo en
+proporción a la masa de cada bloque. Para los bloques base,
+$\alpha_B=\alpha N_B/N$, y para los hijos, $\alpha_C=\alpha_BN_C/N_B$.
+
+\emph{Ejemplo.} Sea $N=10\,000$ viajes y $\alpha=0.05$, con cuatro bloques base de
+4000, 3000, 2000 y 1000 viajes. Sus niveles son $0.020$, $0.015$, $0.010$ y $0.005$,
+que suman $0.05$. Si el bloque de 4000 se corta en hijos de 3000 y 1000, estos
+reciben $0.02\cdot0.75=0.015$ y $0.02\cdot0.25=0.005$, que suman lo que tenía el
+padre. Con Bonferroni sobre 20 pruebas todos recibirían $0.0025$, y el bloque de 4000
+trabaja con $0.02$, ocho veces más, lo cual es razonable porque tiene más datos y más
+potencia. Además, un bloque solo se prueba si su padre fue refinado, y los niveles de
+los bloques que nunca se visitan no se gastan.
+
+\paragraph{El argumento de control.} Si el nulo de independencia se cumple en un
+bloque, se cumple en todos sus sub-bloques, así que los nulos verdaderos forman
+subárboles completos. Un falso rechazo ocurre por primera vez en la raíz de alguno de
+esos subárboles, y esas raíces son bloques disjuntos cuyos niveles suman a lo sumo
+$\alpha$. En el ejemplo, si los bloques de 2000 y 1000 viajes fueran verdaderamente
+nulos, la probabilidad de refinarlos por error sería a lo sumo
+$0.010+0.005=0.015\le0.05$. Eso da control de la tasa de error por familia (FWER),
+la probabilidad de al menos un falso refinamiento en todo el árbol. La salvedad
+honesta es que la jerarquía se construye con los datos, así que la garantía es
+aproximada, y su comportamiento real lo mide el experimento de calibración del
+capítulo de resultados.
+
+\paragraph{Consecuencia práctica, el número de réplicas.} El nivel de un bloque
+pequeño puede ser menor que la resolución del p-valor por simulación, $1/(B+1)$. Por
+eso $B_{\mathrm{perm}}=\max\{B_{\min},\lceil c/\alpha_B\rceil\}$, acotado por
+$B_{\max}$, con $B_{\min}=199$, $c=2$ y $B_{\max}=20\,000$.
+
+\begin{center}
+\small
+\begin{tabular}{@{}cccl@{}}
+\toprule
+$\alpha_B$ & $\lceil2/\alpha_B\rceil$ & $B_{\mathrm{perm}}$ & Resultado \\
+\midrule
+0.02 & 100 & 199 & Se usa el mínimo \\
+0.005 & 400 & 400 & Se adapta \\
+0.0001 & 20\,000 & 20\,000 & Llega al máximo \\
+0.00002 & 100\,000 & 20\,000 & $p_{\min}=5\cdot10^{-5}>\alpha_B$, hoja inalcanzable \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Una hoja inalcanzable no es una hoja homogénea. El método no afirma que el bloque sea
+homogéneo, sino que no puede probarlo al nivel asignado.
+
+\paragraph{Parada secuencial de Besag y Clifford.} La simulación se detiene en cuanto
+se acumulan $h=10$ réplicas con estadístico mayor o igual al observado. Si el bloque
+claramente no es significativo, por ejemplo con $p\approx0.5$, eso ocurre tras unas 20
+réplicas en lugar de 199. Los bloques que sí pasan el ómnibus completan la
+simulación, y esas réplicas sirven para las pruebas dirigidas.
+
+\section{3.7 Criterios de parada}
+
+\paragraph{Significancia frente a tamaño de efecto.} Un bloque con $N=10^6$ viajes e
+$\hat I=0.0005$ tiene $G^2=2\cdot10^6\cdot0.0005=1000$, un p-valor prácticamente
+nulo y una interacción irrelevante. Con $\delta=0.005$ es hoja. Otro con $N=1000$ e
+$\hat I=0.05$ tiene $G^2=100$, y si pasa la prueba también supera $\delta$, así que se
+refina. La significancia crece con $N$ y el tamaño de efecto no.
+
+\paragraph{Los siete criterios.}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{3.2cm}p{4.6cm}p{5.4cm}@{}}
+\toprule
+Criterio & Condición para ser hoja & Cuándo importa \\
+\midrule
+Tamaño mínimo & $|I|<2$ o $|J|<2$ & Con una sola fila o columna, $G^2=0$ \\
+Masa mínima & $N_B<N_{\min}$ (500) & Bloques con muy poca actividad \\
+Profundidad máxima & $d\ge d_{\max}$ (6) & Acota costo y complejidad \\
+Nivel inalcanzable & $1/(B_{\max}+1)>\alpha_B$ & La prueba no podría rechazar \\
+Significancia & $p_{\mathrm{omn}}>\alpha_B$ o ningún corte $\le\alpha_B$ & No hay evidencia o no se localiza \\
+Tamaño de efecto & $\tilde I_B<\delta$ & Interacción irrelevante \\
+Ganancia del corte & $\tilde g<\delta$ & El corte explica muy poco \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Los cuatro primeros son reglas triviales, análogas a las de SigTree, que no dependen
+de la estructura interna del bloque. Los tres últimos son estadísticos.
+
+\paragraph{El umbral $\delta$.} Es la defensa principal contra la inflación por tamaño
+de muestra y tiene una interpretación directa, información mutua en nats por
+observación, sin crecer con $N$. En los bloques base de ST-CC el cociente $G^2/\nu$
+va de 3 a más de 1700 y la prueba de independencia rechaza en casi todos. Por eso, en
+los primeros niveles del árbol decide $\delta$, y la prueba cobra importancia en los
+bloques pequeños y profundos, donde la masa es menor.
+
+\paragraph{Tamaño de efecto corregido por sesgo.} Aun sin interacción,
+$\mathrm{E}[G^2]\approx\nu$, así que $\mathrm{E}[\hat I]\approx\nu/(2N)>0$. Un bloque
+de 1033 viajes con $\nu=12$ tiene $\hat I=0.017$, y cerca de un tercio,
+$12/2066\approx0.006$, es ruido de Poisson. La versión corregida es
+$\tilde I=\max\{0,(G^2-\bar t_0)/(2N)\}$, con $\bar t_0$ la media de $G^2$ bajo las
+réplicas nulas.
+
+\emph{Ejemplo ilustrativo.} Aquí $G^2=2\cdot1033\cdot0.017\approx35.1$. Restando el
+$\nu=12$ de Poisson, $\tilde I=(35.1-12)/2066\approx0.011$. Con sobredispersión de
+2.1, como en el periodo laborable, $\bar t_0$ sería más cercano a 25 y entonces
+$\tilde I=(35.1-25)/2066\approx0.005$. Los 25 son una cifra supuesta solo para mostrar
+el efecto. El mismo bloque pasa de $0.017$ a $0.011$ y a $0.005$ según cuánto ruido se
+descuente. La ganancia corregida $\tilde g$ funciona igual, pero con $\bar t_{0,s}$
+calculado repitiendo la búsqueda, así que descuenta además el optimismo de haber
+elegido el mejor corte. Ambas medias salen de las réplicas que ya se generaron para
+los p-valores, sin costo adicional.
+
+\paragraph{Elección de $\delta$.} No se fija a priori. Los $\hat I$ de los bloques
+base van de $0.0012$ a $0.061$ en laborable y de $0.0017$ a $0.19$ en feriado. En el
+capítulo de resultados se recorre una rejilla como
+$\{0.001,0.0025,0.005,0.01,0.02\}$, y para cada valor se reportan el número de hojas,
+la fracción del término de interacción local que explica el árbol y la estabilidad de
+las hojas. Como medida estandarizada complementaria puede reportarse la $V$ de
+Cramér.
+
+\begin{idea}
+El nivel $\alpha$ se reparte por masa a lo largo del árbol, de modo que los bloques con
+más datos tienen más poder de rechazo y el error global queda acotado. Con muchos
+datos casi todo es significativo, por eso la significancia se acompaña de un umbral de
+tamaño de efecto $\delta$, corregido por el sesgo que produce el ruido, y de reglas
+triviales de parada.
+\end{idea}
+
+% =====================================================================
+\part{Capítulo 3, bloque 5: el algoritmo}
+
+\section{Por qué existe esta sección}
+
+Hasta ahora el método se presentó por piezas, que son el reparto de $G^2$, la prueba
+ómnibus, las pruebas dirigidas, la nula con \emph{bootstrap}, el reparto del nivel y
+los criterios de parada. La sección 3.8 las junta en dos pseudocódigos que se pueden
+implementar, fija los valores de referencia de los parámetros y estima el costo, para
+mostrar que el método es ejecutable en datos reales.
+
+\section{3.8 Algoritmo}
+
+\subsection{Algoritmo 1: Refinar}
+
+La entrada es la matriz $O$ con sus $D$ días y los parámetros. Primero se obtiene la
+partición base con BBAC$_I$ y luego se llama a \textsc{Refinar} sobre cada bloque base
+con nivel $\alpha N_B/N$ y profundidad 0. \textsc{Refinar} sigue seis pasos.
+\begin{enumerate}
+\item \textbf{Reglas triviales.} Si $|I|<2$, $|J|<2$, $N_B<N_{\min}$ o
+$d\ge d_{\max}$, el bloque es hoja.
+\item \textbf{Número de réplicas.} Se calcula $B_{\mathrm{perm}}$. Si
+$1/(B_{\mathrm{perm}}+1)>\alpha_B$, es hoja inalcanzable.
+\item \textbf{Puerta ómnibus.} Se calcula $G^2_B$, se generan las réplicas por
+\emph{bootstrap} de días (con parada de Besag y Clifford) y se obtienen $p_{\mathrm{omn}}$,
+$\bar t_0$ y $\tilde I_B$. Si $p_{\mathrm{omn}}>\alpha_B$ o $\tilde I_B<\delta$, es
+hoja homogénea.
+\item \textbf{Pruebas dirigidas.} Se llama a \textsc{MejorCorte} para filas y para
+columnas con las mismas réplicas. Si el menor p-valor es $\le\alpha_B$, se elige ese
+corte (desempate por $z$). Si no, se prueba el conjunto, y si tampoco es
+significativo, es hoja heterogénea no localizada.
+\item \textbf{Ganancia mínima.} Se calcula $\tilde g$. Si $\tilde g<\delta$, es hoja
+heterogénea no localizada.
+\item \textbf{Recursión.} Se llama a \textsc{Refinar} sobre cada hijo con
+$\alpha_C=\alpha_BN_C/N_B$ y profundidad $d+1$.
+\end{enumerate}
+
+\paragraph{Seguimiento con números.} Sea $N=10\,000$, $\alpha=0.05$ y un bloque base
+de 4000 viajes con $\alpha_B=0.02$ y $\delta=0.005$.
+\begin{itemize}
+\item Pasa las reglas triviales, pues tiene filas y columnas de sobra, $4000\ge500$ y
+$d=0$.
+\item $B_{\mathrm{perm}}=\min\{20\,000,\max\{199,\lceil2/0.02\rceil=100\}\}=199$. El
+p mínimo es $1/200=0.005\le0.02$, así que es alcanzable.
+\item Supón $p_{\mathrm{omn}}=0.005$ y $\tilde I=0.03\ge\delta$. Pasa la puerta.
+\item Supón $p_{\mathrm{fil}}=0.005$ y $p_{\mathrm{col}}=0.4$. Solo el corte de filas
+es significativo y se elige.
+\item Supón $\tilde g\ge\delta$. Se acepta y se recurre en cada hijo. Si el corte dejó
+hijos de 3000 y 1000 viajes, reciben $0.015$ y $0.005$. El hijo de nivel $0.005$ usa
+$B_{\mathrm{perm}}=\max\{199,400\}=400$ y repite todo el proceso.
+\end{itemize}
+La recursión termina cuando todas las ramas llegan a una hoja, y el resultado es el
+árbol con cada hoja etiquetada como homogénea, heterogénea no localizada o
+inalcanzable.
+
+\paragraph{Una precisión sobre las réplicas.} La parada secuencial se activa solo
+cuando se acumulan $h=10$ réplicas por encima del observado, lo que implica un
+p-valor mayor que $\alpha_B$ (con $B_{\mathrm{perm}}\approx2/\alpha_B$, esas 10
+réplicas equivalen a un p-valor de al menos $5\alpha_B$). Por eso, si el bloque pasa la
+puerta ómnibus, la simulación ya estaba completa y \textsc{MejorCorte} puede
+reutilizarla sin pasos adicionales.
+
+\subsection{Algoritmo 2: \textsc{MejorCorte} con \emph{min-P}}
+
+Recibe un bloque, un tipo de corte y las réplicas nulas, y hace cuatro cosas.
+\begin{enumerate}
+\item Busca el mejor corte en el bloque observado y calcula
+$t_{\mathrm{obs}}=G^2_{B,s^\ast}$.
+\item \textbf{Repite la búsqueda completa en cada réplica}, y no solo evalúa el corte
+encontrado en los datos reales. Esa repetición es lo que corrige el sesgo de haber
+elegido el mejor corte.
+\item Calcula $p=(1+\#\{t_b\ge t_{\mathrm{obs}}\})/(1+B_{\mathrm{perm}})$.
+\item Devuelve el corte, el p-valor y la media $\bar t$ de los $t_b$, que alimenta la
+corrección por sesgo de $\tilde g$.
+\end{enumerate}
+
+\subsection{La tabla de parámetros}
+
+Los parámetros son de dos tipos. Las \emph{decisiones del investigador}, que se
+someten a análisis de sensibilidad, son $K_R$ y $K_T$ (resolución inicial, tomados de
+Liu), $\alpha=0.05$, $\delta$ (rejilla en $[0.001,0.02]$ nats), $N_{\min}=500$ y
+$d_{\max}=6$. Los \emph{parámetros técnicos}, que dan fiabilidad a la prueba sin ser el
+foco de la interpretación, son las 200 inicializaciones de BBAC$_I$,
+$B_{\min}=199$, $c=2$, $B_{\max}=20\,000$, $h=10$, los límites de enumeración
+$|I|\le14$ y $|J|\le6$, y $R_{\mathrm{ini}}=10$ del 2-medias. Todos estos valores
+coinciden con los de la implementación (\texttt{astcc/arbol.py}).
+
+\paragraph{Una nota de consistencia.} El criterio de nivel inalcanzable de la tabla de
+parada usa $B_{\max}$ y el algoritmo usa $B_{\mathrm{perm}}$, que está acotado por
+$B_{\max}$. Son equivalentes, porque si $\alpha_B$ es grande la prueba es alcanzable
+con $B_{\mathrm{perm}}$ y si es pequeño $B_{\mathrm{perm}}$ llega a $B_{\max}$.
+
+\subsection{Costo computacional}
+
+\paragraph{Partición base.} Cuesta lo mismo que ST-CC, $O(mn(K_R+K_T))$ por iteración.
+La búsqueda local evalúa cada movimiento en $O(K_RK_T)$, porque con las bases C2 y C5
+la divergencia solo depende de los totales de bloque.
+
+\paragraph{Refinamiento.} El costo extra está en las pruebas por simulación. Por
+bloque, el orden es
+\[
+B_{\mathrm{perm}}\,\bigl[\,2^{|J|}|I|+2^{\min(|I|,14)}|J|\,\bigr],
+\]
+donde el primer término es la búsqueda de columnas y el segundo la de filas. Con
+$n=12$ y bloques base de a lo sumo 15 filas, quedan acotados.
+
+\begin{center}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Bloque & Términos por réplica & Con 199 réplicas & Con 20\,000 \\
+\midrule
+$|I|=10$, $|J|=12$ & $2^{12}\cdot10+2^{10}\cdot12\approx5\cdot10^4$ & $\approx10^7$ & $\approx10^9$ \\
+$|I|=14$, $|J|=12$ & $2^{12}\cdot14+2^{14}\cdot12\approx2.5\cdot10^5$ & $\approx5\cdot10^7$ & $\approx5\cdot10^9$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Son órdenes de magnitud de operaciones elementales, no tiempos medidos. Los bloques con
+20\,000 réplicas son los de nivel muy pequeño y poca masa, que se vuelven hojas pronto.
+
+\paragraph{Tres propiedades mantienen el costo manejable.} La parada secuencial
+abandona pronto los bloques no significativos. Los bloques de un mismo nivel son
+independientes dado el árbol, por lo que se procesan en paralelo. Y el tamaño de los
+bloques decrece con la profundidad.
+
+\begin{idea}
+El algoritmo es una recursión que, en cada bloque, hace tres preguntas en orden (si
+hay algo, dónde y si vale la pena), reutiliza las mismas réplicas nulas para todas
+ellas y reparte el nivel $\alpha$ a los hijos en proporción a su masa. El costo extra
+frente a ST-CC está solo en las simulaciones, y la parada secuencial, el
+paralelismo por niveles y la reducción de tamaño lo mantienen manejable.
+\end{idea}
+
+% =====================================================================
+\part{Capítulo 3, bloque 6: representación de los resultados}
+
+\section{Por qué existe esta sección}
+
+ST-CC se lee fácil porque la partición es un tablero, con $K_T$ patrones espaciales
+con su dinámica temporal y $K_R$ patrones temporales con su distribución espacial.
+Con refinamiento local esa lectura deja de existir como un solo objeto, porque la
+partición temporal puede cambiar de un subconjunto de regiones a otro. Si el método
+devolviera solo un árbol de hojas sería correcto pero difícil de interpretar. La
+sección define cinco productos que devuelven la interpretabilidad que se pierde al
+abandonar la rejilla.
+
+\section{3.9 Los cinco productos}
+
+\subsection{1. Descriptores de hoja}
+
+Para cada hoja se reportan sus regiones y horarios, su masa $N_L$, su interacción
+residual corregida $\tilde I_L$, su tipo (homogénea, heterogénea no localizada o
+inalcanzable) y su nivel de actividad relativo
+\[
+\ell_L=\frac{N_L}{\sum_{(i,j)\in L}O_{i\cdot}O_{\cdot j}/N}.
+\]
+Compara la actividad que se observa en la hoja con la que predecirían los volúmenes
+globales de sus regiones y de sus horarios. Como la hoja es un rectángulo, el
+denominador se simplifica a
+$\bigl(\sum_{i\in I_L}O_{i\cdot}\bigr)\bigl(\sum_{j\in J_L}O_{\cdot j}\bigr)/N$.
+
+\paragraph{Ejemplo.} Sea $N=10\,000$ y una hoja con las regiones 1 y 2 y los horarios
+$a$ y $b$. Los totales globales son $O_{1\cdot}=500$, $O_{2\cdot}=300$,
+$O_{\cdot a}=1000$ y $O_{\cdot b}=2000$. El esperado es
+$(500+300)(1000+2000)/10\,000=800\cdot3000/10\,000=\mathbf{240}$. Si la hoja tiene
+$N_L=360$ viajes, entonces $\ell_L=360/240=\mathbf{1.5}$. Ese grupo de regiones se
+activa en ese grupo de horarios un 50\,\% más de lo que corresponde a su volumen. Un
+valor menor que 1 indica lo contrario, que está más apagado de lo esperado.
+
+\paragraph{Por qué la referencia es la matriz completa y no el padre.} El modelo de
+independencia del bloque padre reproduce los totales de fila y de columna del padre.
+Tras un corte de filas, el esperado de cada hijo suma exactamente su masa, y el
+cociente respecto del padre vale 1 en todos los hijos, sin distinguir nada. En el
+bloque de 4000 viajes cortado en hijos de 3000 y 1000, respecto del padre ambos
+darían $3000/3000=1$ y $1000/1000=1$. Con la matriz completa como referencia, el
+cociente sí mide algo.
+
+\subsection{2. Árbol anotado}
+
+Cada nodo interno muestra el tipo de corte, la ganancia corregida $\tilde g$ y el
+p-valor, de modo que se lee qué parte de la heterogeneidad fue espacial y cuál
+temporal. Cada hoja se lee como el resultado de la secuencia de cortes que llevó hasta
+ella, como las reglas de un árbol de decisión.
+
+\paragraph{Ejemplo de lectura.} Un bloque base se corta por filas ($\tilde g=0.04$,
+$p=0.005$) y uno de sus hijos se corta por columnas ($\tilde g=0.01$, $p=0.01$). La
+hoja resultante se lee como un grupo de regiones, dentro de ese bloque, en un grupo
+de horarios. La primera pregunta fue espacial y la segunda temporal.
+
+\subsection{3. Matriz teselada}
+
+La matriz se reordena según la partición base y, dentro de cada bloque, según sus
+cortes. Se dibuja con los contornos de las hojas y un color proporcional a $\ell_L$,
+como en la Figura 3.1. Da una vista global en la que los patrones locales aparecen
+como rectángulos de color distinto dentro de bloques que, en el tablero de ST-CC, se
+veían uniformes.
+
+\subsection{4. Mapas de profundidad}
+
+Para cada región se dibuja la profundidad máxima que alcanza el refinamiento en sus
+filas, y análogamente para cada intervalo de tiempo. Si la región 5 aparece en hojas
+de profundidades 1, 3 y 2, su valor en el mapa es 3. Un mapa con profundidad uniforme
+indicaría que el tablero de ST-CC era suficiente. Las zonas con profundidades altas
+señalan las regiones y los horarios donde se concentra la interacción
+espacio-temporal local, es decir, dónde y cuándo la partición base es insuficiente.
+
+\subsection{5. Frecuencia de soporte}
+
+BBAC$_I$ converge a mínimos locales y el refinamiento es voraz, así que el resultado
+puede cambiar con la inicialización. A cada hoja se le asigna su frecuencia de
+soporte, que es la proporción de ejecuciones, con distintas inicializaciones de la
+partición base, en que aparece una hoja con índice de Jaccard sobre celdas
+$\ge\kappa$ respecto de ella.
+
+El índice de Jaccard entre dos conjuntos de celdas es $|A\cap B|/|A\cup B|$. Vale 1
+si son idénticos y 0 si no comparten nada.
+
+\paragraph{Ejemplo.} Una hoja de $3\times2$ regiones y horarios tiene 6 celdas. En
+otra ejecución aparece una hoja de $2\times2=4$ celdas contenida en la primera. Entonces
+$|A\cap B|=4$, $|A\cup B|=6$ y $J=4/6\approx0.67$. Con $\kappa=0.7$ no se cuenta como la
+misma hoja, y con $\kappa=0.5$ sí. Si la hoja aparece en 170 de 200 ejecuciones, su
+soporte es $0.85$. Una hoja con soporte bajo no debe interpretarse como hallazgo.
+
+\paragraph{Estado de la implementación.} El cálculo de la frecuencia de soporte y del
+índice de Jaccard no aparece todavía en \texttt{Implementaciones}. Si el capítulo de
+resultados los va a reportar, hay que implementarlos. El valor $\kappa=0.5$ y el
+criterio de soporte bajo (menos de la mitad de las ejecuciones) son propuestas que
+quedan por confirmar. Además, el comentario de \texttt{AST-CC/02\_refinamiento.py}
+asigna la ecuación del nivel de actividad a la versión respecto del padre, cuando en la
+tesis esa ecuación es la global.
+
+\begin{idea}
+Al abandonar el tablero se pierde la lectura sencilla de ST-CC, y los cinco productos
+la reconstruyen. Los descriptores dicen qué es cada hoja, el árbol anotado cómo se
+llegó a ella, la matriz teselada dónde está, los mapas de profundidad dónde y cuándo
+el tablero fue insuficiente, y la frecuencia de soporte cuánto se puede confiar en
+que no sea un accidente de la inicialización.
+\end{idea}
+
+% =====================================================================
+\part{Capítulo 3, bloque 7: limitaciones y cierre}
+
+\section{Por qué existe esta sección}
+
+Un método propuesto que solo muestra sus virtudes no es defendible. La sección 3.10
+declara antes de los experimentos qué no puede hacer el diseño, cómo condiciona la
+lectura de los resultados y cómo se piensa medir el efecto de cada limitación. Por eso
+cada limitación viene con su forma de evaluarla. La sección termina con las
+extensiones que se consideraron y quedan fuera del alcance.
+
+\section{3.10 Las ocho limitaciones}
+
+\paragraph{1. Restricción guillotina.} El refinamiento solo mira hacia dentro de cada
+bloque, así que un patrón que cruce la frontera entre dos bloques base no se recupera
+como una hoja sino como hojas separadas. Por ejemplo, un patrón en las regiones 3 a 6 en
+las mismas horas, con las regiones 3 y 4 en el bloque base A y las 5 y 6 en el B, se
+recupera como dos hojas pequeñas y no como un rectángulo de cuatro regiones. Por eso se
+menciona como extensión un paso de fusión de hojas vecinas.
+
+\paragraph{2. Dependencia de la partición base.} El refinamiento parte de un óptimo
+local de BBAC$_I$, que tiene muchos mínimos locales. La búsqueda local, las múltiples
+inicializaciones y la frecuencia de soporte atenúan y miden el efecto. La base también
+importa, pues con C5 y con C2 se obtienen tableros muy distintos, y C5 deja menos
+interacción local por refinar, porque agrupa las regiones por la forma de su perfil y no
+por su volumen.
+
+\paragraph{3. Resolución de entrada.} Los cortes agrupan regiones e intervalos pero no
+los subdividen, así que el método no puede bajar de la resolución de la matriz, que son
+las zonas de taxi (de tamaños muy dispares) y los intervalos de dos horas.
+
+\paragraph{4. Parámetros.} El método no elimina $K_R$ y $K_T$ sino que cambia su
+papel. Fijan la resolución inicial, y la final la deciden $\alpha$ y $\delta$, dos
+parámetros con interpretación directa. Esto solo se sostiene si el resultado es
+razonablemente estable frente a $K_R$ y $K_T$, lo que debe comprobarse empíricamente.
+
+\paragraph{5. Comparación con rejillas más finas.} Cabe preguntar por qué no basta con
+subir $K_R$ y $K_T$ o elegirlos con Cross-Associations. La respuesta debe ser empírica, y
+consiste en comprobar que una rejilla global con el mismo número de parámetros, o con el
+mismo BIC, no recupera los patrones locales que encuentra AST-CC.
+
+\emph{Ejemplo del conteo de parámetros.} Sea $n=12$ intervalos repartidos en $K_T=4$
+grupos de 3 columnas. Un corte de filas en un único bloque de 3 columnas añade
+$|J|-1=2$ parámetros. Partir globalmente el mismo grupo de filas a lo largo de los 4
+grupos de columnas añade $4\cdot2=\mathbf{8}$. Los parámetros crecen con la estructura
+local encontrada y no con la resolución global.
+
+\paragraph{6. Validez de las pruebas.} La selección de nodos con los mismos datos puede
+inflar el error de tipo~I. El \emph{bootstrap} de días supone días independientes y usa
+$E^B$ como estimación de las medias. Con pocos días, como en el feriado, es algo liberal
+en los bloques nocturnos (hasta 0.30 en el peor bloque de la calibración). Por eso es
+indispensable un experimento de calibración sobre datos nulos.
+
+\paragraph{7. Costo frente a resolución.} El reparto del nivel por masa da a los
+bloques con pocos viajes niveles menores que la resolución alcanzable con $B_{\max}$
+réplicas.
+
+\emph{Ejemplo.} Con $N=10^6$ y $\alpha=0.05$, un bloque de 600 viajes recibe
+$\alpha_B=0.05\cdot600/10^6=3\cdot10^{-5}$. Supera $N_{\min}=500$, pero el p-valor
+mínimo con 20\,000 réplicas es $1/20\,001\approx5\cdot10^{-5}>3\cdot10^{-5}$, así que
+queda como hoja inalcanzable. Eso no es lo mismo que homogénea, porque el método no
+afirma que no haya nada sino que no puede probarlo al nivel asignado.
+
+\paragraph{8. Significativo no es interesante.} Una hoja puede tener heterogeneidad
+detectable y ser irrelevante en el dominio. Por eso se reporta siempre el tamaño de
+efecto junto al p-valor, y los patrones principales se contrastan con conocimiento del
+dominio, como el foco alrededor de Penn Station que identifican Liu y colaboradores.
+
+\section{Extensiones que quedan como trabajo futuro}
+
+Cada una se consideró durante el diseño y tiene un motivo para quedar fuera.
+
+\begin{itemize}
+\item \textbf{Control de FDR jerárquico (Yekutieli).} Es más permisivo que la FWER
+cuando se esperan muchos refinamientos. Se dejó fuera porque la FWER es la garantía más
+simple de interpretar en una primera versión del método.
+\item \textbf{Elegir y probar con días distintos.} Elegir la partición y los cortes con
+la mitad de los días y probarlos con la otra mitad elimina el doble uso de los datos a
+costa de potencia, en la línea del \emph{count splitting}. Exige comprobar antes que la
+mitad de los días basta para estimar la partición.
+\item \textbf{Nulas paramétricas por celda.} Con una función de varianza como la ley de
+potencia de Taylor. No se adoptaron porque no reproducen las desviaciones correlacionadas
+entre las celdas de un bloque (sección 3.5).
+\item \textbf{Cortes de columnas en intervalos consecutivos.} Con doce intervalos hay
+$2^{11}-1=2047$ biparticiones, pero solo 11 si deben respetar el orden del día. Serían
+más fáciles de interpretar y más baratos, a costa de no capturar horarios no
+contiguos, como las dos horas punta del día.
+\item \textbf{Fusión de hojas vecinas.} Recuperaría los patrones que cruzan bloques base,
+que es la limitación de la restricción guillotina.
+\end{itemize}
+
+\section{Consideraciones finales del capítulo}
+
+El capítulo presentó AST-CC, una extensión de ST-CC que refina localmente la partición
+en tablero mediante un árbol de cortes guiados por pruebas de hipótesis. La pieza
+teórica central es la proposición de descomposición por hojas, según la cual la
+divergencia del árbol se reparte exactamente entre las hojas y la ganancia de cada corte
+es un estadístico de razón de verosimilitud. El corolario muestra que el método
+descompone el término de interacción local que ST-CC deja sin modelar, de modo que el
+criterio de refinamiento y la función objetivo de ST-CC son la misma cantidad vista a
+distintas escalas.
+
+Sobre esa base, el método combina una prueba ómnibus calibrada con \emph{bootstrap} de
+los días observados, pruebas dirigidas con ajuste \emph{min-P}, un reparto jerárquico
+del nivel y un umbral de tamaño de efecto corregido por sesgo. Cada limitación tiene en
+el Capítulo~4 una forma de evaluarse, que es la calibración sobre datos nulos para la
+validez de las pruebas, la comparación con rejillas globales de igual número de
+parámetros para el valor del refinamiento local, y el análisis de sensibilidad a $K_R$,
+$K_T$, $\alpha$ y $\delta$ para la dependencia de la partición base y de los parámetros.
+
+\begin{idea}
+AST-CC conserva el tablero de ST-CC y le añade un refinamiento local cuyas decisiones
+son pruebas de hipótesis con error controlado. Sus límites son la restricción a cortes
+dentro de cada bloque, la dependencia de la partición base y la validez solo aproximada
+de las pruebas cuando el árbol se construye con los datos, y cada uno tiene un
+experimento previsto que lo mide.
+\end{idea}
+
+
+\end{document}

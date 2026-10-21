@@ -10,6 +10,9 @@
 *.log
 *.out
 *.synctex.gz
+*.nav
+*.snm
+*.vrb
 *.synctex(busy)
 Tesis.pdf
 
