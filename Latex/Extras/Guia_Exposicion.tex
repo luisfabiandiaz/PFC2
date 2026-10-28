@@ -1,0 +1,766 @@
+% =====================================================================
+% Guía de exposición del Plan de Tesis (PFC II), 7 minutos
+% Acompaña a Diapositivas.tex. Se va completando diapositiva por diapositiva.
+% Compilar con: latexmk -pdf Guia_Exposicion.tex
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{xcolor}
+
+\definecolor{ucspblue}{HTML}{14325A}
+\definecolor{acc}{HTML}{C8651B}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8ex}
+
+\setlength{\fboxsep}{8pt}
+\setlength{\fboxrule}{0.6pt}
+\newsavebox{\cajabox}
+\newcommand{\cajainicio}[3]{\par\medskip\noindent
+  \begin{lrbox}{\cajabox}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}%
+  \textbf{\color{#1}#3}\par\smallskip}
+\newcommand{\cajafin}[2]{\end{minipage}\end{lrbox}\fcolorbox{#1}{#2}{\usebox{\cajabox}}\par\medskip}
+\newenvironment{guion}{\cajainicio{ucspblue}{ucspblue!6}{Qué decir}}{\cajafin{ucspblue}{ucspblue!6}}
+\newenvironment{nota}[1]{\cajainicio{acc}{acc!7}{#1}}{\cajafin{acc}{acc!7}}
+
+\newcommand{\STCC}{ST-CC}
+\newcommand{\BBAC}{BBAC$_I$}
+
+\title{\textbf{Guía de exposición}\\[0.5ex]\large Extensión de ST-CC con refinamiento jerárquico por bloques\\para la detección de patrones espacio-temporales locales}
+\author{Luis Fabian Diaz Alvizuri}
+\date{Arequipa, octubre de 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Tiempo total: 7 minutos}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+Diapositiva 2 (Contexto) & aprox. 40 segundos\\
+Diapositiva 3 (La limitación) & aprox. 40 segundos\\
+Diapositiva 4 (Planteamiento del problema) & aprox. 45 segundos\\
+Diapositiva 5 (Objetivos) & aprox. 45 segundos\\
+Diapositiva 6 (Estado del arte) & aprox. 50 segundos\\
+Diapositiva 7 (Brecha de investigación) & aprox. 40 segundos\\
+Diapositiva 8 (AST-CC: idea central) & aprox. 50 segundos\\
+Diapositiva 9 (Regla de decisión) & aprox. 40 segundos\\
+Diapositiva 10 (Calibración, multiplicidad y parada) & aprox. 40 segundos\\
+Diapositiva 11 (Resultados esperados y evaluación) & aprox. 40 segundos\\
+\end{tabular}
+\end{center}
+
+\section*{Diapositiva 2. Contexto: ST-CC y el co-agrupamiento en tablero}
+
+\begin{guion}
+Muchos fenómenos, como los viajes en taxi, los sismos o el monitoreo ambiental, se describen con dónde y cuándo ocurren, y el espacio y el tiempo no son independientes.
+
+Para analizarlos, Liu y colaboradores proponen \STCC, un método de co-agrupamiento: agrupa a la vez las filas, que son las regiones, y las columnas, que son los intervalos de tiempo de una matriz.
+
+El resultado es un tablero de bloques rectangulares. En Manhattan usaron unos diez millones de viajes, 66 regiones y 12 intervalos de dos horas.
+
+Es fácil de interpretar, pero tiene una limitación: la estructura es \textbf{global}. Es decir, las divisiones del tablero se aplican a toda la matriz de una sola vez: cada corte de filas o de columnas atraviesa el tablero completo y no se puede decidir por zonas. Esa limitación es la que motiva este trabajo.
+\end{guion}
+
+\begin{nota}{Qué significa «global» (por si te preguntan)}
+Piensa en cortar una torta con un cuchillo: cada corte la atraviesa entera. En \STCC\ pasa lo mismo. Si quieres separar mejor una zona de la matriz, el corte también parte las demás zonas, aunque ahí no hiciera falta. No existe la opción de cortar solo una parte.
+
+\textbf{Ejemplo:} supón que a las 8 a.m. hay un foco de viajes en una sola región. Para verlo, \STCC\ tendría que aumentar el número de grupos de toda la matriz, y terminaría fragmentando zonas tranquilas sin ningún patrón. Un método local solo subdividiría el bloque donde está el foco.
+\end{nota}
+
+\begin{nota}{Glosario rápido de la diapositiva}
+\textbf{Co-agrupamiento:} agrupar filas y columnas al mismo tiempo, no una sola de ellas.\\
+\textbf{Matriz regiones $\times$ tiempo:} cada fila es una región, cada columna un intervalo, y cada celda cuenta los viajes de esa región en ese intervalo.\\
+\textbf{Bloque:} el rectángulo que se forma al cruzar un grupo de filas con un grupo de columnas.\\
+\textbf{Tablero $K_R\times K_T$:} $K_R$ grupos de regiones por $K_T$ grupos de intervalos; da $K_R\cdot K_T$ bloques en total.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 3. La limitación: un detalle local obliga a refinar todo}
+
+\begin{guion}
+Aquí se ve el problema con un ejemplo. A la izquierda están los datos, con un foco local en un solo bloque. A la derecha está el tablero de \STCC, donde ese foco queda promediado y se pierde.
+
+Para capturarlo, cada corte de filas o de columnas atraviesa toda la matriz, así que habría que aumentar la resolución global y fragmentar zonas que no tienen ningún patrón.
+
+El paso con K-means de Liu y colaboradores reagrupa bloques que ya están formados, pero no subdivide un bloque por dentro. Y elegir el número de grupos con una curva, o con Cross-Associations, sigue dando una rejilla global.
+\end{guion}
+
+\begin{nota}{K-means: ¿convierte el tablero en un bloque de color?}
+Casi, pero con un matiz. Después de armar el tablero, cada bloque se resume con su media y su desviación estándar. K-means junta los bloques que tienen valores parecidos y les asigna el mismo grupo, que en la figura se ve como el mismo color. Es decir, \textbf{fusiona bloques}, pero no convierte todo el tablero en uno solo y los bloques siguen siendo los mismos.
+
+Lo importante para la diapositiva es lo que \emph{no} hace: nunca parte un bloque en dos. Si dentro de un bloque hay un foco, K-means no lo ve, porque ya lo recibe promediado en un solo valor.
+
+\textbf{Ejemplo:} tres bloques con media baja (zonas tranquilas) quedan en el grupo «bajo» y dos con media alta quedan en el grupo «alto». Se reducen los colores, pero el foco escondido dentro de un bloque sigue escondido.
+\end{nota}
+
+\begin{nota}{«Una curva»: ¿es el método del codo?}
+Sí, es la misma idea. Se prueban distintos números de grupos $K$ y se grafica cuánto mejora un error o una función objetivo; se elige el $K$ donde la curva deja de bajar rápido y forma un «codo». En \STCC\ los autores usan la forma de la curva de la función objetivo para el tablero, y el método del codo y la silueta para el K-means.
+
+El punto de la diapositiva es que es un criterio visual y heurístico, sin una justificación estadística, y que además da un único $K_R$ y $K_T$ para toda la matriz.
+\end{nota}
+
+\begin{nota}{¿Qué es Cross-Associations?}
+Es un método de Chakrabarti y colaboradores (2004) que agrupa filas y columnas de una matriz de ceros y unos. Su particularidad es que decide solo cuántos grupos de filas y de columnas usar, sin que el usuario lo indique. Lo hace con el principio de longitud de descripción mínima (MDL): se queda con la partición que permite describir la matriz con el menor número de bits, o sea, la que mejor la comprime.
+
+\textbf{Idea simple:} si los grupos reflejan patrones reales, la matriz se describe en pocas palabras («este bloque es casi todo unos, este casi todo ceros»). Si los grupos no sirven, hay que dar mucho detalle.
+
+Resuelve el problema de elegir el número de grupos, pero el resultado sigue siendo una rejilla global, y por eso lo menciona la diapositiva.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 4. Planteamiento del problema}
+
+\begin{guion}
+Entonces, la pregunta de la tesis es: ¿cómo refinar \textbf{localmente} y de forma \textbf{estadísticamente justificada} la partición de \STCC, para detectar patrones espacio-temporales locales sin perder la interpretabilidad?
+
+Responderla exige resolver tres preguntas. La primera, ¿dónde refinar? Hoy no hay un criterio que diga si un bloque tiene heterogeneidad real que justifique subdividirlo.
+
+La segunda, ¿cuándo detenerse? Si se evalúan muchas divisiones sobre los mismos datos, aparecen refinamientos espurios, a menos que se controle la multiplicidad.
+
+Y la tercera, ¿qué es ruido? La matriz suma varios días y tiene más variabilidad que la que supone el modelo de Poisson; además, con millones de viajes casi cualquier diferencia sale significativa.
+\end{guion}
+
+\begin{nota}{¿Qué significa «heterogeneidad»?}
+Que dentro de un bloque las celdas \emph{no} se comportan igual. Un bloque es \textbf{homogéneo} si todas sus celdas son parecidas, de modo que su promedio lo representa bien. Es \textbf{heterogéneo} si adentro hay partes distintas, por ejemplo una región con mucha actividad en una hora puntual mientras el resto está tranquilo.
+
+La palabra «real» en la diapositiva importa: toda matriz tiene diferencias por simple azar entre celdas. La heterogeneidad real es la que va más allá de ese azar y por eso conviene subdividir el bloque.
+
+\textbf{Ejemplo:} un bloque con 40 celdas casi iguales es homogéneo. Si 3 de esas celdas tienen cinco veces más viajes que las demás, el bloque es heterogéneo y su promedio esconde ese foco.
+\end{nota}
+
+\begin{nota}{¿Qué son los refinamientos «espurios»?}
+Un resultado espurio es uno que parece un hallazgo pero es solo producto del azar. Un refinamiento espurio sería subdividir un bloque porque «parece» tener un patrón, cuando en realidad no lo tiene.
+
+\textbf{Por qué pasa (multiplicidad):} cada prueba estadística acepta una pequeña probabilidad de equivocarse, por ejemplo 5\,\%. Si pruebas muchos cortes posibles sobre los mismos datos, tarde o temprano alguno sale «significativo» por pura suerte. Es como lanzar una moneda muchas veces: en algún momento salen varias caras seguidas sin que la moneda esté trucada.
+
+\textbf{Ejemplo:} con 20 cortes posibles y un 5\,\% de error por prueba, lo esperable es que en promedio uno salga significativo aunque no haya ningún patrón, y la probabilidad de que salga al menos uno es de 64\,\%. Controlar la multiplicidad es corregir esto para que el error total se mantenga bajo.
+\end{nota}
+
+\begin{nota}{Poisson (pendiente)}
+Esta diapositiva solo lo menciona de paso, y el modelo de Poisson aparece en el método (diapositiva 8, y luego en la 10), así que lo explicamos cuando lleguemos ahí. Para esta diapositiva basta saber una frase: \textbf{el modelo de Poisson describe cuánto varía un conteo de eventos cuando solo interviene el azar}, y los datos reales varían más que eso. Esa diferencia es lo que la diapositiva llama «variabilidad mayor que la de Poisson».
+\end{nota}
+
+\newpage
+\section*{Diapositiva 5. Objetivos}
+
+\begin{guion}
+El objetivo general es proponer y validar una extensión de \STCC\ basada en un refinamiento jerárquico por bloques, guiado por pruebas de significancia derivadas de la I-divergencia, que detecte patrones locales y conserve la interpretabilidad.
+
+Para lograrlo, planteamos cuatro objetivos específicos. El primero, formular el refinamiento como un árbol de bloques anidados a partir de la partición base. El segundo, diseñar la regla de decisión y de parada, con control de la multiplicidad. El tercero, implementar el método y evaluar su calibración y su potencia con datos sintéticos y con datos nulos que reproducen la variabilidad real. Y el cuarto, aplicarlo a los taxis de Manhattan y compararlo con \STCC\ y con rejillas globales.
+\end{guion}
+
+\begin{nota}{¿Qué es la multiplicidad?}
+Es el problema que aparece cuando se hacen \textbf{muchas pruebas estadísticas sobre los mismos datos}. Cada prueba, al nivel de $\alpha=0{,}05$, tiene una probabilidad de 5\,\% de dar un falso positivo. Pero al repetirla varias veces esos riesgos se acumulan: la probabilidad de cometer al menos un falso positivo es $1-(1-\alpha)^M$, con $M$ pruebas.
+
+\textbf{Ejemplo:} con una prueba el riesgo es 5\,\%; con 20 pruebas sube a 64\,\%; con 100, a 99\,\%.
+
+En esta tesis cada bloque admite muchos cortes posibles y el árbol se va ramificando, así que se hacen muchas pruebas seguidas. «Controlar la multiplicidad» significa corregir esto, de modo que el riesgo total de un falso refinamiento siga siendo bajo (como máximo $\alpha$ en toda la jerarquía) y no crezca con el número de pruebas. Es la misma idea que los refinamientos espurios de la diapositiva 4.
+\end{nota}
+
+\begin{nota}{Pendiente: qué objetivo resuelve cada parte}
+Más adelante, al presentar la propuesta, hay que aclarar en cada diapositiva qué objetivo específico se está resolviendo. Lo dejamos para cuando lleguemos a esas diapositivas (8 a 11), donde lo conectamos con el método y con la forma de evaluación.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 6. Estado del arte: tres familias de trabajos desde 2020}
+
+\begin{guion}
+Revisamos los trabajos publicados desde 2020 y los organizamos en tres familias.
+
+La primera es el co-agrupamiento y los bloques flexibles: co-clusters coherentes, biclustering con prueba de significancia y modelos de bloques bayesianos y jerárquicos. Su diferencia con nuestra propuesta es que producen tableros globales, o usan las pruebas solo como filtro al final, y ninguno decide por bloque cuándo subdividir.
+
+La segunda es la inferencia selectiva: pruebas que siguen siendo válidas después de haber agrupado los datos, junto con \emph{count splitting} y \emph{data thinning}. Validan estructuras que ya fueron estimadas, pero ninguno construye un refinamiento jerárquico local.
+
+La tercera son los \emph{hotspots} espacio-temporales, que buscan zonas de alta intensidad en el espacio, no interacciones dentro de bloques de una matriz región por tiempo.
+
+Como puntos de partida tomamos \STCC\ para la partición base, y SigTree para el principio de construir la partición con pruebas de hipótesis y detenerla cuando ninguna división es significativa.
+\end{guion}
+
+\begin{nota}{Antes de los métodos: dos ideas que ayudan}
+\textbf{Biclustering vs.\ co-agrupamiento en tablero.} El co-agrupamiento en tablero (como \STCC) reparte \emph{todas} las filas y \emph{todas} las columnas en grupos, así que cubre la matriz completa con una rejilla. El biclustering busca solo submatrices interesantes, que pueden quedar sueltas y no cubren todo.
+
+\textbf{Inferencia selectiva y «doble uso de los datos».} Si primero usas los datos para formar grupos y luego usas \emph{los mismos datos} para probar si los grupos son distintos, la prueba te dará la razón casi siempre, porque los grupos se formaron justamente para ser distintos. Es como elegir a los 10 alumnos más altos de un salón y «descubrir» después que son más altos que el resto. La inferencia selectiva corrige ese sesgo.
+\end{nota}
+
+\subsection*{Primera familia: co-agrupamiento y bloques flexibles}
+
+\begin{nota}{Qué hace cada método}
+\textbf{Wu 2022 (BCC\_MSSR).} Trabaja en el mismo marco de Bregman que \STCC, pero en vez de agrupar celdas con valores \emph{parecidos} agrupa las que tienen \emph{tendencias coherentes}: suben y bajan juntas aunque estén en niveles distintos. La aplicaron a temperaturas mensuales de estaciones meteorológicas. \textit{Ejemplo:} una ciudad cálida y una fría tienen temperaturas muy distintas, pero ambas suben en verano y bajan en invierno, y quedan en el mismo co-cluster. Su aporte para la tesis es que muestra que el marco admite distintas formas de decir que un bloque es «homogéneo».
+
+\textbf{Neves et al.\ 2022 (biclustering en tráfico).} Usa biclustering, es decir submatrices que no tienen que cubrir toda la matriz, sobre datos de tráfico vial. Agrega una prueba de significancia (BSig) que conserva solo los biclusters cuyo patrón de congestión sería muy improbable por azar, con nivel de 0,01 por bicluster. Pero la prueba es un \emph{filtro posterior}: primero se generan muchos candidatos y luego se descartan los poco significativos, y no controla el error entre tantas pruebas.
+
+\textbf{Yen y Larremore 2020 (biSBM).} Modela una red bipartita, que equivale a una matriz de filas y columnas, con un \emph{modelo de bloques estocástico}: los elementos de un mismo grupo se comportan igual entre sí. Es bayesiano y elige de forma parsimoniosa cuántas comunidades hay, sin que el usuario lo fije. Un hallazgo útil es que, en redes pequeñas y dispersas, el modelo simple supera al jerárquico de alta resolución, es decir, \emph{más flexibilidad no siempre da mejores resultados con pocos datos}.
+
+\textbf{Sugahara y Okamoto 2023 (HICCAM).} Co-agrupamiento \emph{jerárquico}, que va formando grupos dentro de grupos. Su particularidad es que usa matrices aumentadas: a la matriz principal se le pega información de otros dominios (datos auxiliares relacionados) para mejorar el agrupamiento.
+
+\textbf{Watanabe y Suzuki 2021 (bondad de ajuste).} Es una prueba que responde: «¿esta matriz realmente se explica con $K$ grupos de filas y $H$ de columnas, o hay más grupos en alguna dirección?». Sirve para decidir cuántos grupos usar. Se apoya en teoría de matrices aleatorias.
+\end{nota}
+
+\begin{nota}{Si te preguntan: ¿en qué se diferencia de lo tuyo?}
+Los métodos tipo Bregman dan tableros globales. Neves sí usa una prueba, pero como filtro al final y no para decidir durante la construcción si un bloque merece dividirse. Yen y Sugahara flexibilizan el número de bloques con una jerarquía sobre \emph{todas} las filas y columnas, sin refinar un bloque desde adentro. Ninguno usa una prueba estadística como criterio de parada, bloque por bloque.
+\end{nota}
+
+\subsection*{Segunda familia: inferencia selectiva}
+
+\begin{nota}{Qué hace cada método}
+\textbf{Gao et al.\ 2024 (agrupamiento jerárquico).} Muestran que una prueba clásica de diferencia de medias, aplicada a grupos formados por agrupamiento sobre los mismos datos, infla muchísimo el error de tipo I (falsos positivos). Proponen una prueba selectiva que calcula p-valores \emph{exactos} para grupos obtenidos por agrupamiento jerárquico aglomerativo, teniendo en cuenta que los grupos fueron elegidos a partir de los mismos datos. De aquí la tesis toma una lección: hay que repetir la búsqueda del mejor corte en cada réplica nula, para no ignorar que el corte se eligió por ser el mejor.
+
+\textbf{Chen y Witten 2023 (K-means).} Extienden la misma idea a K-means. El p-valor condiciona sobre todas las asignaciones intermedias que hizo el algoritmo hasta llegar al resultado.
+
+\textbf{Watanabe y Suzuki 2021 (inferencia selectiva en modelos de bloques latentes).} Prueba si las pertenencias de filas y columnas obtenidas por el modelo son reales, y también el número de grupos. Como enumerar todas las posibilidades es imposible, incluye una versión aproximada con recocido simulado, que explora las posibilidades al azar en vez de recorrerlas todas. Es la referencia más rigurosa para estructuras de bloques, aunque está planteada para residuos cuadráticos y no para conteos.
+
+\textbf{Neufeld et al.\ 2024 (\emph{count splitting}).} En lugar de dividir las \emph{filas} entre un grupo de entrenamiento y uno de prueba, divide cada \emph{conteo}. \textit{Ejemplo:} una celda con 10 viajes se reparte al azar en 6 y 4, y se obtienen dos matrices. Si los conteos son Poisson, las dos matrices resultan independientes: con una se estima el agrupamiento y con la otra se prueba, sin hacer doble uso de los datos.
+
+\textbf{Neufeld et al.\ 2024 (\emph{data thinning}).} Es la generalización del anterior: sirve para cualquier distribución que se pueda dividir así (Poisson, binomial negativa y otras), y sirve para validar resultados de aprendizaje no supervisado.
+\end{nota}
+
+\begin{nota}{Si te preguntan: ¿por qué no usaste count splitting o data thinning?}
+Su garantía depende de que los conteos sigan una distribución conocida. Los conteos de viajes tienen más variabilidad que la de Poisson (sobredispersión), y esa variabilidad cambia con el volumen. Por eso no se adoptan; dividir los \emph{días} en lugar de los conteos queda como trabajo futuro. En cambio, sí se adopta la lección de Gao sobre repetir la búsqueda del mejor corte en cada réplica nula, y se toma como referencia la prueba de Watanabe y Suzuki.
+\end{nota}
+
+\subsection*{Tercera familia: \emph{hotspots} espacio-temporales}
+
+\begin{nota}{Qué hace cada método}
+\textbf{Shiode y Shiode 2022 (\emph{space-time NetScan}).} Usa una \emph{estadística de barrido}: se recorre el espacio y el tiempo con ventanas de distinto tamaño, a lo largo de la red de calles, y en cada una se calcula una razón de verosimilitud que mide cuánto más eventos hay de lo esperado. La ventana más anómala marca el foco. En pruebas con datos sintéticos detectó mejor la ubicación, forma, tamaño y duración de los focos que los métodos anteriores.
+
+\textbf{Chen et al.\ 2021 (focos urbanos en paradas de taxi).} Detecta focos con un criterio de densidad máxima local, es decir, puntos donde la concentración de paradas es mayor que la de sus alrededores. El umbral para decidir cuándo un foco es «popular» se fija con una simulación Monte Carlo y con \emph{head/tail breaks}, un procedimiento que parte los datos repetidamente alrededor de la media cuando la distribución tiene cola larga (pocos lugares muy populares y muchos poco populares). No usa un nivel de significancia fijo ni corrige comparaciones múltiples.
+\end{nota}
+
+\begin{nota}{Si te preguntan: ¿en qué se diferencia de lo tuyo?}
+Los \emph{hotspots} buscan zonas de alta intensidad en un espacio continuo, una red de calles o un grafo, mientras que esta tesis trabaja sobre una matriz región $\times$ tiempo y detecta interacciones dentro de bloques ya formados. Las estadísticas de barrido sí comparten con la propuesta la lógica de la razón de verosimilitud y la necesidad de controlar las comparaciones múltiples, por lo que son una comparación natural.
+\end{nota}
+
+\subsection*{Los dos puntos de partida}
+
+\begin{nota}{ST-CC y SigTree}
+\textbf{\STCC\ (Liu et al.\ 2021).} Ya lo vimos: co-agrupamiento en tablero con \BBAC\ sobre una matriz región $\times$ tiempo. De aquí se toma la \emph{partición base}.
+
+\textbf{SigTree (Hu et al.\ 2025).} Construye un árbol de decisión binario para agrupar datos categóricos, y usa una prueba de hipótesis tanto para elegir cada división como para decidir cuándo detenerse. \textit{Cómo funciona:} en cada nodo prueba cada división posible y se queda con la de menor p-valor, que solo se aplica si es menor que un nivel ajustado por Bonferroni (el nivel $\alpha$ dividido entre el número de categorías). Cuando ninguna división es significativa, el árbol termina. Su ventaja es que no hay que fijar el número de grupos de antemano, solo el nivel $\alpha$. Sus limitaciones: es costoso, no optimiza una función objetivo, el estadístico $\chi^2$ crece con el tamaño de la muestra, y calcula el p-valor como si la división se hubiera fijado de antemano.
+
+\textbf{Qué toma la tesis:} el principio de SigTree, construir la partición con pruebas de hipótesis y detenerla cuando ninguna división es significativa, pero aplicado a bloques de una matriz de conteos, donde el corte puede ser de filas, de columnas o conjunto.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 7. Brecha de investigación}
+
+\begin{guion}
+Esta tabla resume lo anterior. Compara los trabajos más cercanos según cinco características: si trabajan con datos espacio-temporales, si agrupan filas y columnas a la vez, si permiten una estructura local, si usan un criterio estadístico, y si controlan el error.
+
+\STCC\ tiene las dos primeras, pero no tiene estructura local, ni criterio estadístico, ni control del error. SigTree tiene las tres últimas, pero no trabaja con datos espacio-temporales ni agrupa filas y columnas. Y los demás trabajos cumplen algunas características, nunca todas.
+
+Por eso la brecha es esta: no encontramos un trabajo que \textbf{refine localmente} los bloques de un co-agrupamiento espacio-temporal, \textbf{decida cada división con una prueba de hipótesis} y \textbf{controle el error} a lo largo de la jerarquía. Nuestra propuesta, AST-CC, es la única que reúne las cinco.
+\end{guion}
+
+\begin{nota}{Cómo leer la tabla}
+Cada columna es una pregunta, y la marca indica si el trabajo cumple (\checkmark) o no ($\times$):
+
+\textbf{Esp.-temp.:} ¿trabaja con datos que tienen espacio y tiempo, como la matriz región $\times$ tiempo?\\
+\textbf{Filas y col.:} ¿agrupa filas y columnas a la vez (co-agrupamiento)?\\
+\textbf{Estructura local:} ¿permite que una parte de la matriz se divida de forma distinta a otra, en vez de una rejilla global?\\
+\textbf{Criterio estad.:} ¿usa una prueba estadística para decidir o validar la estructura?\\
+\textbf{Control de error:} ¿controla el error de falsos positivos cuando hace muchas pruebas (multiplicidad) o por elegir con los mismos datos?
+
+\textbf{Cómo decirlo en la exposición:} las filas del medio muestran que cada trabajo tiene piezas sueltas. La propuesta es la única con las cinco marcas.
+\end{nota}
+
+\begin{nota}{Si te preguntan: ¿por qué los demás no cumplen todo?}
+\textbf{\STCC\ (Liu 2021):} co-agrupa regiones y tiempo, pero produce una rejilla global sin pruebas estadísticas.\\
+\textbf{SigTree (Hu 2025):} sí usa pruebas y controla el error, y su árbol es local, pero es para datos categóricos y no agrupa filas y columnas juntas, ni trata espacio y tiempo.\\
+\textbf{Wu 2022:} co-agrupa datos geo-referenciados, pero con una rejilla global y sin pruebas.\\
+\textbf{Neves 2022:} es el más cercano, con cuatro marcas: espacio-tiempo, filas y columnas, estructura local y una prueba. Pero la prueba es un filtro al final y no controla el error entre tantas pruebas.\\
+\textbf{Watanabe 2021 (inferencia selectiva):} valida bien la estructura de bloques, pero no es espacio-temporal y no es local.\\
+\textbf{Gao 2024:} da inferencia selectiva correcta y estructura jerárquica, pero agrupa una sola dimensión y no es espacio-temporal.\\
+\textbf{Shiode 2022:} detecta focos en espacio y tiempo con control del error, pero no agrupa filas y columnas de una matriz.
+\end{nota}
+
+\begin{nota}{«Controle el error a lo largo de la jerarquía»}
+Es la misma idea de multiplicidad de la diapositiva 5, pero aplicada al árbol: como cada bloque se prueba y sus hijos se vuelven a probar, el riesgo de equivocarse se acumula nivel tras nivel. Controlar el error a lo largo de la jerarquía significa que el riesgo total, sumando todo el árbol, se mantenga bajo. Cómo se hace se explica más adelante, en la diapositiva 10.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 8. AST-CC: refinar mientras haya heterogeneidad detectable y relevante}
+
+\begin{guion}
+La idea central de AST-CC es simple: refinar mientras haya heterogeneidad detectable y relevante, y detenerse cuando ya no la haya.
+
+A la izquierda está la partición base de \STCC\ y a la derecha la teselación refinada de AST-CC. Fíjense que cada corte afecta solo al bloque donde se detectó el patrón, y no atraviesa toda la matriz.
+
+¿Por qué se puede hacer esto? Porque con conteos, la I-divergencia que usa \BBAC\ coincide con la devianza de Poisson. Con ella, el error de \STCC\ se descompone en partes, y la que \STCC\ no modela es la interacción \emph{dentro} de cada bloque, que medimos con $G^2_B$. Y lo más importante es que cuando cortamos un bloque, esa heterogeneidad se reparte de forma exacta: lo que explica el corte más lo que queda en cada hijo.
+
+Abajo está el procedimiento en cuatro etapas: la matriz de conteos, la partición base, el refinamiento con pruebas de hipótesis por bloque, y el resumen de las hojas.
+\end{guion}
+
+\begin{nota}{Objetivo que se resuelve aquí}
+Esta diapositiva responde al \textbf{OE1}: formular el refinamiento como un árbol de bloques anidados desde la partición base de \BBAC, con un criterio de heterogeneidad coherente con la función objetivo de \STCC.
+\end{nota}
+
+\subsection*{Parte 1. La idea central, en simple}
+
+\begin{nota}{Qué significa «refinar mientras haya heterogeneidad detectable y relevante»}
+Se parte de los bloques que da \STCC\ y se examina cada uno por separado. Para cada bloque se pregunta: ¿adentro hay heterogeneidad que \emph{no} sea azar (detectable) y que sea \emph{suficientemente grande} (relevante)? Si la respuesta es sí, se divide el bloque y se repite la pregunta con cada pedazo. Si es no, el bloque queda como \textbf{hoja} (un bloque final que ya no se divide).
+
+\textbf{Detectable} se decide con una prueba de hipótesis (que no sea azar). \textbf{Relevante} se decide con un tamaño de efecto (que la diferencia no sea mínima aunque sea significativa). Con millones de viajes casi todo sale «detectable», por eso hace falta también lo «relevante» (diapositiva 4, tercera pregunta).
+
+\textbf{La figura:} en (a) hay una rejilla global de $3\times3$ bloques. En (b) un bloque se dividió en tres hojas, que es donde estaba el foco local, y el resto quedó intacto. Si lo hubiera hecho una rejilla global más fina, habría tenido que partir también todos los bloques tranquilos.
+\end{nota}
+
+\begin{nota}{Las cuatro etapas del procedimiento (la franja de abajo)}
+\textbf{1. Matriz.} Se cuentan los viajes de cada región en cada intervalo y se obtiene la matriz $O$ de conteos. Además se guardan las $D$ matrices diarias $X_1,\dots,X_D$ (una por día) cuya suma es $O$. Estas se usan más adelante para calibrar las pruebas (diapositiva 10). Se usan conteos y no promedios porque solo con conteos la I-divergencia equivale a la devianza de Poisson.
+
+\textbf{2. Partición base.} Se ejecuta \BBAC\ con $K_R$ grupos de regiones y $K_T$ grupos de intervalos. Es el mismo tipo de tablero que el de \STCC.
+
+\textbf{3. Refinamiento.} Cada uno de los $K_R\cdot K_T$ bloques pasa por una decisión recursiva con pruebas de hipótesis: se divide por filas, por columnas, de forma conjunta, o se queda como hoja (diapositiva 9).
+
+\textbf{4. Resumen.} Las hojas finales se describen con su tamaño de efecto y su nivel de actividad, y se dibujan de forma que se siga leyendo como grupos de regiones y de horarios.
+\end{nota}
+
+\subsection*{Parte 2. El recuadro «Idea central», frase por frase}
+
+\begin{nota}{«Con conteos, la I-divergencia de \BBAC\ coincide con la devianza de Poisson»}
+\textbf{I-divergencia:} es la medida de error que usa \BBAC\ para comparar el dato real con lo que predice el bloque. Para cada celda compara el conteo observado $O_{ij}$ con el valor que el bloque le asigna, y la suma de todas las celdas es el error total.
+
+\textbf{Poisson:} es el modelo estándar para contar eventos que ocurren al azar y de forma independiente, a un ritmo promedio constante. Si en promedio hay 4 viajes en una celda, Poisson dice que lo normal es ver entre 2 y 6, y que la variabilidad es igual al promedio.
+
+\textbf{Devianza:} es la medida habitual de qué tan mal ajusta un modelo a un conjunto de conteos. Cuanto más alta, peor ajuste.
+
+\textbf{La frase completa} dice que, cuando los datos son conteos, el error que ya minimiza \BBAC\ es, salvo un factor de $\tfrac12$, la devianza del modelo de Poisson. Es decir, \BBAC\ ya estaba ajustando sin decirlo un modelo estadístico, donde la predicción de cada celda es el promedio de su bloque. Esto es lo que permite aplicar pruebas de hipótesis de forma legítima: el error deja de ser solo una distancia y pasa a ser un estadístico con distribución conocida.
+\end{nota}
+
+\begin{nota}{«El término que \STCC\ no modela es la interacción dentro de cada bloque»}
+El error que deja \STCC\ se puede separar en tres partes:\\
+\textbf{(i) Efectos marginales:} algunas regiones y horarios simplemente tienen más viajes que otros. Por ejemplo, Midtown mueve más viajes que el norte de Manhattan a cualquier hora. No es interacción.\\
+\textbf{(ii) Marginales por bloque:} el peso de una región cambia según el grupo de horarios. Por ejemplo, una región pesa más en horario de oficina que de noche.\\
+\textbf{(iii) Interacción local:} lo que queda dentro de cada bloque una vez descontado el volumen de sus propias regiones e intervalos. Por ejemplo, unas pocas regiones se activan solo en ciertos horarios del bloque.
+
+La tercera parte es la que \STCC\ deja sin modelar, porque resume cada bloque con un solo valor. Es justamente el patrón local que busca esta tesis, y se mide con $G^2_B$.
+\end{nota}
+
+\subsection*{Parte 3. La ecuación $G^2_B = G^2_{B,s} + \sum_C G^2_C$}
+
+\begin{nota}{Qué significa cada símbolo}
+$B$ \hfill\small(se dice «bloque B»)\normalsize\\
+Es el bloque que estamos examinando: un conjunto de regiones por un conjunto de intervalos.
+
+$s$ \hfill\small(se dice «corte s»)\normalsize\\
+Es un corte concreto del bloque, que puede ser de filas, de columnas o conjunto ($2\times2$).
+
+$C$ \hfill\small(se dice «hijo C»)\normalsize\\
+Cada uno de los bloques pequeños que resultan al aplicar el corte. En un corte de filas hay dos hijos; en uno conjunto, cuatro. La suma $\sum_C$ se dice «suma sobre los hijos».
+
+$G^2_B$ \hfill\small(se dice «ge cuadrado de B»)\normalsize\\
+Mide la \textbf{heterogeneidad total} del bloque: qué tanto se aleja el bloque de comportarse de manera uniforme, es decir, de que el patrón de regiones sea el mismo en todos los horarios. Vale 0 si no hay interacción, y crece cuanto más heterogéneo es.
+
+$G^2_{B,s}$ \hfill\small(se dice «ge cuadrado de B coma s»)\normalsize\\
+Es la \textbf{parte de esa heterogeneidad que explica el corte $s$}, es decir, la \textbf{diferencia entre los hijos}. Mide cuánto mejora el ajuste al separar el bloque en sus hijos. Siempre es mayor o igual que cero.
+
+$G^2_C$ \hfill\small(se dice «ge cuadrado de C»)\normalsize\\
+Es la heterogeneidad que \textbf{queda dentro} de cada hijo después del corte.
+\end{nota}
+
+\begin{nota}{Ejemplo numérico de la ecuación}
+Un bloque con cuatro regiones y dos horarios, con conteos por región $(30,10)$, $(28,12)$, $(10,30)$ y $(12,28)$. En total $N_B=160$ y, si fuera uniforme, cada celda valdría 20. Las dos primeras regiones se concentran en el primer horario y las dos últimas en el segundo, es decir, hay interacción, y $G^2_B\approx 34{,}10$.
+
+\textbf{Aplicamos un corte de filas:} regiones $\{1,2\}$ por un lado y $\{3,4\}$ por el otro. Se obtiene $G^2_{B,s}\approx 33{,}59$, y cada hijo queda con $G^2_C\approx 0{,}25$, porque dentro de cada hijo las dos regiones ya se parecen. Y se comprueba la ecuación: $33{,}59+0{,}25+0{,}25\approx 34{,}10$. El corte explica cerca del 98,5\,\% de la heterogeneidad del bloque.
+\end{nota}
+
+\begin{nota}{¿Por qué el «2» en $G^2$?}
+No es una potencia que se calcule: $G^2$ es el \emph{nombre} del estadístico, que se lee «ge cuadrado», igual que $\chi^2$ se lee «ji cuadrado». Se llama así porque, cuando no hay interacción, su valor se comporta como una distribución ji cuadrado. Por eso sirve para hacer pruebas de hipótesis.
+
+El «2» viene de que $G^2$ es, por definición, \textbf{dos veces} el logaritmo de la razón de verosimilitudes. Ese factor 2 es lo que hace que siga la distribución ji cuadrado. Por eso también aparece la relación de la diapositiva 8: la reducción del error del árbol es $\tfrac12 G^2_{B,s}$, o sea, $G^2$ es el doble de la I-divergencia.
+
+\textbf{Los subíndices} solo dicen \emph{a qué se aplica} el mismo estadístico: $G^2_B$ al bloque completo, $G^2_C$ a cada hijo, y $G^2_{B,s}$ al corte $s$ del bloque $B$. Es la misma medida, calculada sobre cosas distintas.
+\end{nota}
+
+\begin{nota}{¿Por qué aparece $G^2_{B,s}$ si los hijos ya suman su heterogeneidad?}
+Tu lectura es correcta para el último término: $\sum_C G^2_C$ es la suma de la heterogeneidad que queda \emph{dentro} de cada hijo. Pero eso \textbf{no} es todo el $G^2_B$, porque falta algo: cuando se mira a cada hijo por separado, cada uno se compara solo consigo mismo, y se pierde la \textbf{diferencia entre los hijos}. Esa diferencia es justamente $G^2_{B,s}$.
+
+La ecuación entonces es: \textbf{total = diferencia entre los hijos + heterogeneidad dentro de los hijos}.
+
+\textbf{Analogía:} dos salones de clase. La variación de estaturas de todos los alumnos juntos tiene dos fuentes: la que hay \emph{dentro} de cada salón y la que hay \emph{entre} los salones (un salón es de alumnos más altos que el otro). Si solo sumas la de cada salón, te falta la de «entre salones».
+
+\textbf{En el ejemplo:} dentro de cada hijo, las dos regiones ya se parecen, así que casi no queda heterogeneidad ($0{,}25$ cada uno). Pero entre los hijos hay una diferencia enorme: el hijo 1 se concentra en el primer horario (58 contra 22) y el hijo 2 en el segundo (22 contra 58). Esa diferencia es $G^2_{B,s}\approx 33{,}59$, y es lo que el corte logró separar.
+
+\textbf{Por qué importa:} $G^2_{B,s}$ es la \emph{ganancia} del corte. Si los hijos fueran iguales entre sí, $G^2_{B,s}$ valdría casi 0 y cortar no serviría de nada. Si son muy distintos, vale mucho, y el corte vale la pena. Por eso es el estadístico que se prueba para decidir si se corta.
+\end{nota}
+
+\begin{nota}{Cómo decir la ecuación en voz alta, y por qué importa}
+\textbf{En voz alta:} «la heterogeneidad total del bloque es igual a la parte que explica el corte, más la que queda dentro de los hijos».
+
+\textbf{Qué quiere decir «exacta»:} el reparto no pierde ni duplica nada, como cortar una torta: la suma de los pedazos es la torta entera. Es una identidad matemática (consecuencia de la propiedad pitagórica de la I-divergencia), no una aproximación.
+
+\textbf{Por qué importa:}
+\begin{itemize}
+\item \textbf{Se decide localmente.} La ganancia de un corte se calcula solo con los datos de su bloque, sin tocar el resto de la matriz, y aun así es coherente con el error global. Por eso el árbol puede construirse bloque por bloque.
+\item \textbf{La ganancia es un estadístico de prueba.} Reducir el error del árbol al aplicar el corte es exactamente $\tfrac12 G^2_{B,s}$, y $G^2_{B,s}$ es un estadístico de razón de verosimilitud. Por eso se puede \emph{probar} si ese corte es real o es azar, que es lo que se hace en las diapositivas 9 y 10.
+\item \textbf{Se sabe cuándo parar.} Cuando lo que queda dentro de los hijos ($G^2_C$) ya no se distingue del azar, no hay más que refinar.
+\end{itemize}
+\end{nota}
+
+\begin{nota}{Si te preguntan}
+\textbf{¿Por qué no solo aumentar $K_R$ y $K_T$?} Porque cada corte nuevo atraviesa toda la matriz y fragmenta zonas sin patrón. En AST-CC los parámetros que se añaden crecen con la cantidad de estructura local encontrada, no con la resolución global.
+
+\textbf{¿Qué tipos de corte hay?} Tres: de filas (separa regiones), de columnas (separa intervalos) y conjunto $2\times2$ (separa ambos a la vez). En la figura de la diapositiva solo se ve el bloque del foco dividido en tres hojas (un corte de filas y luego uno de columnas).
+
+\textbf{¿Es lo mismo \STCC\ que la partición base de AST-CC?} Casi. Ambos usan \BBAC, pero la implementación de \STCC\ usa la base C2 y AST-CC usa la base C5, así que los tableros pueden no ser idénticos.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 9. Regla de decisión para cada bloque}
+
+\begin{guion}
+Esta es la regla que se aplica a cada bloque del árbol.
+
+Primero, la prueba ómnibus: se pregunta si hay heterogeneidad detectable, es decir, significativa, y además relevante, es decir, con un tamaño $\tilde I_B$ de al menos $\delta$. Si no se cumple, el bloque es una hoja homogénea y ahí termina.
+
+Si se cumple, se busca dónde cortar. Se prueba un corte de filas o de columnas, y si alguno es significativo se aplica el de menor p-valor. Si ninguno lo es, se prueba el corte conjunto $2\times 2$ como último recurso.
+
+Antes de aceptar el corte, se verifica que su ganancia $\tilde g_{B,s}$ sea al menos $\delta$. Si lo es, se repite todo en cada hijo. Si no, o si no se encontró ningún corte, el bloque queda como hoja heterogénea no localizada. Distinguir estas dos hojas evita presentar como uniforme un bloque que no lo es.
+\end{guion}
+
+\begin{nota}{Objetivo que se resuelve aquí}
+Esta diapositiva responde al \textbf{OE2}: diseñar la regla de decisión y de parada (prueba global por bloque, mejor corte, tamaño de efecto). La calibración y el control de multiplicidad, que también son parte del OE2, se ven en la diapositiva 10.
+\end{nota}
+
+\subsection*{Cómo leer el diagrama}
+
+\begin{nota}{El recorrido, paso a paso}
+\textbf{Entrada:} un bloque $B$ con un nivel $\alpha_B$ (ver más abajo qué es).
+
+\textbf{1. ¿Ómnibus significativo y $\tilde I_B\ge\delta$?} Es la «puerta». Pregunta si hay algo que refinar. Si la respuesta es no, el bloque es una \textbf{hoja homogénea}: sus celdas se comportan parecido y no se toca.
+
+\textbf{2. ¿Corte de filas o de columnas significativo?} Si pasó la puerta, se busca qué corte captura la heterogeneidad. Se prueban cortes de filas (separar regiones) y de columnas (separar intervalos). Si alguno es significativo, se elige el de menor p-valor.
+
+\textbf{3. ¿Corte conjunto $2\times2$ significativo?} Solo si ningún corte de filas ni de columnas funcionó, pero la puerta sí se pasó. Es el último recurso, porque separa regiones e intervalos a la vez y tiene más parámetros.
+
+\textbf{4. ¿Ganancia $\tilde g_{B,s}\ge\delta$?} Antes de aceptar el corte elegido, se comprueba que explique una cantidad mínima de información. Si sí, se \textbf{recurre en cada hijo}: cada pedazo vuelve a empezar en el paso 1. Si no, el bloque queda como \textbf{hoja heterogénea no localizada}.
+
+\textbf{Hoja heterogénea no localizada:} hay evidencia de que el bloque tiene estructura interna, pero ningún corte la captura con suficiente respaldo. Se reporta como tal y no como uniforme.
+
+\textbf{«Un corte por nivel»:} en cada bloque se aplica un solo corte. Si además haría falta cortar por la otra dimensión, eso lo decide la recursión en los hijos.
+
+\textbf{Ejemplo con números.} Con $\alpha_B=0{,}01$ y $\delta=0{,}005$: si el ómnibus da $p=0{,}002$ y $\tilde I_B=0{,}03$, el bloque pasa la puerta. Si el corte de filas da $p=0{,}004$ y el de columnas $p=0{,}3$, solo el de filas es significativo y se elige. Si su ganancia corregida supera $0{,}005$, se corta y se repite en cada hijo.
+\end{nota}
+
+\begin{nota}{Cómo se lee cada símbolo de la diapositiva}
+\begin{tabular}{@{}p{3.6cm}p{11.2cm}@{}}
+$\alpha_B$ & «alfa sub B» o «alfa de B». Nivel de significancia del bloque $B$.\\
+$p_{\mathrm{omn}}$ & «p ómnibus». El p-valor de la prueba ómnibus.\\
+$p_{\mathrm{fil}}$, $p_{\mathrm{col}}$ & «p filas» y «p columnas». Los p-valores de los mejores cortes de filas y de columnas.\\
+$p_{\mathrm{conj}}$ & «p conjunto». El p-valor del corte conjunto $2\times2$.\\
+$\tilde I_B$ & «I tilde sub B» o «I tilde de B». Tamaño de efecto del bloque, corregido por sesgo.\\
+$\hat I_B$ & «I sombrero de B». La misma información mutua, sin corregir.\\
+$\delta$ & «delta». El umbral mínimo de tamaño de efecto.\\
+$\tilde g_{B,s}$ & «ge tilde de B coma s». Ganancia corregida del corte $s$ en el bloque $B$.\\
+$G^2_B$, $G^2_{B,s}$ & «ge cuadrado de B» y «ge cuadrado de B coma s» (diapositiva 8).\\
+$\bar t_0$, $\bar t_{0,s}$ & «te barra cero» y «te barra cero coma s». El promedio del estadístico en las matrices sin patrón. La barra significa «promedio» y el 0, «bajo el nulo».\\
+$N_B$ & «N sub B». Número total de viajes del bloque $B$.\\
+$2N_B$ & «dos N sub B». Dos veces el número de viajes del bloque.\\
+$\le$, $\ge$ & «menor o igual» y «mayor o igual».\\
+$\max\{0,\ x\}$ & «el máximo entre cero y $x$». Si $x$ sale negativo, el resultado es 0. Evita tamaños de efecto negativos.\\
+\end{tabular}
+\end{nota}
+
+\subsection*{Las cosas que pueden preguntarte}
+
+\begin{nota}{¿Qué significa «ómnibus significativo»?}
+«Ómnibus» quiere decir «para todo»: es una prueba general que pregunta si hay \emph{algo} en el bloque, \textbf{sin decir dónde}. Es como un chequeo médico general antes de ir al especialista. Aquí la pregunta es: ¿hay alguna interacción entre regiones y horarios dentro del bloque? Se mide con $G^2_B$ (la heterogeneidad total de la diapositiva 8).
+
+\textbf{«Significativo»} quiere decir que su p-valor es menor o igual que el nivel $\alpha_B$, es decir, que es difícil que ese resultado sea solo azar.
+
+Las pruebas siguientes (de filas, de columnas y conjunta) se llaman \emph{dirigidas} porque sí dicen dónde: buscan el corte que captura lo que el ómnibus detectó. Se hacen solo si el ómnibus rechazó, para no añadir oportunidades de falsos positivos.
+\end{nota}
+
+\begin{nota}{¿Qué es el p-valor?}
+Es la probabilidad de ver un resultado \emph{al menos tan extremo como el observado}, si en realidad \textbf{no hubiera ningún patrón}. Un p-valor pequeño significa que, sin patrón, sería muy raro ver algo así, y por eso se concluye que hay un patrón real.
+
+\textbf{Ejemplo:} con $p=0{,}002$ y suponiendo que no hay patrón, solo 2 de cada 1000 matrices parecidas darían una heterogeneidad tan grande como la observada. Es tan raro que se descarta el azar.
+
+\textbf{Cómo se compara con el nivel $\alpha_B$:} si $p\le\alpha_B$, se rechaza «no hay patrón» y se dice que es significativo. Si $p>\alpha_B$, no hay evidencia suficiente.
+
+\textbf{Cómo se obtiene en esta tesis:} no se usa una fórmula teórica, sino simulación. Se remuestrean los días observados para generar muchas matrices «sin patrón» y se cuenta en cuántas el estadístico es tan grande como el real. Eso se explica en la diapositiva 10.
+\end{nota}
+
+\begin{nota}{¿Qué es $\alpha_B$?}
+Es el nivel de significancia asignado al bloque $B$: el riesgo máximo de falso positivo que se tolera en ese bloque (por ejemplo 1\,\%). Cada bloque del árbol recibe su propio nivel, y los hijos reciben una fracción del nivel del padre según su tamaño. Así el riesgo total de todo el árbol se mantiene acotado. Es el control de multiplicidad, y se detalla en la diapositiva 10.
+\end{nota}
+
+\begin{nota}{¿Qué es $\tilde I_B$?}
+Es el \textbf{tamaño de efecto} del bloque: no responde «¿hay un patrón?», sino «¿qué tan grande es?». Es la \emph{información mutua} dentro del bloque, que mide cuánto informa la región sobre el horario del viaje (y al revés). Si regiones y horarios son independientes, vale 0; cuanto más fuerte es la interacción, más crece. Se mide en \emph{nats por observación}, que es una unidad de información (como los bits, pero con logaritmo natural).
+
+Está relacionada con lo que ya vimos: $\hat I_B=G^2_B/(2N_B)$. Es $G^2_B$ dividido entre el número de viajes $N_B$ (y el 2), y por eso \textbf{no crece cuando hay más viajes}. Esa es su gran ventaja sobre $G^2_B$ o el p-valor, que sí crecen con la muestra.
+
+\textbf{La tilde ($\tilde{\ }$)} indica que está \emph{corregida por sesgo}: aunque no haya patrón, $G^2_B$ no vale 0, porque el azar siempre produce algo de heterogeneidad, sobre todo en bloques pequeños. Se estima cuánto vale $G^2_B$ en las matrices simuladas sin patrón ($\bar t_0$) y se resta:
+\[ \tilde I_B=\max\Bigl\{0,\ \frac{G^2_B-\bar t_0}{2N_B}\Bigr\}. \]
+Así queda solo lo que va más allá del ruido.
+\end{nota}
+
+\begin{nota}{¿Qué es $\delta$ y de dónde sale?}
+$\delta$ es el \textbf{umbral mínimo de tamaño de efecto}: la cantidad mínima de información (en nats por observación) que una heterogeneidad debe tener para considerarla relevante. Se lee «delta».
+
+\textbf{Para qué sirve:} con millones de viajes, casi cualquier diferencia, por pequeña que sea, sale «significativa» (diapositiva 4, tercera pregunta). En los bloques base de la tesis, el cociente $G^2_B/\nu_B$ va de 3 a más de 1700, y la prueba rechaza prácticamente todos. Entonces la significancia por sí sola no distingue lo importante de lo trivial. $\delta$ pone un piso: una diferencia detectable pero diminuta no justifica subdividir el bloque. Por eso la regla pide \emph{ambas} cosas: significativo \textbf{y} $\tilde I_B\ge\delta$.
+
+\textbf{De dónde sale su valor:} no es una constante teórica ni se fija a priori. Es un \textbf{parámetro de diseño} con interpretación directa (nats por observación). Para elegirlo se toma como referencia de escala la información mutua de los bloques base de \STCC, que va de $0{,}0012$ a $0{,}061$ nats en días laborables y de $0{,}0017$ a $0{,}19$ en feriados. Con esa escala se recorre una rejilla, por ejemplo $\delta\in\{0{,}001;\,0{,}0025;\,0{,}005;\,0{,}01;\,0{,}02\}$, y para cada valor se reporta cuántas hojas resultan, qué fracción de la interacción local se explica y qué tan estables son. Es decir, se hace un análisis de sensibilidad. En los ejemplos de la tesis se usa $\delta=0{,}005$.
+
+\textbf{Cómo decirlo:} «$\delta$ es el tamaño mínimo que debe tener un patrón para que valga la pena refinar; si es más chico, no importa que sea significativo».
+\end{nota}
+
+\begin{nota}{¿Qué es $\tilde g_{B,s}$?}
+Es la \textbf{ganancia corregida} del corte $s$ en el bloque $B$ (se lee «ge tilde de B coma s», con $g$ minúscula). Mide cuánta información adicional explica ese corte, en la misma unidad que $\tilde I_B$: nats por observación.
+
+Se construye a partir de lo que ya vimos: $G^2_{B,s}$ es la \emph{diferencia entre los hijos} (diapositiva 8). Pero $G^2_{B,s}$ crece con el número de viajes, y además siempre vale algo positivo, porque al elegir el \emph{mejor} entre muchos cortes posibles, el mejor casi siempre luce bien por puro azar. Entonces se hace lo mismo que con $\tilde I_B$: se divide entre $2N_B$ y se resta lo que el mejor corte explicaría en las matrices sin patrón ($\bar t_{0,s}$):
+\[ \tilde g_{B,s}=\max\Bigl\{0,\ \frac{G^2_{B,s}-\bar t_{0,s}}{2N_B}\Bigr\}. \]
+
+\textbf{La condición $\tilde g_{B,s}\ge\delta$} pide que el corte explique al menos $\delta$ nats por observación más de lo que explicaría el mejor corte de una tabla sin patrón. Si el corte es significativo pero aporta muy poco, no se acepta.
+
+\textbf{Diferencia entre $\tilde I_B$ y $\tilde g_{B,s}$:} $\tilde I_B$ es el tamaño de la heterogeneidad \emph{total} del bloque (la puerta). $\tilde g_{B,s}$ es el tamaño de la parte que \emph{explica el corte} (la ganancia). Ambos se comparan con el mismo $\delta$.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 10. Calibración, multiplicidad y parada}
+
+\begin{guion}
+Para que la regla anterior sea confiable hacen falta tres cosas: calibrar las pruebas, controlar la multiplicidad y saber cuándo parar.
+
+Primero, la calibración. Los datos reales varían mucho más de lo que dice Poisson: la varianza entre días es 3 veces la media en días laborables y 17 veces en feriados. Por eso usamos un \emph{bootstrap} de días, que remuestrea días completos y así conserva la correlación entre celdas. Segundo, el ajuste \emph{min-P}: como el corte se elige entre muchos candidatos, se repite esa búsqueda en cada réplica nula. Sin esto, el error de tipo I llegó a 0,98.
+
+Tercero, el nivel se reparte por masa, con $\alpha_C=\alpha_B N_C/N_B$, lo que acota el error por familia por $\alpha$. Y la parada exige significancia y también tamaño de efecto, que no crece con el número de viajes.
+
+El gráfico lo resume: Poisson se equivoca en el 40\,\% y el 76\,\% de los casos, y el \emph{bootstrap} queda cerca del 5\,\% nominal.
+\end{guion}
+
+\begin{nota}{Objetivo que se resuelve aquí}
+Esta diapositiva completa el \textbf{OE2}: la calibración con la variabilidad entre días, el control de multiplicidad y el umbral de tamaño de efecto. El gráfico de la derecha es un adelanto de la evaluación de calibración del OE3.
+\end{nota}
+
+\subsection*{Calibración: el bootstrap de días}
+
+\begin{nota}{¿Por qué hace falta calibrar? La sobredispersión}
+Una prueba estadística necesita saber cuánto \emph{varía} el estadístico cuando no hay ningún patrón. Si se supone que los conteos son Poisson, esa variación es la de un conteo «puramente aleatorio», donde la varianza es igual al promedio (cociente varianza/promedio $=1$).
+
+Pero los conteos reales de taxis varían mucho más entre un día y otro: el cociente varianza/promedio de una celda típica es \textbf{3} en días laborables y \textbf{17} en feriados. Esto es la \emph{sobredispersión} (más variabilidad que Poisson). Consecuencia: si se usa Poisson, la prueba cree que cualquier diferencia es rara y ve patrones donde solo hay variación normal entre días. Por eso necesita otra referencia, y la mejor es usar los propios días observados.
+
+Además, esa variación entre días es \textbf{correlacionada}: un día lluvioso baja muchas celdas a la vez. Por eso se remuestrean \emph{días completos} y no celdas sueltas: así cada réplica conserva esa correlación.
+\end{nota}
+
+\begin{nota}{¿Qué es el bootstrap?}
+Es una técnica para estimar cuánto varía un resultado \textbf{usando los mismos datos observados}, sin suponer ninguna fórmula teórica. La idea: remuestrear \emph{con reemplazo}, es decir, sortear observaciones de los datos reales, pudiendo repetir las mismas, para generar muchas versiones alternativas de los datos. Sobre cada versión se calcula el estadístico, y la variación entre versiones muestra cuánto varía por azar.
+
+\textbf{Ejemplo simple:} tienes los conteos de 4 días, $(80, 100, 90, 130)$. Una réplica bootstrap sortea 4 días con reemplazo, por ejemplo el día 4, el 1, el 4 y el 2, y los usa como nueva muestra. Repites esto miles de veces.
+
+\textbf{«Bootstrap de días»} significa que lo que se sortea son los días completos de la matriz (cada día es una matriz región $\times$ intervalo), no las celdas ni los viajes. Y «\textbf{bajo la hipótesis nula}» significa que las réplicas se construyen para que \emph{no} tengan patrón: se centran en el promedio de independencia del bloque, pero heredan las fluctuaciones reales entre días.
+\end{nota}
+
+\begin{nota}{Las fórmulas del bootstrap, con cómo se leen}
+Para cada celda $(i,j)$ del bloque, $X_{dij}$ es el conteo del día $d$ y $\bar X_{ij}$ su promedio diario.
+
+\textbf{Fluctuación del día:}
+\[ F_{dij}=\frac{X_{dij}}{\bar X_{ij}} \]
+Se lee «efe de d, i, j es igual a equis de d, i, j entre equis barra de i, j». Mide cuánto se desvió ese día respecto del promedio de la celda. Vale 1 si fue un día típico, más de 1 si fue más activo. \textit{Ejemplo:} con conteos $(80,100,90,130)$ y promedio 100, las fluctuaciones son $(0{,}8;\ 1{,}0;\ 0{,}9;\ 1{,}3)$.
+
+\textbf{Fluctuación corregida:}
+\[ \tilde F_{dij}=\max\Bigl\{0,\ 1+\sqrt{\tfrac{D}{D-1}}\,(F_{dij}-1)\Bigr\} \]
+Se lee «efe tilde...». Es la misma fluctuación, pero ampliada un poco: con pocos días ($D$), la variación observada \emph{subestima} la variación real, y el factor $\sqrt{D/(D-1)}$ compensa eso. Con $D=4$ el factor es $1{,}155$ y las fluctuaciones pasan a $(0{,}77;\ 1{,}00;\ 0{,}89;\ 1{,}35)$. El $\max\{0,\cdot\}$ evita valores negativos.
+
+\textbf{La réplica nula:}
+\[ O^{(b)}_{ij}=\frac{E^B_{ij}}{D}\sum_{k=1}^{D}\tilde F_{d_k\,ij} \]
+Se lee «O de b, i, j es igual a E de B, i, j entre D, por la suma, desde k igual 1 hasta D, de efe tilde de d sub k, i, j». Aquí:\\
+$O^{(b)}_{ij}$: la celda $(i,j)$ en la réplica número $b$.\\
+$E^B_{ij}$: lo que se esperaría sin patrón en el bloque (diapositiva 8).\\
+$d_1,\dots,d_D$: los $D$ días que se sortean con reemplazo.\\
+$\sum_{k=1}^{D}\tilde F_{d_k ij}/D$: el promedio de las fluctuaciones de los días sorteados.
+
+En palabras: \textbf{réplica = lo esperado sin patrón $\times$ la fluctuación promedio de los días sorteados}. \textit{Ejemplo:} $E^B_{ij}=400$ y se sortean los días $(4,1,4,2)$. La suma de fluctuaciones corregidas es $4{,}46$ y la réplica vale $400/4\times 4{,}46\approx 446$.
+
+\textbf{Por qué es nula:} en promedio las réplicas valen $E^B$, o sea, cumplen la independencia. Pero la variabilidad entre días, y su correlación entre celdas, es la real, porque se usa el mismo día para todas las celdas.
+\end{nota}
+
+\begin{nota}{El p-valor por simulación}
+Con cada réplica $b=1,\dots,B_{\mathrm{perm}}$ se calcula el estadístico $t_b$ (por ejemplo $G^2_B$). Con el estadístico observado $t_{\mathrm{obs}}$, el p-valor es:
+\[ p=\frac{1+\#\{b:\ t_b\ge t_{\mathrm{obs}}\}}{1+B_{\mathrm{perm}}} \]
+Se lee «p es igual a uno más el número de réplicas $b$ tales que $t_b$ es mayor o igual que $t_{\mathrm{obs}}$, entre uno más $B_{\mathrm{perm}}$». Es decir: la fracción de réplicas sin patrón que igualan o superan lo observado. El «1 +» cuenta la matriz observada como una réplica más, y así el p-valor nunca vale cero.
+
+\textit{Ejemplo:} con 199 réplicas, si 4 superan lo observado, $p=(1+4)/200=0{,}025$. Si ninguna lo supera, $p=1/200=0{,}005$, que es lo más pequeño que se puede obtener con 199 réplicas.
+\end{nota}
+
+\subsection*{Ajuste min-P}
+
+\begin{nota}{¿Qué es el ajuste min-P y por qué hace falta?}
+\textbf{El problema.} El corte que se prueba no es uno cualquiera: es el \emph{mejor} entre muchos candidatos (un bloque con 12 intervalos tiene 2047 cortes posibles de columnas). Si ese mejor corte se compara con la distribución de un corte \emph{elegido de antemano}, el p-valor sale artificialmente pequeño, porque el ganador casi siempre luce bien por puro azar.
+
+\textbf{Ejemplo:} con 7 cortes independientes y un umbral del 5\,\%, la probabilidad de que \emph{al menos uno} lo supere sin que haya patrón es $1-0{,}95^{7}\approx 0{,}30$, no $0{,}05$. Es la multiplicidad de la diapositiva 5 aplicada a los cortes.
+
+\textbf{La solución.} En cada réplica sin patrón se \emph{repite la búsqueda completa} del mejor corte y se anota su estadístico máximo. El p-valor compara entonces el \textbf{máximo observado} con la distribución del \textbf{máximo bajo el nulo}. Así se compara ganador contra ganadores: si en las réplicas sin patrón también se obtiene siempre un ganador así de bueno, el resultado no es raro.
+
+\textbf{Por qué «min-P».} El corte con mayor estadístico es el de menor p-valor. Comparar el mayor estadístico es equivalente a comparar el menor p-valor, de ahí el nombre (Westfall y Young, 1993). En fórmula, el estadístico de cada tipo de corte es
+\[ T_{\mathrm{tipo}}(B)=\max_{s\in\mathcal{S}_{\mathrm{tipo}}(B)}G^2_{B,s},\qquad \mathrm{tipo}\in\{\mathrm{fil},\mathrm{col},\mathrm{conj}\}. \]
+Se lee «T del tipo, de B, es el máximo, sobre todos los cortes candidatos $s$ del conjunto $\mathcal{S}$ de ese tipo en el bloque $B$, de $G^2_{B,s}$». Es decir, el estadístico es la ganancia del \emph{mejor} corte de cada tipo (filas, columnas o conjunto).
+
+\textbf{Resultado.} Sin repetir la búsqueda, el error de tipo I llegó a 0,98 al nivel 0,05. Con min-P, el error medio fue 0,050.
+
+\textbf{Frente a Bonferroni:} dividir $\alpha$ entre los 2047 candidatos sería demasiado estricto, porque los candidatos comparten casi todos sus datos y están muy correlacionados. Min-P tiene en cuenta esa correlación, por lo que conserva más potencia.
+\end{nota}
+
+\subsection*{Multiplicidad: nivel por masa}
+
+\begin{nota}{La fórmula del nivel por masa}
+\[ \alpha_{B_{gh}}=\alpha\,\frac{N_{B_{gh}}}{N}\quad\text{(bloques base)},\qquad \alpha_C=\alpha_B\,\frac{N_C}{N_B}\quad\text{(hijos de }B\text{)} \]
+Se lee «alfa de C es igual a alfa de B por N de C entre N de B». Los símbolos:\\
+$\alpha$: el nivel global que se quiere respetar en todo el árbol (por ejemplo 0,05).\\
+$N$: el total de viajes de la matriz.\\
+$N_B$, $N_C$: los viajes del bloque $B$ y de su hijo $C$.\\
+$\alpha_B$, $\alpha_C$: el nivel que recibe el bloque y el que recibe su hijo.
+
+\textbf{En palabras:} cada bloque recibe una parte del nivel proporcional a su masa de viajes, y los hijos se reparten el nivel de su padre en proporción a sus viajes. Los bloques con más datos reciben más nivel, porque con más datos se puede detectar mejor.
+
+\textbf{Ejemplo:} $N=10\,000$ viajes y $\alpha=0{,}05$; cuatro bloques base de 4000, 3000, 2000 y 1000 viajes. Reciben $0{,}020$; $0{,}015$; $0{,}010$ y $0{,}005$, que suman $0{,}05$. Si el de 4000 se corta en hijos de 3000 y 1000 viajes, estos reciben $0{,}015$ y $0{,}005$, que suman lo mismo que tenía el padre ($0{,}020$).
+
+\textbf{Por qué acota el error:} un bloque solo se prueba si su padre fue refinado. Los bloques donde no hay patrón forman ramas completas, y el primer falso refinamiento ocurre en la raíz de alguna de esas ramas. Esas raíces son bloques que no se superponen y sus niveles suman a lo más $\alpha$. Por eso la probabilidad de \emph{algún} falso refinamiento en todo el árbol (la tasa de error por familia, FWER) queda acotada por $\alpha$. Como el árbol se construye con los mismos datos, la garantía es aproximada y se verifica con experimentos.
+
+\textbf{Frente a Bonferroni:} con 20 pruebas, Bonferroni da $0{,}05/20=0{,}0025$ a todas por igual. Aquí el bloque grande del ejemplo trabaja con $0{,}02$, ocho veces más, lo que es razonable porque tiene más datos y más potencia.
+\end{nota}
+
+\subsection*{Parada: significancia y tamaño de efecto}
+
+\begin{nota}{Por qué se piden las dos cosas}
+La significancia \textbf{crece con el número de viajes}, y el tamaño de efecto $\tilde I_B$ no. Dos casos de la tesis:
+
+\textbf{Un bloque con un millón de viajes} e información mutua de $0{,}0005$ nats por observación tiene $G^2=2N\hat I=1000$, un p-valor prácticamente cero, pero una interacción irrelevante.\\
+\textbf{Un bloque con mil viajes} e información mutua de $0{,}05$ tiene $G^2=100$ y, si pasa la prueba, también supera el umbral de efecto.
+
+Si solo se mirara el p-valor, el primer bloque se subdividiría sin sentido. Por eso un bloque es hoja si $p_{\mathrm{omn}}>\alpha_B$ (no es significativo) \textbf{o} si $\tilde I_B<\delta$ (es demasiado pequeño). Se lee «I tilde de B menor que delta». La explicación de $\delta$ está en la diapositiva 9.
+\end{nota}
+
+\subsection*{Cómo leer el gráfico}
+
+\begin{nota}{Error de tipo I al nivel 0,05}
+\textbf{Qué mide:} el \emph{error de tipo I} es declarar que hay un patrón cuando no lo hay (un falso positivo). Si la prueba está bien calibrada al nivel 0,05, debe equivocarse en el 5\,\% de los casos. La línea discontinua es ese 0,05 («nominal»).
+
+\textbf{Cómo se hizo la prueba:} con «datos nulos semirreales»: matrices construidas para que \emph{no} tengan patrón, pero con la variabilidad entre días de los datos reales. Como no hay patrón, todo rechazo es un falso positivo.
+
+\textbf{Qué muestra cada barra} (azul: laborable; naranja: feriado):\\
+\textbf{Poisson:} $0{,}40$ y $0{,}76$. Rechaza «sin patrón» en el 40\,\% y el 76\,\% de los casos cuando no hay patrón. Está muy mal calibrada, porque ignora la sobredispersión.\\
+\textbf{Cuasi-Poisson ($\hat\varphi$ constante):} $0{,}03$ y $0{,}01$. Usa un solo factor de corrección para todas las celdas, y queda muy conservadora: rechaza mucho menos del 5\,\% y por eso pierde potencia para detectar patrones reales.\\
+\textbf{Gamma--Poisson, $\mathrm{var}=a\mu^b$:} $0{,}02$ y $0{,}06$. Corrige la varianza según el volumen, pero trata cada celda por separado y no reproduce la correlación entre celdas.\\
+\textbf{Bootstrap de días:} $0{,}04$ y $0{,}09$. Es el que más se acerca al 0,05 nominal, sobre todo en días laborables.
+
+\textbf{La nota de abajo:} con pocos días (en feriados solo hay 9), el bootstrap es algo liberal en bloques nocturnos, es decir, rechaza un poco más de lo debido. Es una \textbf{limitación conocida} y se debe decir con franqueza.
+\end{nota}
+
+\begin{nota}{Si te preguntan}
+\textbf{¿Por qué no un modelo cuasi-Poisson más simple?} Porque usa un único factor de corrección para todas las celdas, pero la sobredispersión crece con el volumen: corregiría de más los bloques poco activos y de menos los de mucho volumen, que son los que concentran la masa.
+
+\textbf{¿Por qué el bootstrap no supone ninguna distribución?} Porque usa los días reales: no asume una forma para la varianza ni para la correlación entre celdas. Solo supone que los días son independientes entre sí y que $E^B$ estima bien las medias.
+
+\textbf{¿Garantiza el método un error total de $\alpha$?} Es una garantía aproximada: el argumento exacto supone que la jerarquía está fijada de antemano, y aquí se construye con los datos. Por eso se mide con un experimento de calibración sobre datos nulos.
+\end{nota}
+
+\newpage
+\section*{Diapositiva 11. Resultados esperados y forma de evaluación}
+
+\begin{guion}
+Para terminar, así vamos a evaluar el método, con tres experimentos.
+
+El primero es de calibración. Con datos nulos, es decir, sin ningún patrón, tanto Poisson como semirreales, medimos el error de tipo I y la FWER al nivel 0,05. El segundo es de potencia. Con datos sintéticos que tienen patrones locales plantados, medimos la tasa de detección, la recuperación del patrón con ARI y los falsos positivos. Y el tercero usa datos reales, los taxis de Manhattan, y compara contra \STCC\ y rejillas globales con el mismo número de parámetros. Ahí miramos el error de reconstrucción por parámetro, la estabilidad y la interpretabilidad, por ejemplo con Penn Station.
+
+Esperamos pruebas calibradas, detección de patrones locales que \STCC\ no recupera, menos parámetros para el mismo ajuste, y hojas que se leen directamente como grupos de regiones y de horarios. Muchas gracias.
+\end{guion}
+
+\begin{nota}{Objetivo que se resuelve aquí}
+Esta diapositiva responde al \textbf{OE3} (implementar y evaluar calibración y potencia con datos sintéticos y nulos) y al \textbf{OE4} (aplicar a los taxis de Manhattan y comparar con \STCC\ y rejillas globales). Son resultados \emph{esperados}: es la forma en que se va a evaluar, no resultados ya obtenidos.
+\end{nota}
+
+\subsection*{Los tres experimentos}
+
+\begin{nota}{Qué se hace en cada fila de la tabla}
+\textbf{Calibración (OE3).} La pregunta es: ¿el método es honesto cuando no hay nada que encontrar? Se le dan matrices que \emph{no} tienen ningún patrón, y se mide con qué frecuencia el método refina de todos modos (falso positivo). Si está bien calibrado, debe equivocarse cerca del 5\,\% al nivel 0,05.
+
+\textbf{Potencia (OE3).} La pregunta es: ¿el método encuentra los patrones cuando sí existen? Se crean matrices sintéticas con un patrón local \textbf{plantado} (por ejemplo, unas regiones que se activan el doble en ciertos horarios), de modo que se sabe la respuesta correcta, y se varía la intensidad del patrón. Se mide cuántas veces lo detecta y qué tan bien lo recupera.
+
+\textbf{Datos reales (OE4).} La pregunta es: ¿sirve en datos de verdad? Se aplica a los taxis de Manhattan de noviembre de 2017, en un día laborable y en un feriado, y se compara con \STCC\ y con rejillas globales que usan el \emph{mismo número de parámetros}. Esta condición es la que hace justa la comparación: no vale ganar solo por usar más bloques.
+\end{nota}
+
+\begin{nota}{¿Qué son los «datos nulos Poisson» y los «semirreales»?}
+Un \textbf{dato nulo} es una matriz construida para que \textbf{no tenga ningún patrón} entre regiones y horarios. Como se sabe que no hay patrón, cualquier refinamiento que el método haga ahí es un error. Sirve para medir falsos positivos.
+
+\textbf{Nulos Poisson.} Se simula cada celda como un conteo de Poisson independiente, con media igual al producto de un efecto de región y un efecto de horario (el modelo de independencia, sin interacción). \textit{Ejemplo:} si una celda debería tener 4 viajes en promedio, cada simulación da valores como 3, 5, 4 o 6, que varían solo lo que permite el azar puro (varianza igual al promedio). Es el caso ideal, el más sencillo.
+
+\textbf{Nulos semirreales.} Se construyen también sin patrón, pero con la \textbf{variabilidad real entre días} de los datos de taxis, usando el bootstrap de la diapositiva 10. Son más exigentes, porque la sobredispersión (3 veces la media en laborables, 17 en feriados) hace que casi cualquier prueba mal calibrada «vea» patrones. Por eso la diapositiva 10 mostraba que con Poisson el error llegaba a 0,40 y 0,76.
+
+\textbf{«Partición base estimada de los mismos datos».} En los experimentos, la partición base de \BBAC\ no se da como un hecho: se estima desde la propia matriz nula, como ocurriría en la práctica. Esto es importante porque \BBAC\ arma los grupos para que se vean lo más distintos posible, y eso puede hacer que bloques sin patrón luzcan heterogéneos. El experimento mide si el método completo, incluido ese efecto, sigue respetando el nivel.
+\end{nota}
+
+\subsection*{Las métricas de calibración y potencia}
+
+\begin{nota}{Error de tipo I y FWER (calibración)}
+\textbf{Error de tipo I:} la proporción de veces que el método declara un patrón cuando no lo hay, para una prueba o un bloque. Se lee «error de tipo uno». Al nivel $0{,}05$ debe estar cerca de $0{,}05$. \textit{Ejemplo:} en 1000 bloques nulos, la prueba rechaza en 52; el error de tipo I es 0,052, y está bien.
+
+\textbf{FWER} (\emph{family-wise error rate}, «tasa de error por familia»): la probabilidad de cometer \textbf{al menos un} falso refinamiento en todo el árbol. Es más exigente que el error de tipo I porque cuenta el árbol entero y no cada prueba por separado. Debe ser como máximo $\alpha$. \textit{Ejemplo:} se generan 1000 matrices nulas y en 38 el método refina algo; FWER $=38/1000=0{,}038\le 0{,}05$.
+
+\textbf{Diferencia:} el error de tipo I mira una prueba; la FWER mira que no haya \emph{ningún} falso positivo en todo el procedimiento. Es el control de multiplicidad de las diapositivas 5 y 10.
+\end{nota}
+
+\begin{nota}{Tasa de detección, ARI y falsos positivos (potencia)}
+\textbf{Tasa de detección} (potencia): de las matrices con un patrón plantado, la proporción en que el método lo encuentra. \textit{Ejemplo:} en 100 matrices con el mismo patrón, lo detecta en 90; la tasa es del 90\,\%. Se espera que baje cuando el patrón es más débil, y por eso se varía la intensidad.
+
+\textbf{ARI} (\emph{Adjusted Rand Index}, «índice de Rand ajustado»): mide qué tan parecida es la partición que encontró el método a la verdadera (la plantada). Se compara cada par de celdas y se revisa si ambas particiones coinciden en si están juntas o separadas. «Ajustado» significa que se descuenta lo que se esperaría por pura casualidad. \textbf{Vale 1} si son idénticas, \textbf{cerca de 0} si no son mejores que al azar (puede dar negativo si son peores).
+
+\textit{Ejemplo:} cuatro celdas $a,b,c,d$ con la partición verdadera $\{a,b\},\{c,d\}$. Si el método encuentra exactamente $\{a,b\},\{c,d\}$, el ARI es 1. Si deja todo en un solo grupo $\{a,b,c,d\}$ (no detectó nada), el ARI es 0.
+
+\textbf{Falsos positivos:} refinamientos o hojas que el método declara donde no se plantó ningún patrón. \textit{Ejemplo:} si la matriz tiene un único foco plantado y el método reporta tres hojas de patrón, dos son falsos positivos.
+
+\textbf{Cómo se leen juntas:} la detección dice si lo encuentra, el ARI dice qué tan bien lo delimita, y los falsos positivos dicen si además inventa otros.
+\end{nota}
+
+\subsection*{Las métricas con datos reales}
+
+\begin{nota}{Error de reconstrucción por parámetro (BIC)}
+\textbf{Qué mide:} qué tan bien la partición reproduce la matriz original, \emph{teniendo en cuenta cuántos parámetros usa}. Una partición con más bloques siempre reconstruye mejor, así que comparar solo el error sería injusto: hay que penalizar la complejidad.
+
+\textbf{Cómo se hace:} con el criterio \textbf{BIC} (criterio de información bayesiano), que suma el error y una penalización por cada parámetro:
+\[ J_\lambda(\mathcal{T})=D_I\bigl(O\,\|\,\hat O^{\mathcal{T}}\bigr)+\lambda\sum_{L}\bigl(|I_L|+|J_L|-1\bigr),\qquad \lambda=\tfrac12\log N. \]
+Se lee «$J$ lambda del árbol es igual a la I-divergencia de $O$ respecto de $\hat O$ del árbol, más lambda por la suma, sobre las hojas $L$, de $|I_L|$ más $|J_L|$ menos 1». Los símbolos: $D_I$ es el error (diapositiva 8); $\hat O^{\mathcal{T}}$ es la matriz que el árbol reconstruye; $|I_L|$ y $|J_L|$ son el número de regiones y de intervalos de la hoja $L$; $|I_L|+|J_L|-1$ es el número de parámetros de la hoja; y $\lambda=\tfrac12\log N$ es lo que «cuesta» cada parámetro. \textbf{Menor es mejor.}
+
+\textbf{Qué se espera:} que AST-CC logre el mismo ajuste con menos parámetros. \textit{Ejemplo de la tesis:} con 12 intervalos en 4 grupos de 3, un corte de filas en un solo bloque añade $|J|-1=2$ parámetros; dividir globalmente ese mismo grupo de filas en los 4 grupos de columnas añade $4\cdot2=8$.
+\end{nota}
+
+\begin{nota}{Fracción del término (iii) explicada}
+\textbf{Qué mide:} qué parte de la interacción local que \STCC\ dejaba sin modelar logró capturar el árbol. Recuerda de la diapositiva 8 que el término (iii) es la interacción dentro de los bloques base.
+\[ \frac{\sum_{B\in\mathcal{S}}G^2_{B,s_B}}{\sum_{g,h}G^2_{gh}} \]
+Se lee «la suma de las ganancias $G^2_{B,s_B}$ de todos los cortes del árbol, entre la suma de $G^2_{gh}$ de todos los bloques base». El numerador es lo que explican los cortes. El denominador es la interacción local total con la que partía \STCC. $\mathcal{S}$ es el conjunto de nodos que se cortaron, y $s_B$ el corte aplicado en el bloque $B$.
+
+\textbf{Cómo se lee:} vale 0 si el árbol no cortó nada (es igual a \STCC), y 1 si explicó toda la interacción local. \textit{Ejemplo:} si los bloques base tienen en total $G^2=100$ y los cortes explican 70, la fracción es $0{,}70$: el árbol capturó el 70\,\% de lo que \STCC\ dejaba escondido. Esta fracción se mira para cada valor de $\delta$.
+\end{nota}
+
+\begin{nota}{Estabilidad por frecuencia de soporte}
+\textbf{El problema:} \BBAC\ es un algoritmo que depende de por dónde empieza y puede quedar atrapado en soluciones distintas (mínimos locales), y el refinamiento es voraz. Si un resultado cambia mucho de una ejecución a otra, no es confiable.
+
+\textbf{Qué se hace:} se ejecuta el método varias veces con distintas inicializaciones de la partición base. Para cada hoja se mide su \textbf{frecuencia de soporte}: la proporción de ejecuciones en que aparece una hoja \emph{parecida} a ella. «Parecida» se mide con el \textbf{índice de Jaccard}: celdas en común dividido entre celdas en total de ambas hojas, es decir, intersección sobre unión. Vale 1 si son idénticas y 0 si no comparten ninguna. Se considera la misma hoja si el Jaccard es al menos $\kappa=0{,}5$ («kappa»).
+
+\textit{Ejemplo:} una hoja de $3\times2$ celdas y otra de $2\times2$ dentro de ella tienen Jaccard $4/6\approx0{,}67$. Con $\kappa=0{,}5$ cuentan como la misma hoja; con $\kappa=0{,}7$, no.
+
+\textbf{Cómo se lee:} una hoja que aparece en la mayoría de las ejecuciones es un hallazgo estable. Una que aparece en menos de la mitad no debe interpretarse como hallazgo.
+\end{nota}
+
+\begin{nota}{Interpretabilidad y el ejemplo de Penn Station}
+\textbf{Qué se evalúa:} si las hojas se pueden leer directamente como «este grupo de regiones, en este grupo de horarios», y si lo que encuentra el método tiene sentido en el mundo real. Un resultado puede ser significativo y aun así irrelevante o inexplicable; por eso los patrones principales se contrastan con conocimiento del dominio (en la tesis se reporta siempre el tamaño de efecto junto al p-valor).
+
+\textbf{El ejemplo de Penn Station:} Penn Station es la gran estación de trenes de Manhattan, un punto de mucho movimiento. Liu y colaboradores, con \STCC, encontraron que la zona alrededor de Penn Station alcanza un nivel de actividad alto \textbf{solo en feriados}. Es un hallazgo conocido y verificable. La idea de usarlo en la evaluación es: ¿AST-CC aísla esa zona en una hoja propia, en los horarios correspondientes, y aporta más detalle que el tablero de \STCC, que la promedia dentro de un bloque grande? Si lo hace, es una señal de que los patrones locales que encuentra tienen sentido en el dominio y no son ruido.
+
+\textbf{Cómo decirlo con cuidado:} es un criterio de validación planeado. Aún no se afirma que el método lo logre; es lo que se va a comprobar con los datos reales.
+\end{nota}
+
+\begin{nota}{Si te preguntan}
+\textbf{¿Por qué «el mismo número de parámetros»?} Porque una rejilla global más fina siempre reconstruye mejor solo por tener más bloques. Para mostrar que el refinamiento local es mejor, hay que compararlo con una rejilla de igual complejidad (o con el mismo BIC).
+
+\textbf{¿Por qué probar con datos sintéticos si ya hay datos reales?} Porque en los reales no se sabe dónde están los patrones verdaderos. En los sintéticos se planta el patrón y se puede medir exactamente si el método lo encuentra (detección, ARI, falsos positivos).
+
+\textbf{¿Qué se espera exactamente?} Cuatro cosas: pruebas calibradas frente a la variabilidad real; detección de patrones locales que \STCC\ y las rejillas más finas no recuperan; menos parámetros para el mismo ajuste; y hojas que se leen como grupos de regiones y de horarios.
+\end{nota}
+
+\end{document}

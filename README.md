@@ -5,7 +5,7 @@ pruebas de hipótesis sobre matrices espacio-temporales de conteos.
 
 | Carpeta | Contenido |
 |---|---|
-| `Latex/` | Plan de tesis (`Tesis.tex`). Compilar con `latexmk -pdf Tesis.tex`. |
+| `Latex/` | Tesis (`Tesis.tex`; capítulos en `capitulos/`, preliminares en `preliminares/`, diapositivas y guías en `Extras/`). Compilar con `latexmk -pdf Tesis.tex`. |
 | `Implementaciones/` | Código, experimentos y resultados (ver su `README.md`). |
 
 ## Puesta en marcha en otra máquina
