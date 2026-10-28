@@ -29,6 +29,7 @@ Implementaciones/
 │   ├── cortes.py
 │   ├── bbac.py                BBAC_I con bases C2 y C5 (+ búsqueda local)
 │   ├── arbol.py               Algoritmo AST-CC (Algoritmos 1 y 2 del Cap. 3)
+│   ├── estabilidad.py         Jaccard entre hojas, frecuencia de soporte y D_I fuera de muestra
 │   └── sinteticos.py          Datos con patrones locales plantados
 ├── tests/                     Pruebas de astcc (python -m pytest tests)
 ├── Verificacion_teorica/      Comprobación numérica del marco teórico y la propuesta
@@ -45,7 +46,8 @@ Implementaciones/
 │   ├── 02_refinamiento.py          AST-CC sobre los datos reales y sensibilidad a delta
 │   ├── 03_simulacion.py            Calibración (FWER) y potencia sobre datos sintéticos
 │   ├── 04_patrones.py              Otros tipos de patrón: XOR, anidado, entre bloques, BBAC
-│   └── 05_comparacion.py           AST-CC frente a ST-CC y a rejillas globales (D_I, parámetros, BIC)
+│   ├── 05_comparacion.py           AST-CC frente a ST-CC y a rejillas globales (D_I, parámetros, BIC)
+│   └── 06_estabilidad.py           Frecuencia de soporte de las hojas y ajuste fuera de muestra (división de días)
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -91,6 +93,7 @@ python AST-CC/02_refinamiento.py
 python AST-CC/03_simulacion.py
 python AST-CC/04_patrones.py
 python AST-CC/05_comparacion.py
+python AST-CC/06_estabilidad.py weekday    # o holiday; cada periodo tarda unos 15 min
 python -m pytest tests
 ```
 

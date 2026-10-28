@@ -82,6 +82,34 @@ def test_lift_del_ejemplo():
     assert 360 / (800 * 3000 / 10000) == pytest.approx(1.5)
 
 
+def test_jaccard_del_ejemplo_de_frecuencia_de_soporte():
+    """sec:prop-representacion: una hoja de 3 x 2 celdas y otra de 2 x 2 contenida en ella
+    tienen índice 4/6; no son la misma hoja con kappa = 0.7 y sí con kappa = 0.5."""
+    from astcc.estabilidad import frecuencia_de_soporte, jaccard
+
+    class Hoja:
+        def __init__(self, filas, cols):
+            self.filas, self.cols = np.array(filas), np.array(cols)
+
+    grande, chica = Hoja([0, 1, 2], [0, 1]), Hoja([0, 1], [0, 1])
+    assert jaccard(grande.filas, grande.cols, chica.filas, chica.cols) == pytest.approx(4 / 6)
+    assert frecuencia_de_soporte([grande], [[chica]], kappa=0.7)[0] == 0.0
+    assert frecuencia_de_soporte([grande], [[chica]], kappa=0.5)[0] == 1.0
+    ajena = Hoja([5, 6], [3, 4])
+    assert jaccard(grande.filas, grande.cols, ajena.filas, ajena.cols) == 0.0
+    assert frecuencia_de_soporte([grande], [[chica], [ajena], [grande]])[0] == pytest.approx(2 / 3)
+
+
+def test_divergencia_fuera_de_muestra():
+    from astcc.estabilidad import divergencia_fuera_de_muestra as dfm
+    rng = np.random.default_rng(0)
+    O = rng.poisson(100, (6, 4)).astype(float)
+    assert dfm(O, O * 7.0, suavizado=0.0) == pytest.approx(0.0, abs=1e-9)   # misma forma, otra escala
+    ruido = rng.poisson(100, (6, 4)).astype(float)
+    assert dfm(O, ruido) > 0
+    assert np.isfinite(dfm(O, np.zeros((6, 4))))                              # el suavizado evita el infinito
+
+
 # ----------------------------------------------------------------------------
 # Algoritmo 1: nivel por bloque, réplicas y reglas de parada
 # ----------------------------------------------------------------------------
