@@ -1,0 +1,36 @@
+Árbol de AST-CC, periodo feriado (alfa = 0.05, delta = 0.005, nula de bootstrap de días)
+G2_s: estadístico del corte; g~: ganancia corregida por sesgo; p: p-valor min-P del corte;
+p_omn e I~: prueba ómnibus del nodo y su información mutua corregida; l: nivel de actividad
+
+Bloque (0,0): 12 regiones x 4 intervalos, N = 288,058, alfa_B = 0.0060, l = 1.09  -> hoja homogenea, p_omn = 0.00601, I~ = 0.0018
+Bloque (0,1): 12 regiones x 3 intervalos, N = 189,660, alfa_B = 0.0040, l = 1.02  -> hoja homogenea, p_omn = 0.00791, I~ = 0.0014
+Bloque (0,2): 12 regiones x 2 intervalos, N = 51,511, alfa_B = 0.0011, l = 1.00  -> hoja homogenea, p_omn = 0.00162, I~ = 0.0049
+Bloque (0,3): 12 regiones x 3 intervalos, N = 74,966, alfa_B = 0.0016, l = 0.73  -> hoja homogenea, p_omn = 0.00705, I~ = 0.0035
+Bloque (1,0): 5 regiones x 4 intervalos, N = 191,155, alfa_B = 0.0040, l = 1.26  -> hoja homogenea, p_omn = 0.00199, I~ = 0.0011
+Bloque (1,1): 5 regiones x 3 intervalos, N = 94,798, alfa_B = 0.0020, l = 0.88  -> hoja homogenea, p_omn = 0.028, I~ = 0.0009
+Bloque (1,2): 5 regiones x 2 intervalos, N = 37,328, alfa_B = 0.0008, l = 1.25  -> hoja homogenea, p_omn = 0.005, I~ = 0.0015
+Bloque (1,3): 5 regiones x 3 intervalos, N = 25,445, alfa_B = 0.0005, l = 0.43  -> hoja homogenea, p_omn = 0.01, I~ = 0.0059
+Bloque (2,0): 14 regiones x 4 intervalos, N = 229,811, alfa_B = 0.0048, l = 0.96  -> hoja homogenea, p_omn = 0.0024, I~ = 0.0021
+Bloque (2,1): 14 regiones x 3 intervalos, N = 175,466, alfa_B = 0.0037, l = 1.04  -> hoja homogenea, p_omn = 0.00366, I~ = 0.0008
+Bloque (2,2): 14 regiones x 2 intervalos, N = 41,417, alfa_B = 0.0009, l = 0.88  -> hoja no_localizada, p_omn = 0.000433, I~ = 0.0052
+Bloque (2,3): 14 regiones x 3 intervalos, N = 101,343, alfa_B = 0.0021, l = 1.09  -> hoja homogenea, p_omn = 0.00106, I~ = 0.0027
+Bloque (3,0): 15 regiones x 4 intervalos, N = 158,094, alfa_B = 0.0033, l = 0.86  -> hoja homogenea, p_omn = 0.0033, I~ = 0.0012
+Bloque (3,1): 15 regiones x 3 intervalos, N = 137,068, alfa_B = 0.0029, l = 1.05  -> hoja homogenea, p_omn = 0.01, I~ = 0.0006
+Bloque (3,2): 15 regiones x 2 intervalos, N = 29,466, alfa_B = 0.0006, l = 0.82  -> corte de fil: G2_s = 862.8, g~ = 0.0142, p = 0.000308, p_omn = 0.000308, I~ = 0.0182
+    hijo 1: 10 regiones x 2 intervalos, N = 21,094, alfa_B = 0.0004, l = 0.75  -> hoja homogenea, p_omn = 0.000221, I~ = 0.0035
+        regiones: Central Harlem North, East Chelsea, Flatiron, Gramercy, Greenwich Village South, Hudson Sq, Meatpacking/West Village West, Roosevelt Island, Seaport, West Village
+    hijo 2: 5 regiones x 2 intervalos, N = 8,372, alfa_B = 0.0002, l = 1.04  -> hoja homogenea, p_omn = 0.000263, I~ = 0.0041
+        regiones: Highbridge Park, Kips Bay, Manhattanville, UN/Turtle Bay South, Washington Heights South
+Bloque (3,3): 15 regiones x 3 intervalos, N = 97,057, alfa_B = 0.0020, l = 1.36  -> hoja no_localizada, p_omn = 0.00101, I~ = 0.0073
+Bloque (4,0): 9 regiones x 4 intervalos, N = 63,545, alfa_B = 0.0013, l = 0.70  -> hoja homogenea, p_omn = 0.000664, I~ = 0.0016
+Bloque (4,1): 9 regiones x 3 intervalos, N = 71,582, alfa_B = 0.0015, l = 1.11  -> hoja homogenea, p_omn = 0.0015, I~ = 0.0011
+Bloque (4,2): 9 regiones x 2 intervalos, N = 9,307, alfa_B = 0.0002, l = 0.52  -> hoja homogenea, p_omn = 0.000389, I~ = 0.0030
+Bloque (4,3): 9 regiones x 3 intervalos, N = 63,876, alfa_B = 0.0013, l = 1.81  -> corte de fil: G2_s = 687.2, g~ = 0.0053, p = 0.000668, p_omn = 0.000668, I~ = 0.0070
+    hijo 1: 7 regiones x 3 intervalos, N = 25,918, alfa_B = 0.0005, l = 1.77  -> hoja homogenea, p_omn = 0.000271, I~ = 0.0031
+        regiones: Alphabet City, Financial District North, Hamilton Heights, Inwood, Stuy Town/Peter Cooper Village, Two Bridges/Seward Park, Washington Heights North
+    hijo 2: 2 regiones x 3 intervalos, N = 37,958, alfa_B = 0.0008, l = 1.84  -> hoja homogenea, p_omn = 0.000397, I~ = 0.0006
+        regiones: East Village, Lower East Side
+Bloque (5,0): 11 regiones x 4 intervalos, N = 111,579, alfa_B = 0.0023, l = 0.99  -> hoja homogenea, p_omn = 0.00233, I~ = 0.0026
+Bloque (5,1): 11 regiones x 3 intervalos, N = 69,869, alfa_B = 0.0015, l = 0.87  -> hoja homogenea, p_omn = 0.00073, I~ = 0.0018
+Bloque (5,2): 11 regiones x 2 intervalos, N = 35,617, alfa_B = 0.0007, l = 1.61  -> hoja homogenea, p_omn = 0.01, I~ = 0.0114
+Bloque (5,3): 11 regiones x 3 intervalos, N = 41,777, alfa_B = 0.0009, l = 0.95  -> hoja homogenea, p_omn = 0.024, I~ = 0.0033

@@ -1,0 +1,41 @@
+weekday: K-means sobre las 38 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
+
+  Silhouette y SSE (K = 2 solo de referencia; el artículo lo excluye de la selección):
+    K=2: silhouette = 0.5540, SSE = 1.610
+    K=3: silhouette = 0.4245, SSE = 1.063
+    K=4: silhouette = 0.4411, SSE = 0.715
+    K=5: silhouette = 0.4200, SSE = 0.490
+    K=6: silhouette = 0.4544, SSE = 0.349
+    K=7: silhouette = 0.4068, SSE = 0.276
+    K=8: silhouette = 0.4197, SSE = 0.227
+  Mejor silhouette entre K >= 3: K = 6; se usa K = 4, como ST-CC
+
+  Con K = 4: silhouette = 0.4411
+
+  Very Low (promedio 190.9, 10 hojas de 9 bloques base distintos, 182 celdas)
+  Low (promedio 384.9, 21 hojas de 20 bloques base distintos, 546 celdas)
+  Medium (promedio 713.3, 5 hojas de 5 bloques base distintos, 54 celdas)
+  High (promedio 1682.5, 2 hojas de 2 bloques base distintos, 10 celdas)
+
+  De los 6 bloques base refinados, 4 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
+
+holiday: K-means sobre las 26 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
+
+  Silhouette y SSE (K = 2 solo de referencia; el artículo lo excluye de la selección):
+    K=2: silhouette = 0.5093, SSE = 1.070
+    K=3: silhouette = 0.4665, SSE = 0.567
+    K=4: silhouette = 0.4596, SSE = 0.386
+    K=5: silhouette = 0.4234, SSE = 0.254
+    K=6: silhouette = 0.3826, SSE = 0.189
+    K=7: silhouette = 0.4278, SSE = 0.098
+    K=8: silhouette = 0.4349, SSE = 0.075
+  Mejor silhouette entre K >= 3: K = 3; se usa K = 4, como ST-CC
+
+  Con K = 4: silhouette = 0.4596
+
+  Very Low (promedio 164.2, 10 hojas de 9 bloques base distintos, 227 celdas)
+  Low (promedio 316.3, 11 hojas de 11 bloques base distintos, 440 celdas)
+  Medium (promedio 702.9, 1 hojas de 1 bloques base distintos, 6 celdas)
+  High (promedio 713.0, 4 hojas de 4 bloques base distintos, 119 celdas)
+
+  De los 2 bloques base refinados, 1 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)

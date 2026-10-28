@@ -47,7 +47,9 @@ Implementaciones/
 │   ├── 03_simulacion.py            Calibración (FWER) y potencia sobre datos sintéticos
 │   ├── 04_patrones.py              Otros tipos de patrón: XOR, anidado, entre bloques, BBAC
 │   ├── 05_comparacion.py           AST-CC frente a ST-CC y a rejillas globales (D_I, parámetros, BIC)
-│   └── 06_estabilidad.py           Frecuencia de soporte de las hojas y ajuste fuera de muestra (división de días)
+│   ├── 06_estabilidad.py           Frecuencia de soporte de las hojas y ajuste fuera de muestra (división de días)
+│   ├── 07_visualizacion.py         Matriz teselada, mapas de profundidad y de bloques refinados, árbol anotado
+│   └── 08_refinamiento_kmeans.py   K-means (K = 4, como ST-CC/04) sobre las hojas de AST-CC
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -94,6 +96,8 @@ python AST-CC/03_simulacion.py
 python AST-CC/04_patrones.py
 python AST-CC/05_comparacion.py
 python AST-CC/06_estabilidad.py weekday    # o holiday; cada periodo tarda unos 15 min
+python AST-CC/07_visualizacion.py          # usa los soportes de 06 si existen
+python AST-CC/08_refinamiento_kmeans.py
 python -m pytest tests
 ```
 
