@@ -1,0 +1,72 @@
+Comparación de AST-CC con ST-CC y con rejillas globales (modelos de Poisson sobre conteos)
+J = D_I + (1/2) log(N) k;  J_phi usa D_I / phi (dispersión de Pearson, modelo [DZ][DT][ZT])
+
+weekday: 66 x 12, N = 3,602,851, D = 12 días, phi = 2.06, saturado: k = 792
+
+  A. A igual número de parámetros: AST-CC frente a la mejor rejilla global con a lo sumo esos parámetros;
+     a la derecha, la rejilla con menos parámetros que iguala el D_I de AST-CC
+
+    delta hojas     k  D_I AST-CC   rejilla base     k D_I rejilla  reducción    iguala     k  ahorro
+   0.0001   117   503         837      16x6   C5   492       2,921      71.3%      32x8   656    +153
+  0.00025   110   488         953      12x6   C5   468       3,989      76.1%      32x8   656    +168
+   0.0005   102   475       1,240      12x6   C5   468       3,989      68.9%      20x8   608    +133
+    0.001    78   424       2,816      20x4   C5   424      10,414      73.0%      20x6   516     +92
+   0.0025    50   364       6,835      12x4   C5   360      13,774      50.4%      10x6   456     +92
+    0.005    38   336      10,514       8x4   C5   328      14,983      29.8%      20x4   424     +88
+     0.01    33   329      13,412       8x4   C5   328      14,983      10.5%      16x4   392     +63
+     0.02    32   328      14,983       8x4   C5   328      14,983       0.0%       8x4   328      +0
+
+  B. Criterio de información (menor es mejor)
+
+  modelo     config         k         D_I           J       J_phi
+  ST-CC C2   8x4           32     161,319     161,560      78,563
+  ST-CC C5   8x4           98      92,338      93,077      45,570
+  ST-CC C6   8x4          328      25,703      28,179      14,955
+  Rejilla    24x8         624         998       5,708       5,195  <- mejor rejilla por J
+  Rejilla    24x6         540       2,083       6,159       5,087  <- mejor rejilla por J_phi
+  AST-CC     d=0.0001     503         837       4,634       4,204  <- mejor AST-CC por J
+  AST-CC     d=0.00025    488         953       4,637       4,147  <- mejor AST-CC por J_phi
+  AST-CC     d=0.0005     475       1,240       4,826       4,188
+  AST-CC     d=0.001      424       2,816       6,016       4,568
+  AST-CC     d=0.0025     364       6,835       9,583       6,066
+  AST-CC     d=0.005      336      10,514      13,050       7,641
+  AST-CC     d=0.01       329      13,412      15,895       8,995
+  AST-CC     d=0.02       328      14,983      17,459       9,750
+  Mínimo de J: AST-CC d=0.0001; AST-CC frente a la mejor rejilla: -1,074
+  Mínimo de J_phi: AST-CC d=0.00025; AST-CC frente a la mejor rejilla: -941
+
+holiday: 66 x 12, N = 2,389,795, D = 9 días, phi = 6.73, saturado: k = 792
+
+  A. A igual número de parámetros: AST-CC frente a la mejor rejilla global con a lo sumo esos parámetros;
+     a la derecha, la rejilla con menos parámetros que iguala el D_I de AST-CC
+
+    delta hojas     k  D_I AST-CC   rejilla base     k D_I rejilla  reducción    iguala     k  ahorro
+   0.0001    50   384       3,428      12x4   C5   360       5,172      33.7%      12x6   468     +84
+  0.00025    50   384       3,428      12x4   C5   360       5,172      33.7%      12x6   468     +84
+   0.0005    50   384       3,428      12x4   C5   360       5,172      33.7%      12x6   468     +84
+    0.001    40   351       3,998      10x4   C5   344       5,667      29.5%       8x6   444     +93
+   0.0025    30   321       5,539       6x4   C5   312       7,123      22.2%      12x4   360     +39
+    0.005    26   315       6,348       6x4   C5   312       7,123      10.9%       8x4   328     +13
+     0.01    25   313       6,692       6x4   C5   312       7,123       6.1%       8x4   328     +15
+     0.02    24   312       7,123       6x4   C5   312       7,123       0.0%       6x4   312      +0
+
+  B. Criterio de información (menor es mejor)
+
+  modelo     config         k         D_I           J       J_phi
+  ST-CC C2   6x4           24      89,315      89,491      13,457
+  ST-CC C5   6x4           92      66,230      66,906      10,524
+  ST-CC C6   6x4          312      43,011      45,302       8,687
+  Rejilla    24x8         624         715       5,298       4,689  <- mejor rejilla por J
+  Rejilla    8x4          328       6,139       8,547       3,321  <- mejor rejilla por J_phi
+  AST-CC     d=0.0001     384       3,428       6,247       3,330  <- mejor AST-CC por J
+  AST-CC     d=0.00025    384       3,428       6,247       3,330
+  AST-CC     d=0.0005     384       3,428       6,247       3,330
+  AST-CC     d=0.001      351       3,998       6,575       3,172  <- mejor AST-CC por J_phi
+  AST-CC     d=0.0025     321       5,539       7,897       3,181
+  AST-CC     d=0.005      315       6,348       8,661       3,257
+  AST-CC     d=0.01       313       6,692       8,990       3,294
+  AST-CC     d=0.02       312       7,123       9,414       3,350
+  Mínimo de J: Rejilla 24x8; AST-CC frente a la mejor rejilla: +950
+  Mínimo de J_phi: AST-CC d=0.001; AST-CC frente a la mejor rejilla: -149
+
+Tiempo total: 5.2 min
