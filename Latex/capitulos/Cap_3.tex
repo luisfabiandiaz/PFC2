@@ -533,7 +533,10 @@ continuación.
   los cortes de columnas y, para cada uno, se elige el mejor corte de filas, lo
   que da el óptimo exacto. En bloques mayores se alternan los dos pasos, que es
   el algoritmo de la Sección~\ref{sec:bbac-algoritmo} con base C6 y $k=l=2$
-  restringido al bloque, desde los mejores cortes de filas y de columnas.
+  restringido al bloque, desde los mejores cortes de filas y de columnas. El paso
+  de filas enumera todos los cortes, de modo que solo se aplica cuando $|I|\le 14$;
+  con más filas se conserva el corte de filas inicial del 2-medias y solo se
+  actualiza el de columnas.
 \end{itemize}
 
 Que una búsqueda sea heurística no compromete la validez de la prueba, siempre
@@ -778,7 +781,7 @@ que compensa que la varianza empírica de $D$ días subestima la poblacional; en
 las celdas con menos actividad se toma $\tilde F_{dij}=1$. Para una celda con
 cuatro días de conteos $(80,100,90,130)$ y media 100, las fluctuaciones son
 $(0.8,1.0,0.9,1.3)$ y, con el factor $\sqrt{4/3}\approx1.155$, las corregidas son
-$(0.77,1.00,0.89,1.35)$, que multiplican por $4/3$ la varianza de las
+$(0.77,1.00,0.88,1.35)$, que multiplican por $4/3$ la varianza de las
 fluctuaciones. Cada réplica sortea
 $D$ días $d_1,\dots,d_D$ con reemplazo y toma
 \begin{equation}\label{eq:prop-bootstrap}
@@ -872,7 +875,7 @@ repetición de la búsqueda invalida el p-valor, como lo muestra una comprobaci�
 preliminar con bloques nulos de los tamaños de los bloques base, en la que comparar
 el mejor corte de
 filas con la $\chi^2$ de un corte fijo produjo errores de tipo~I de hasta 0.98
-al nivel 0.05, mientras que con el ajuste \emph{min-P} el error medio fue 0.050.
+al nivel 0.05, mientras que con el ajuste \emph{min-P} el error medio fue 0.053.
 Las pruebas dirigidas reutilizan las réplicas que ya generó la prueba ómnibus, y
 sobre cada una se repiten las tres búsquedas. Cada prueba sigue siendo válida
 por separado, y el costo de generar réplicas se paga una sola vez por bloque.
@@ -944,9 +947,14 @@ réplicas el p-valor mínimo $1/(B_{\max}+1)$ supera $\alpha_B$, el bloque no
 puede rechazarse y se marca como hoja inalcanzable, para distinguirla de
 una hoja homogénea. Además se aplica la parada secuencial de \cite{Besag1991},
 en la que la simulación se detiene en cuanto se acumulan $h$ réplicas con estadístico
-mayor o igual que el observado, lo que abarata los bloques claramente no
-significativos; si el p-valor verdadero ronda 0.5, por ejemplo, la simulación se
-detiene tras unas 20 réplicas en lugar de 199. Si el bloque supera la prueba ómnibus, la simulación se completó
+mayor o igual que el observado. Las réplicas se generan por lotes de 500 y la regla se
+evalúa al cierre de cada lote, de modo que el p-valor es la proporción de réplicas que
+igualan o superan al observado en las generadas hasta ese momento. Con
+$B_{\mathrm{perm}}\le 500$ la regla no se activa y se usan todas las réplicas, lo que
+es barato porque la prueba ómnibus solo requiere calcular $G^2$ sobre cada tabla;
+el ahorro está en los bloques con $\alpha_B$ muy pequeño, que exigen miles de
+réplicas, donde un bloque claramente no significativo se abandona tras el primer
+lote. Si el bloque supera la prueba ómnibus, la simulación se completó
 y sus réplicas sirven para las pruebas dirigidas.
 
 \section{Criterios de parada}\label{sec:prop-parada}
@@ -1062,7 +1070,7 @@ calcula su p-valor con el ajuste \emph{min-P}.
     \State marcar $B$ como hoja inalcanzable; \Return
   \EndIf
   \State calcular $G^2_B$ con \eqref{eq:prop-G2}
-  \State generar réplicas $O^{(b)}$ con \eqref{eq:prop-bootstrap} hasta $B_{\mathrm{perm}}$ o hasta que $h$ superen $G^2_B$ \Comment{la parada solo se activa si el bloque no es significativo}
+  \State generar réplicas $O^{(b)}$ con \eqref{eq:prop-bootstrap}, por lotes, hasta $B_{\mathrm{perm}}$ o hasta que al cierre de un lote $h$ superen $G^2_B$ \Comment{la parada solo se activa si el bloque no es significativo}
   \State $(p_{\mathrm{omn}}, \bar t_0)\gets$ p-valor y media nula de $G^2_B$ sobre las réplicas
   \State $\tilde I_B\gets\max\{0,\ (G^2_B-\bar t_0)/(2N_B)\}$
   \If{$p_{\mathrm{omn}}>\alpha_B$ \textbf{o} $\tilde I_B<\delta$}
@@ -1120,7 +1128,7 @@ $\alpha$ & Nivel global (FWER sobre el árbol) & $0.05$ \\
 $\delta$ & Información mutua mínima por observación, corregida por sesgo & Rejilla en $[0.001, 0.02]$ nats; sensibilidad \\
 $N_{\min}$, $d_{\max}$ & Reglas triviales de parada & $500$ viajes y profundidad $6$; sensibilidad \\
 $B_{\min}$, $c$, $B_{\max}$ & Réplicas mínimas, resolución respecto de $\alpha_B$ y máximo & $199$, $2$ y $20\,000$ \\
-$h$ & Parada secuencial de Besag y Clifford & $10$ \\
+$h$ & Parada secuencial de Besag y Clifford, evaluada por lotes de 500 réplicas & $10$ \\
 Límites de enumeración & Tamaño máximo para buscar cortes por enumeración & $|I|\le14$; $|J|\le6$ en el corte conjunto \\
 $R_{\mathrm{ini}}$ & Inicializaciones del 2-medias para bloques con más de 14 filas & $10$ \\
 $\kappa$ & Índice de Jaccard mínimo para la frecuencia de soporte & $0.5$ como punto de partida \\
@@ -1188,8 +1196,10 @@ partición temporal puede cambiar de un subconjunto de regiones a otro. Para no
 perder interpretabilidad, AST-CC acompaña el árbol de cinco productos.
 
 \paragraph{Descriptores de hoja.} Para cada hoja $L = I_L\times J_L$ se reportan
-sus regiones y horarios, su masa $N_L$, su interacción residual $\tilde I_L$, su
-tipo (homogénea, heterogénea no localizada o inalcanzable) y su nivel de
+sus regiones y horarios, su masa $N_L$, su interacción residual $\tilde I_L$ (solo
+para las hojas que llegaron a la prueba ómnibus, pues requiere las réplicas nulas), su
+tipo (homogénea, heterogénea no localizada, inalcanzable o trivial, esta última por
+las reglas de tamaño, masa o profundidad de la Tabla~\ref{tab:prop-parada}) y su nivel de
 actividad relativo
 \begin{equation}\label{eq:prop-lift}
   \ell_L = \frac{N_L}{\sum_{(i,j)\in L} O_{i\cdot}\,O_{\cdot j}/N},

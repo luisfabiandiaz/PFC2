@@ -24,7 +24,9 @@ def replicas_poisson(T, R, rng):
 
 
 def varianza_agregada(mu, a, b, D):
-    """V_D(mu) = max{mu, a D^(1-b) mu^b}  (eq:prop-varianza-D)."""
+    """V_D(mu) = max{mu, a D^(1-b) mu^b}: varianza agregada de la ley de potencia de
+    Taylor. Es la nula Gamma-Poisson que el Cap. 3 compara y descarta
+    (tab:prop-calibracion)."""
     mu = np.asarray(mu, float)
     return np.maximum(mu, a * D ** (1 - b) * np.power(mu, b, where=mu > 0, out=np.zeros_like(mu)))
 

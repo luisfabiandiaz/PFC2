@@ -15,9 +15,11 @@ refina de forma recursiva:
   4. Ganancia mínima: si g~_{B,s} < delta -> hoja heterogénea no localizada.
   5. Cada hijo C recibe alfa_C = alfa_B N_C / N_B y se refina.
 
-Las réplicas nulas se generan por lotes y se detienen con la regla de Besag y
-Clifford (1991) en cuanto h de ellas superan al estadístico observado; si el
-bloque supera la prueba ómnibus, las mismas réplicas se reutilizan para las
+Las réplicas nulas se generan por lotes (Parametros.lote) y la regla de Besag y
+Clifford (1991) se evalúa al cierre de cada lote: si h de ellas superan al
+estadístico observado se detiene y el p-valor es la proporción observada. Con
+B <= lote no se activa y se usan las B réplicas (Cap_3, sec:prop-multiplicidad). Si
+el bloque supera la prueba ómnibus, las mismas réplicas se reutilizan para las
 pruebas dirigidas. El número de réplicas de un bloque es
 B = max(B_min, ceil(c / alfa_B)), acotado por B_max; si con B_max el p-valor
 mínimo 1 / (B_max + 1) ya supera alfa_B, el bloque no puede rechazarse y se

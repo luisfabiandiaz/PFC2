@@ -130,7 +130,9 @@ def mejor_corte_conjunto(T, a0, b0, max_iter=10, exacto_hasta=14, cols_exacto_ha
     cada corte de columnas se enumeran todos los de filas. Si no, minimización
     alternante (BBAC con base C6 y k = l = 2 restringido al bloque, Cap_3.tex
     sec:prop-candidatos) desde los cortes a0 (filas) y b0 (columnas), que alcanza el
-    óptimo global en menos de la mitad de las tablas pequeñas probadas.
+    óptimo global en menos de la mitad de las tablas pequeñas probadas. El paso de
+    filas enumera todos los cortes, así que con |I| > exacto_hasta se conserva a0 y
+    solo se actualizan las columnas.
     Devuelve (ganancia (B,), a (B, m), b (B, n))."""
     T = np.asarray(T, float)
     B, m, n = T.shape

@@ -20,8 +20,10 @@ La segunda vale exactamente 1 en toda hoja que sale de un corte de filas o de
 columnas, porque E^P reproduce los totales de fila y de columna del padre; solo
 es informativa tras un corte conjunto.
 
-Nota: el periodo feriado usa todavía el bootstrap sin estratificar por tipo de día,
-que en el experimento E3 resultó algo liberal (tipo I medio 0.087).
+Nota: ambos periodos usan el bootstrap sin estratificar por tipo de día. En el
+feriado, estratificar no mejora la calibración (E5: tipo I medio 0.109 frente a 0.045
+sin estratos) y queda como limitación conocida en los bloques nocturnos, 5 de 24
+sobre el nivel nominal (Cap_3, sec:prop-bootstrap y sec:prop-limitaciones).
 
 Salidas:
   Resultados/AST-CC/refinamiento.txt
