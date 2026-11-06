@@ -27,7 +27,7 @@ Implementaciones/
 │   ├── estadisticos.py
 │   ├── nulas.py
 │   ├── cortes.py
-│   ├── bbac.py                BBAC_I con bases C2 y C5 (+ búsqueda local)
+│   ├── bbac.py                BBAC_I con bases C2 y C5 (+ búsqueda local) y optimizar_c6 (rejilla para D_I bajo C6)
 │   ├── arbol.py               Algoritmo AST-CC (Algoritmos 1 y 2 del Cap. 3)
 │   ├── estabilidad.py         Jaccard entre hojas, frecuencia de soporte y D_I fuera de muestra
 │   └── sinteticos.py          Datos con patrones locales plantados
@@ -46,10 +46,11 @@ Implementaciones/
 │   ├── 02_refinamiento.py          AST-CC sobre los datos reales y sensibilidad a delta
 │   ├── 03_simulacion.py            Calibración (FWER) y potencia sobre datos sintéticos
 │   ├── 04_patrones.py              Otros tipos de patrón: XOR, anidado, entre bloques, BBAC
-│   ├── 05_comparacion.py           AST-CC frente a ST-CC y a rejillas globales (D_I, parámetros, BIC)
-│   ├── 06_estabilidad.py           Frecuencia de soporte de las hojas y ajuste fuera de muestra (división de días)
+│   ├── 05_comparacion.py           AST-CC (bases C5 y C6) frente a ST-CC y a rejillas globales optimizadas para C6 (D_I, parámetros, BIC)
+│   ├── 06_estabilidad.py           Frecuencia de soporte de las hojas y ajuste fuera de muestra (división de días) frente a rejillas C6
 │   ├── 07_visualizacion.py         Matriz teselada, mapas de profundidad y de bloques refinados, árbol anotado
-│   └── 08_refinamiento_kmeans.py   K-means (K = 4, como ST-CC/04) sobre las hojas de AST-CC
+│   ├── 08_refinamiento_kmeans.py   K-means (K = 4, como ST-CC/04) sobre las hojas de AST-CC
+│   └── 09_rejillas_sinteticos.py   AST-CC frente a rejillas globales optimizadas para C6, con verdad conocida
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -94,10 +95,11 @@ python AST-CC/01_particion_base.py
 python AST-CC/02_refinamiento.py
 python AST-CC/03_simulacion.py
 python AST-CC/04_patrones.py
-python AST-CC/05_comparacion.py
-python AST-CC/06_estabilidad.py weekday    # o holiday; cada periodo tarda unos 15 min
+python AST-CC/05_comparacion.py          # unos 20 min
+python AST-CC/06_estabilidad.py weekday    # o holiday; cada periodo tarda unos 20-30 min
 python AST-CC/07_visualizacion.py          # usa los soportes de 06 si existen
 python AST-CC/08_refinamiento_kmeans.py
+python AST-CC/09_rejillas_sinteticos.py    # unos 8 min; admite un escenario como argumento
 python -m pytest tests
 ```
 

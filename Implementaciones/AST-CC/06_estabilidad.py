@@ -13,12 +13,15 @@ A. Frecuencia de soporte. La referencia es el árbol de AST-CC/02 (partición ba
    Una hoja que aparece en menos de la mitad no debe interpretarse como hallazgo.
 
 B. División de días. Se parten los D días en dos mitades al azar, R_DIVISION veces. Con una
-   mitad se ajusta cada modelo (rejillas globales de BBAC C5 evaluadas con la base C6,
-   y AST-CC con dos valores de delta, sobre una partición base estimada solo con esa
-   mitad) y se mide D_I en la otra mitad, en ambos sentidos. Un modelo que solo se
-   ajusta al ruido de su mitad empeora fuera de ella. Para cada AST-CC se compara con
-   la rejilla de menos parámetros que tenga al menos tantos como él, que le da ventaja
-   a la rejilla, y se cuenta en cuántos ajustes gana el árbol.
+   mitad se ajusta cada modelo y se mide D_I en la otra mitad, en ambos sentidos. Un
+   modelo que solo se ajusta al ruido de su mitad empeora fuera de ella. Los modelos son:
+   rejillas globales evaluadas con la base C6 y optimizadas para C6 (BBAC C5 mejorado con
+   astcc.bbac.optimizar_c6; la rejilla de BBAC sin mejorar se conserva como "rejilla BBAC"
+   porque fue la comparación anterior), y AST-CC con dos valores de delta y dos
+   particiones base estimadas solo con esa mitad: la de BBAC C5 y la misma rejilla optimizada
+   para C6. Para cada AST-CC se compara con la rejilla de C6 de menos parámetros que tenga
+   al menos tantos como él (ventaja para la rejilla) y con la de más parámetros que tenga
+   a lo sumo tantos (ventaja para el árbol), y se cuenta en cuántos ajustes gana el árbol.
 
 Con la mitad de los días, el bootstrap de días trabaja con muy pocos (6 y 4 o 5) y las
 mitades no conservan la composición del periodo, sobre todo en el feriado; el ruido
@@ -42,7 +45,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
-from astcc.bbac import aproximacion, bbac, d_I  # noqa: E402
+from astcc.bbac import aproximacion, bbac, d_I, optimizar_c6  # noqa: E402
 from astcc.estabilidad import KAPPA, divergencia_fuera_de_muestra, frecuencia_de_soporte  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -124,16 +127,20 @@ def division(periodo, X, L):
         mitades = (perm[:D // 2], perm[D // 2:])
         for sentido, (ent, pru) in enumerate((mitades, mitades[::-1])):
             Xe, Oe, Op = X[ent], X[ent].sum(0), X[pru].sum(0)
-            ajustes, base = {}, None
+            ajustes, bases = {}, None
             for KR, KT in REJILLAS[periodo]:
                 b = bbac(Oe, KR, KT, base="C5", nruns=NRUNS_REJILLA, rng=rng)
-                A = aproximacion(Oe, b.rho, b.tau, "C6", KR, KT)
-                ajustes[f"rejilla {KR}x{KT}"] = ("rejilla", k_rejilla(m, n, KR, KT), A, 0)
+                rho6, tau6, _ = optimizar_c6(Oe, b.rho, b.tau, KR, KT)
+                k = k_rejilla(m, n, KR, KT)
+                ajustes[f"rejilla {KR}x{KT}"] = ("rejilla", k, aproximacion(Oe, rho6, tau6, "C6", KR, KT), 0)
+                ajustes[f"rejilla BBAC {KR}x{KT}"] = ("rejilla BBAC", k, aproximacion(Oe, b.rho, b.tau, "C6", KR, KT), 0)
                 if (KR, KT) == (kr, kt):
-                    base = b
+                    bases = {"C5": (b.rho, b.tau), "C6": (rho6, tau6)}
             for delta in DELTAS:
-                res = ASTCC(Parametros(delta=delta), rng).ajustar(Xe, base.rho, base.tau)
-                ajustes[f"AST-CC d={delta:g}"] = ("AST-CC", k_hojas(res), res.aproximacion(Oe), len(res.internos()))
+                for nb, (rho_b, tau_b) in bases.items():
+                    res = ASTCC(Parametros(delta=delta), rng).ajustar(Xe, rho_b, tau_b)
+                    ajustes[f"AST-CC d={delta:g} base {nb}"] = ("AST-CC", k_hojas(res), res.aproximacion(Oe),
+                                                                len(res.internos()))
             ajustes["saturado"] = ("saturado", m * n, Oe, 0)
             for nombre, (tipo, k, A, cortes) in ajustes.items():
                 filas.append({"division": s, "sentido": sentido, "modelo": nombre, "tipo": tipo, "k": k,
@@ -145,37 +152,41 @@ def division(periodo, X, L):
 
     L += [f"B. División de días ({R_DIVISION} divisiones al azar, ambos sentidos = {2 * R_DIVISION} ajustes; "
           f"D_I medio y desviación típica, reescalado a la masa de la mitad de prueba)", "",
-          f"  {'modelo':<18} {'k':>6} {'cortes':>6} {'D_I entren.':>12} {'D_I prueba':>11} {'± sd':>7} {'brecha':>8}"]
+          f"  {'modelo':<24} {'k':>6} {'cortes':>6} {'D_I entren.':>12} {'D_I prueba':>11} {'± sd':>7} {'brecha':>8}"]
     resumen = tabla.groupby("modelo", sort=False).agg(
         tipo=("tipo", "first"), k=("k", "mean"), cortes=("cortes", "mean"),
         ent=("D_entrenamiento", "mean"), pru=("D_prueba", "mean"), sd=("D_prueba", "std"))
     orden = resumen.sort_values(["k"])
     for nombre, f in orden.iterrows():
-        L.append(f"  {nombre:<18} {f.k:>6.0f} {f.cortes:>6.1f} {f.ent:>12,.0f} {f.pru:>11,.0f} {f.sd:>7,.0f} "
+        L.append(f"  {nombre:<24} {f.k:>6.0f} {f.cortes:>6.1f} {f.ent:>12,.0f} {f.pru:>11,.0f} {f.sd:>7,.0f} "
                  f"{f.pru - f.ent:>8,.0f}")
     L += ["", "  brecha = D_I de prueba - D_I de entrenamiento (optimismo del ajuste)", "",
-          "  AST-CC frente a la rejilla de menos parámetros que tiene al menos tantos como él "
-          "(ventaja para la rejilla); diferencia negativa = mejor el árbol", "",
-          f"  {'modelo':<18} {'rejilla':<14} {'k árbol':>7} {'k rej.':>6} {'dif. D_I prueba':>15} {'gana el árbol':>14}"]
+          "  AST-CC frente a las rejillas optimizadas para C6 (diferencia negativa = mejor el árbol):",
+          "    k>= : la rejilla de menos parámetros que tiene al menos tantos como el árbol (ventaja para la rejilla)",
+          "    k<= : la rejilla de más parámetros que tiene a lo sumo tantos como el árbol (ventaja para el árbol)",
+          "    rejilla BBAC: la rejilla k>= con la partición de BBAC sin optimizar para C6 (comparación anterior)", "",
+          f"  {'modelo':<24} {'comparado con':<14} {'k árbol':>7} {'k rej.':>6} {'dif. D_I prueba':>15} {'gana el árbol':>14}"]
     for delta in DELTAS:
-        nombre = f"AST-CC d={delta:g}"
-        dif, gana, k_a, k_r, usada = [], [], [], [], ""
-        for (s, sent), g in tabla.groupby(["division", "sentido"]):
-            a = g[g.modelo == nombre].iloc[0]
-            cand = g[(g.tipo == "rejilla") & (g.k >= a.k)].sort_values("k")
-            if cand.empty:
-                continue
-            r = cand.iloc[0]
-            dif.append(a.D_prueba - r.D_prueba)
-            gana.append(a.D_prueba < r.D_prueba)
-            k_a.append(a.k)
-            k_r.append(r.k)
-            usada = r.modelo
-        if dif:
-            L.append(f"  {nombre:<18} {usada:<14} {np.mean(k_a):>7.0f} {np.mean(k_r):>6.0f} "
-                     f"{np.mean(dif):>+15,.0f} {np.mean(gana):>13.0%}")
-        else:
-            L.append(f"  {nombre:<18} ninguna rejilla con tantos parámetros")
+        for nb in ("C5", "C6"):
+            nombre = f"AST-CC d={delta:g} base {nb}"
+            for etiqueta, tipo, mayor in (("k>=", "rejilla", True), ("k<=", "rejilla", False),
+                                          ("rejilla BBAC", "rejilla BBAC", True)):
+                dif, gana, k_a, k_r = [], [], [], []
+                for (s, sent), g in tabla.groupby(["division", "sentido"]):
+                    a = g[g.modelo == nombre].iloc[0]
+                    cand = g[(g.tipo == tipo) & ((g.k >= a.k) if mayor else (g.k <= a.k))].sort_values("k")
+                    if cand.empty:
+                        continue
+                    r = cand.iloc[0] if mayor else cand.iloc[-1]
+                    dif.append(a.D_prueba - r.D_prueba)
+                    gana.append(a.D_prueba < r.D_prueba)
+                    k_a.append(a.k)
+                    k_r.append(r.k)
+                if dif:
+                    L.append(f"  {nombre:<24} {etiqueta:<14} {np.mean(k_a):>7.0f} {np.mean(k_r):>6.0f} "
+                             f"{np.mean(dif):>+15,.0f} {np.mean(gana):>13.0%}")
+                else:
+                    L.append(f"  {nombre:<24} {etiqueta:<14} ninguna rejilla")
     L.append("")
 
 

@@ -20,8 +20,13 @@ Modelos (tab:parametros y def:aprox-arbol):
 
 Las rejillas usan la base C6 porque es la familia de las hojas del árbol: un árbol cuyas
 hojas son los bloques base es exactamente la rejilla con C6. Para que sean un rival
-exigente, cada (K_R, K_T) toma la mejor de las particiones que optimizan C2 y C5
-(BBAC_I, con búsqueda local), con las que se minimiza D_I(O || C6) de forma indirecta.
+exigente, cada (K_R, K_T) parte de las particiones que optimizan C2 y C5 (BBAC_I, con
+búsqueda local) y las mejora con astcc.bbac.optimizar_c6, que minimiza D_I(O || C6)
+directamente. BBAC solo optimiza C2 y C5, y una rejilla evaluada con C6 pero optimizada
+con otro criterio queda muy por debajo de lo que puede dar (33-70 % de D_I en los datos
+reales); la columna D_I_bbac del CSV conserva ese valor, que fue el de la versión anterior
+de esta comparación. Por la misma razón, AST-CC se ajusta con dos particiones base: la de
+BBAC C5 (la de AST-CC/01) y la misma rejilla K_R x K_T optimizada para C6 (base C6).
 
 Como la matriz es una suma de días con varianza mayor que la de Poisson, J se reporta
 también con la devianza dividida entre la dispersión de Pearson del modelo
@@ -55,7 +60,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
-from astcc.bbac import bbac, d_I, divergencia  # noqa: E402
+from astcc.bbac import bbac, d_I, divergencia, optimizar_c6  # noqa: E402
 from astcc.nulas import ajuste_sin_interaccion_triple  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -98,8 +103,9 @@ def fila(modelo, config, k, D_I, N, phi):
 
 
 def rejillas(O, rng, periodo):
-    """Mejor partición global para cada (K_R, K_T): la de menor D_I(O || C6) entre las
-    que optimizan C2 y C5."""
+    """Mejor partición global para cada (K_R, K_T). D_I es la de menor D_I(O || C6) tras
+    mejorar con optimizar_c6 las particiones de BBAC C2 y C5; D_I_bbac es la de menor
+    D_I(O || C6) entre esas mismas particiones sin mejorar (comparación anterior)."""
     m, n = O.shape
     N = O.sum()
     filas = []
@@ -107,16 +113,33 @@ def rejillas(O, rng, periodo):
         for KT in KT_REJILLA:
             if KR > m or KT > n:
                 continue
-            mejor = None
+            mejor, mejor_bbac = None, None
             for base in ("C2", "C5"):
                 r = bbac(O, KR, KT, base=base, nruns=NRUNS, rng=rng)
                 d6 = divergencia(O, r.rho, r.tau, "C6", KR, KT)
-                if mejor is None or d6 < mejor[0]:
-                    mejor = (d6, base)
+                d_opt = optimizar_c6(O, r.rho, r.tau, KR, KT)[2]
+                if mejor_bbac is None or d6 < mejor_bbac[0]:
+                    mejor_bbac = (d6, base)
+                if mejor is None or d_opt < mejor[0]:
+                    mejor = (d_opt, base)
             filas.append({**fila("Rejilla", f"{KR}x{KT}", k_rejilla(m, n, KR, KT), mejor[0], N, 1.0),
-                          "base": mejor[1], "KR": KR, "KT": KT})
+                          "base": mejor[1], "KR": KR, "KT": KT, "D_I_bbac": mejor_bbac[0]})
         print(f"  {periodo}: rejillas con K_R = {KR} listas", flush=True)
     return filas
+
+
+def base_c6(O, kr, kt, periodo):
+    """Partición base K_R x K_T optimizada para D_I(O || C6): la mejor tras mejorar con
+    optimizar_c6 las particiones guardadas de AST-CC/01 (BBAC C5 y C2) y la de ST-CC.
+    Se guarda en DATA/procesados/AST-CC/{periodo}_C6_{rho,tau}.npy."""
+    arranques = [(np.load(DATOS / f"AST-CC/{periodo}_{b}_rho.npy"), np.load(DATOS / f"AST-CC/{periodo}_{b}_tau.npy"))
+                 for b in ("C5", "C2")]
+    arranques.append((np.load(DATOS / f"ST-CC/{periodo}_row_clusters.npy"),
+                      np.load(DATOS / f"ST-CC/{periodo}_col_clusters.npy")))
+    mejor = min((optimizar_c6(O, r, t, kr, kt) for r, t in arranques), key=lambda x: x[2])
+    np.save(DATOS / f"AST-CC/{periodo}_C6_rho.npy", mejor[0])
+    np.save(DATOS / f"AST-CC/{periodo}_C6_tau.npy", mejor[1])
+    return mejor[0], mejor[1]
 
 
 def frontera(filas):
@@ -133,6 +156,12 @@ def frontera(filas):
 def mejor_con_a_lo_sumo(filas, k):
     cand = [f for f in filas if f["k"] <= k]
     return min(cand, key=lambda f: f["D_I"]) if cand else None
+
+
+def mejor_con_al_menos(filas, k):
+    """Rejilla de menos parámetros entre las que tienen al menos k (a igualdad, la de menor D_I)."""
+    cand = [f for f in filas if f["k"] >= k]
+    return min(cand, key=lambda f: (f["k"], f["D_I"])) if cand else None
 
 
 def menos_parametros_que_igualan(filas, D_I):
@@ -168,35 +197,51 @@ def main():
             f["J_phi"] = f["D_I"] / phi + 0.5 * np.log(N) * f["k"]
         pareto = frontera(rej)
 
-        # AST-CC con la partición base C5 de AST-CC/01
-        rho = np.load(DATOS / f"AST-CC/{periodo}_C5_rho.npy")
-        tau = np.load(DATOS / f"AST-CC/{periodo}_C5_tau.npy")
+        # AST-CC con dos particiones base: BBAC C5 (AST-CC/01) y la misma rejilla optimizada para C6
+        bases = {"C5": (np.load(DATOS / f"AST-CC/{periodo}_C5_rho.npy"), np.load(DATOS / f"AST-CC/{periodo}_C5_tau.npy")),
+                 "C6": base_c6(O, kr, kt, periodo)}
+        for nombre_base, (rho, tau) in bases.items():
+            print(f"  {periodo}: base {nombre_base}: D_I(C6) = {divergencia(O, rho, tau, 'C6', kr, kt):,.0f}", flush=True)
         ast = []
-        for delta in DELTAS:
-            t0 = time.time()
-            res = ASTCC(Parametros(delta=delta), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
-            k = sum(len(h.filas) + len(h.cols) - 1 for h in res.hojas())
-            f = fila("AST-CC", f"d={delta:g}", k, d_I(O, res.aproximacion(O)), N, phi)
-            f.update(hojas=len(res.hojas()), cortes=len(res.internos()))
-            ast.append(f)
-            print(f"  {periodo}: AST-CC delta = {delta:g}: {len(res.hojas())} hojas, k = {k} "
-                  f"({time.time() - t0:.1f} s)", flush=True)
+        for nombre_base, (rho, tau) in bases.items():
+            for delta in DELTAS:
+                t0 = time.time()
+                res = ASTCC(Parametros(delta=delta), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
+                k = sum(len(h.filas) + len(h.cols) - 1 for h in res.hojas())
+                f = fila("AST-CC", f"d={delta:g} {nombre_base}", k, d_I(O, res.aproximacion(O)), N, phi)
+                f.update(hojas=len(res.hojas()), cortes=len(res.internos()), base_ast=nombre_base)
+                ast.append(f)
+                print(f"  {periodo}: AST-CC base {nombre_base}, delta = {delta:g}: {len(res.hojas())} hojas, "
+                      f"k = {k} ({time.time() - t0:.1f} s)", flush=True)
 
-        # --- Tabla 1: AST-CC frente a la mejor rejilla con a lo sumo los mismos parámetros
-        L += ["  A. A igual número de parámetros: AST-CC frente a la mejor rejilla global con a lo sumo "
-              "esos parámetros;",
-              "     a la derecha, la rejilla con menos parámetros que iguala el D_I de AST-CC", "",
-              f"  {'delta':>7} {'hojas':>5} {'k':>5} {'D_I AST-CC':>11}   {'rejilla':>7} {'base':>4} {'k':>5} "
-              f"{'D_I rejilla':>11}  {'reducción':>9}   {'iguala':>7} {'k':>5} {'ahorro':>7}"]
+        # --- Tabla 1: AST-CC frente a rejillas con a lo sumo y con al menos los mismos parámetros
+        L += ["  A. A igual número de parámetros: AST-CC frente a la mejor rejilla global (optimizada para C6) con",
+              "     a lo sumo esos parámetros (ventaja para el árbol) y con al menos esos parámetros (ventaja para la",
+              "     rejilla); reduc. = 1 - D_I(AST-CC) / D_I(rejilla), negativa si gana la rejilla", "",
+              f"  {'delta':>7} {'base':>4} {'hojas':>5} {'k':>5} {'D_I AST-CC':>11} | {'rej. k<=':>8} {'k':>5} "
+              f"{'D_I':>9} {'reduc.':>7} | {'rej. k>=':>8} {'k':>5} {'D_I':>9} {'reduc.':>7} | {'iguala':>7} {'k':>5}"]
         for f in ast:
-            r = mejor_con_a_lo_sumo(rej, f["k"])
+            r1, r2 = mejor_con_a_lo_sumo(rej, f["k"]), mejor_con_al_menos(rej, f["k"])
             q = menos_parametros_que_igualan(rej, f["D_I"])
-            d = f["config"][2:]
-            izq = f"  {d:>7} {f['hojas']:>5} {f['k']:>5} {f['D_I']:>11,.0f}   "
-            cmp_ = f"{'—':>7}" if r is None else (f"{r['config']:>7} {r['base']:>4} {r['k']:>5} "
-                                                  f"{r['D_I']:>11,.0f}  {1 - f['D_I'] / r['D_I']:>9.1%}")
-            igual = (f"{'ninguna':>7}" if q is None else f"{q['config']:>7} {q['k']:>5} {q['k'] - f['k']:>+7}")
-            L.append(izq + cmp_ + "   " + igual)
+            d = f["config"].split()[0][2:]
+
+            def fila_r(r):
+                if r is None:
+                    return f"{'—':>8} {'':>5} {'':>9} {'':>7}"
+                return f"{r['config']:>8} {r['k']:>5} {r['D_I']:>9,.0f} {1 - f['D_I'] / r['D_I']:>7.1%}"
+            igual = f"{'ninguna':>7}" if q is None else f"{q['config']:>7} {q['k']:>5}"
+            L.append(f"  {d:>7} {f['base_ast']:>4} {f['hojas']:>5} {f['k']:>5} {f['D_I']:>11,.0f} | "
+                     f"{fila_r(r1)} | {fila_r(r2)} | {igual}")
+        L.append("")
+        L += ["  Referencia (comparación anterior): D_I de la mejor rejilla con a lo sumo los parámetros de AST-CC",
+              "  (base C5), con la partición de BBAC sin optimizar para C6 y optimizada para C6", ""]
+        for f in ast:
+            if f["base_ast"] != "C5":
+                continue
+            r = mejor_con_a_lo_sumo(rej, f["k"])
+            if r is not None:
+                L.append(f"    d={f['config'].split()[0][2:]:>7}: rejilla {r['config']:>6} k={r['k']}: "
+                         f"D_I BBAC {r['D_I_bbac']:>9,.0f} -> optimizada para C6 {r['D_I']:>9,.0f}")
         L.append("")
 
         # --- Tabla 2: criterios de información
@@ -205,7 +250,7 @@ def main():
         mejor_rej = {c: min(rej, key=lambda f: f[c]) for c in ("J", "J_phi")}
         mejor_ast = {c: min(ast, key=lambda f: f[c]) for c in ("J", "J_phi")}
         L += ["  B. Criterio de información (menor es mejor)", "",
-              f"  {'modelo':<10} {'config':<10} {'k':>5} {'D_I':>11} {'J':>11} {'J_phi':>11}"]
+              f"  {'modelo':<10} {'config':<14} {'k':>5} {'D_I':>11} {'J':>11} {'J_phi':>11}"]
         for f in st + [mejor_rej["J"], mejor_rej["J_phi"]] + ast:
             marca = ""
             if f is mejor_rej["J"]:
@@ -216,7 +261,7 @@ def main():
                 marca = "  <- mejor AST-CC por J"
             if f is mejor_ast["J_phi"]:
                 marca += "  <- mejor AST-CC por J_phi"
-            L.append(f"  {f['modelo']:<10} {f['config']:<10} {f['k']:>5} {f['D_I']:>11,.0f} "
+            L.append(f"  {f['modelo']:<10} {f['config']:<14} {f['k']:>5} {f['D_I']:>11,.0f} "
                      f"{f['J']:>11,.0f} {f['J_phi']:>11,.0f}{marca}")
         for c, nombre in (("J", "J"), ("J_phi", "J_phi")):
             L.append(f"  Mínimo de {nombre}: {best[c]['modelo']} {best[c]['config']}; "
@@ -228,13 +273,15 @@ def main():
         tabla = pd.DataFrame(st + rej + ast)
         tabla.to_csv(SALIDA / f"comparacion_{periodo}.csv", index=False)
         fig, ax = plt.subplots(figsize=(7, 4.5))
-        ax.scatter([f["k"] for f in rej], [f["D_I"] for f in rej], s=14, c="0.75", label="rejillas globales")
+        ax.scatter([f["k"] for f in rej], [f["D_I"] for f in rej], s=14, c="0.75", label="rejillas globales (C6)")
         ax.plot([f["k"] for f in pareto], [f["D_I"] for f in pareto], "-", c="0.35", lw=1.2,
                 label="mejor rejilla con ≤ k parámetros")
-        ax.plot([f["k"] for f in ast], [f["D_I"] for f in ast], "o-", c="C3", label="AST-CC (δ)")
-        for f in ast:
-            ax.annotate(f["config"][2:], (f["k"], f["D_I"]), textcoords="offset points", xytext=(5, 4),
-                        fontsize=7, color="C3")
+        for nombre_base, color in (("C5", "C3"), ("C6", "C1")):
+            sub = [f for f in ast if f["base_ast"] == nombre_base]
+            ax.plot([f["k"] for f in sub], [f["D_I"] for f in sub], "o-", c=color, label=f"AST-CC (δ), base {nombre_base}")
+            for f in sub:
+                ax.annotate(f["config"].split()[0][2:], (f["k"], f["D_I"]), textcoords="offset points",
+                            xytext=(5, 4), fontsize=7, color=color)
         ax.plot([f["k"] for f in st], [f["D_I"] for f in st], "s", c="C0", label="ST-CC (C2, C5, C6)")
         ax.set_xscale("log")
         ax.set_yscale("log")

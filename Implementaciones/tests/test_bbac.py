@@ -143,3 +143,17 @@ def test_busqueda_local_no_empeora(base):
     con = bbac(O, 3, 3, base=base, nruns=10, rng=np.random.default_rng(9), local=True)
     assert con.divergencia <= sin.divergencia + 1e-9
     assert np.isclose(con.divergencia, divergencia(O, con.rho, con.tau, base, 3, 3))
+
+
+def test_optimizar_c6_no_empeora_y_conserva_los_grupos():
+    from astcc.bbac import optimizar_c6
+    rng = np.random.default_rng(10)
+    O, _, _ = plantada(rng, "C5", m=30, n=12, KR=3, KT=3)
+    b = bbac(O, 4, 3, base="C5", nruns=5, rng=rng)
+    antes = divergencia(O, b.rho, b.tau, "C6", 4, 3)
+    rho, tau, d = optimizar_c6(O, b.rho, b.tau, 4, 3)
+    assert d <= antes + 1e-9
+    assert np.isclose(d, divergencia(O, rho, tau, "C6", 4, 3))
+    assert len(np.unique(rho)) == 4 and len(np.unique(tau)) == 3
+    # no modifica la partición recibida
+    assert divergencia(O, b.rho, b.tau, "C6", 4, 3) == pytest.approx(antes)

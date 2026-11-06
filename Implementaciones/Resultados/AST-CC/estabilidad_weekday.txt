@@ -23,24 +23,46 @@ A. Frecuencia de soporte (referencia: delta = 0.005, 38 hojas; 20 ejecuciones co
 
 B. División de días (8 divisiones al azar, ambos sentidos = 16 ajustes; D_I medio y desviación típica, reescalado a la masa de la mitad de prueba)
 
-  modelo                  k cortes  D_I entren.  D_I prueba    ± sd   brecha
-  rejilla 8x4           328    0.0        7,697      10,334   1,154    2,637
-  AST-CC d=0.005        340    6.7        5,080       7,801   1,185    2,721
-  rejilla 12x4          360    0.0        6,776       9,447   1,131    2,672
-  rejilla 16x4          392    0.0        5,833       8,516   1,217    2,684
-  AST-CC d=0.001        422   42.4        1,530       4,651   1,095    3,121
-  rejilla 20x4          424    0.0        4,955       7,772   1,097    2,817
-  rejilla 12x6          468    0.0        2,070       5,042   1,084    2,972
-  rejilla 16x6          492    0.0        1,635       4,619   1,131    2,984
-  rejilla 24x8          624    0.0          560       3,758   1,097    3,198
-  saturado              792    0.0            0       3,387   1,114    3,387
+  modelo                        k cortes  D_I entren.  D_I prueba    ± sd   brecha
+  rejilla 8x4                 328    0.0        3,939       6,775   1,231    2,836
+  rejilla BBAC 8x4            328    0.0        7,692      10,329   1,293    2,637
+  AST-CC d=0.005 base C6      328    0.2        3,899       6,741   1,177    2,841
+  AST-CC d=0.005 base C5      339    6.4        5,202       7,963   1,261    2,761
+  rejilla 12x4                360    0.0        2,773       5,713   1,295    2,940
+  rejilla BBAC 12x4           360    0.0        6,778       9,417   1,286    2,639
+  AST-CC d=0.001 base C6      378   21.3        1,706       4,752   1,281    3,046
+  rejilla 16x4                392    0.0        2,039       5,063   1,321    3,024
+  rejilla BBAC 16x4           392    0.0        5,852       8,591   1,294    2,739
+  AST-CC d=0.001 base C5      420   43.1        1,529       4,637   1,265    3,107
+  rejilla BBAC 20x4           424    0.0        4,906       7,698   1,197    2,792
+  rejilla 20x4                424    0.0        1,543       4,595   1,239    3,052
+  rejilla 12x6                468    0.0        1,268       4,399   1,275    3,132
+  rejilla BBAC 12x6           468    0.0        2,205       5,122   1,308    2,917
+  rejilla BBAC 16x6           492    0.0        1,656       4,645   1,273    2,989
+  rejilla 16x6                492    0.0          979       4,152   1,281    3,173
+  rejilla 24x8                624    0.0          195       3,502   1,258    3,307
+  rejilla BBAC 24x8           624    0.0          557       3,734   1,257    3,177
+  saturado                    792    0.0            0       3,378   1,262    3,378
 
   brecha = D_I de prueba - D_I de entrenamiento (optimismo del ajuste)
 
-  AST-CC frente a la rejilla de menos parámetros que tiene al menos tantos como él (ventaja para la rejilla); diferencia negativa = mejor el árbol
+  AST-CC frente a las rejillas optimizadas para C6 (diferencia negativa = mejor el árbol):
+    k>= : la rejilla de menos parámetros que tiene al menos tantos como el árbol (ventaja para la rejilla)
+    k<= : la rejilla de más parámetros que tiene a lo sumo tantos como el árbol (ventaja para el árbol)
+    rejilla BBAC: la rejilla k>= con la partición de BBAC sin optimizar para C6 (comparación anterior)
 
-  modelo             rejilla        k árbol k rej. dif. D_I prueba  gana el árbol
-  AST-CC d=0.001     rejilla 20x4       422    446          -1,751          100%
-  AST-CC d=0.005     rejilla 12x4       340    360          -1,646          100%
+  modelo                   comparado con  k árbol k rej. dif. D_I prueba  gana el árbol
+  AST-CC d=0.001 base C5   k>=                420    430             +76           25%
+  AST-CC d=0.001 base C5   k<=                420    402            -303           88%
+  AST-CC d=0.001 base C5   rejilla BBAC       420    430          -2,758          100%
+  AST-CC d=0.001 base C6   k>=                378    394            -291           94%
+  AST-CC d=0.001 base C6   k<=                378    362            -904           94%
+  AST-CC d=0.001 base C6   rejilla BBAC       378    394          -3,796          100%
+  AST-CC d=0.005 base C5   k>=                339    360          +2,250            0%
+  AST-CC d=0.005 base C5   k<=                339    328          +1,188            0%
+  AST-CC d=0.005 base C5   rejilla BBAC       339    360          -1,454          100%
+  AST-CC d=0.005 base C6   k>=                328    336            +184            0%
+  AST-CC d=0.005 base C6   k<=                328    328             -34           25%
+  AST-CC d=0.005 base C6   rejilla BBAC       328    336          -3,361          100%
 
-Tiempo total: 15.3 min
+Tiempo total: 30.8 min

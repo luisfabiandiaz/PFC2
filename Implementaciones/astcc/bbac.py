@@ -164,6 +164,40 @@ def _busqueda_local(O, rho, tau, KR, KT, base, tol):
     return rho, tau, divergencia(O, rho, tau, base, KR, KT)
 
 
+def optimizar_c6(O, rho, tau, KR, KT, max_barridos=50):
+    """Rejilla global (rho, tau) que minimiza D_I(O || C6) directamente.
+
+    BBAC_I solo optimiza las bases C2 y C5, pero una rejilla se evalúa y se compara con
+    AST-CC bajo C6 (independencia dentro de cada bloque, def:aprox-arbol), que es la
+    aproximación de cada hoja. Esta búsqueda local parte de (rho, tau) y mueve una fila
+    o una columna a la vez al grupo que más reduce D_I(O || C6), hasta que ningún
+    movimiento mejora; no vacía grupos. Devuelve (rho, tau, D_I(O || C6))."""
+    O = np.asarray(O, float)
+    rho, tau = np.array(rho), np.array(tau)
+    actual = divergencia(O, rho, tau, "C6", KR, KT)
+    for _ in range(max_barridos):
+        mejoro = False
+        for etiquetas, K in ((rho, KR), (tau, KT)):
+            for i in range(len(etiquetas)):
+                g0 = etiquetas[i]
+                if np.sum(etiquetas == g0) < 2:
+                    continue
+                mejor, gm = actual, g0
+                for g in range(K):
+                    if g == g0:
+                        continue
+                    etiquetas[i] = g
+                    v = divergencia(O, rho, tau, "C6", KR, KT)
+                    if v < mejor - 1e-9 * max(1.0, abs(mejor)):
+                        mejor, gm = v, g
+                etiquetas[i] = gm
+                if gm != g0:
+                    actual, mejoro = mejor, True
+        if not mejoro:
+            break
+    return rho, tau, actual
+
+
 def bbac(O, KR, KT, base="C5", nruns=20, max_iter=100, tol=1e-9, rng=None,
          rho0=None, tau0=None, local=True):
     """BBAC_I con la base dada. Devuelve la mejor de nruns ejecuciones.
