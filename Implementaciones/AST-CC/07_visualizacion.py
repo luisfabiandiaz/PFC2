@@ -118,6 +118,18 @@ def disposicion_global(O, rho, tau):
     return orden_g, orden_h, ancho, alto, x_de, y_de
 
 
+def columnas_dibujadas(res, O, tau, h):
+    """Intervalos del grupo base h en el orden en que se dibujan sus columnas: por volumen
+    creciente, como el checkerboard de ST-CC (dentro de cada hoja las columnas se ordenan
+    por su volumen, ver figura_teselada). Si algún bloque del grupo tiene un corte de
+    columnas, los hijos se colocan uno junto al otro y el orden deja de ser común a todos
+    los bloques; en ese caso se devuelve el orden cronológico, que solo indica los miembros."""
+    idx = np.where(tau == h)[0]
+    hay_corte_col = any(n.corte in ("col", "conj") for r in res.raices if tau[r.cols[0]] == h
+                        for n in r.recorrer())
+    return idx if hay_corte_col else idx[np.argsort(O.sum(0)[idx])]
+
+
 def figura_teselada(periodo, res, O, D, rho, tau, soporte, modo):
     """modo = 'datos': dentro de cada hoja, las celdas reales (drop-offs promedio por día,
     la paleta y el orden por volumen del checkerboard de ST-CC, ST-CC/03). modo =
@@ -155,10 +167,12 @@ def figura_teselada(periodo, res, O, D, rho, tau, soporte, modo):
     ax.set_xlim(0, len(tau))
     ax.set_ylim(0, len(rho))
     ax.set_xticks([x_de[h] + ancho[h] / 2 for h in orden_h])
-    ax.set_xticklabels(["\n".join(FRANJAS[j] for j in np.where(tau == h)[0]) for h in orden_h], fontsize=6)
+    ax.set_xticklabels(["\n".join(FRANJAS[j] for j in columnas_dibujadas(res, O, tau, h)) for h in orden_h],
+                       fontsize=6)
     ax.set_yticks([y_de[g] + alto[g] / 2 for g in orden_g])
     ax.set_yticklabels([f"{alto[g]} regiones" for g in orden_g], fontsize=7)
-    ax.set_xlabel("grupos de intervalos de la partición base (orden de volumen creciente)")
+    ax.set_xlabel("grupos de intervalos de la partición base (orden de volumen creciente)\n"
+                  "dentro de cada grupo, los intervalos van de arriba hacia abajo = de izquierda a derecha")
     ax.set_ylabel("grupos de regiones (volumen creciente hacia arriba)")
     nombre = "teselada" if datos else "actividad"
     ax.set_title(f"{'Matriz teselada de AST-CC' if datos else 'Actividad relativa de las hojas de AST-CC'}, "
