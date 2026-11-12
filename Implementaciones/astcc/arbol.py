@@ -113,8 +113,9 @@ class ResultadoASTCC:
 
     def descomposicion(self, O):
         """Corolario cor:stcc: D_I(O||C2) = (i) + (ii) + 1/2 sum G2_{B,s} + 1/2 sum G2_L."""
-        KR, KT = int(self.rho.max()) + 1, int(self.tau.max()) + 1
-        c2, c5, c6 = (aproximacion(O, self.rho, self.tau, b, KR, KT) for b in ("C2", "C5", "C6"))
+        rho, tau = np.unique(self.rho, return_inverse=True)[1], np.unique(self.tau, return_inverse=True)[1]
+        KR, KT = int(rho.max()) + 1, int(tau.max()) + 1
+        c2, c5, c6 = (aproximacion(O, rho, tau, b, KR, KT) for b in ("C2", "C5", "C6"))
         hojas = 0.5 * sum(float(G2(O[np.ix_(h.filas, h.cols)])) for h in self.hojas())
         cortes = 0.5 * sum(n.G2_corte for n in self.internos())
         return {"total": d_I(O, c2), "i": d_I(c5, c2), "ii": d_I(c6, c5),
@@ -144,6 +145,11 @@ def _hijos(nodo, tipo, etiquetas):
     if tipo == "col":
         return [(I, J[b == 0]), (I, J[b == 1])]
     return [(I[a == r], J[b == c]) for r in (0, 1) for c in (0, 1)]
+
+
+def _rechaza(p, alfa):
+    """p <= alfa con tolerancia: los empates exactos (1+k)/(1+B) no dependen del redondeo."""
+    return p <= alfa * (1 + 1e-12)
 
 
 def _gl(tipo, m, n):
@@ -182,6 +188,9 @@ class ASTCC:
         if m < 2 or n < 2 or nodo.N < p.N_min or nodo.profundidad >= p.d_max:
             nodo.estado = "trivial"
             return
+        if nodo.alfa <= 0:
+            nodo.estado = "inalcanzable"
+            return
         B = min(max(p.B_min, math.ceil(p.c / nodo.alfa)), p.B_max)
         if 1.0 / (B + 1) > nodo.alfa:
             nodo.estado = "inalcanzable"
@@ -204,7 +213,7 @@ class ASTCC:
         else:
             nodo.p_omn = pvalor_simulado(nodo.G2, t_nulos)
         nodo.I_corr = max(0.0, (nodo.G2 - t_nulos.mean()) / (2 * nodo.N))
-        if nodo.p_omn > nodo.alfa or nodo.I_corr < p.delta:
+        if not _rechaza(nodo.p_omn, nodo.alfa) or nodo.I_corr < p.delta:
             nodo.estado = "homogenea"
             nodo.segundos = time.time() - t0
             return
@@ -214,16 +223,21 @@ class ASTCC:
         resultados = {}
         for tipo in ("fil", "col"):
             resultados[tipo] = self._prueba_dirigida(T, replicas, tipo)
-        significativos = [t for t in ("fil", "col") if resultados[t][1] <= nodo.alfa]
+        significativos = [t for t in ("fil", "col") if _rechaza(resultados[t][1], nodo.alfa)]
         if significativos:
-            def clave(t):
-                g, pv = resultados[t][0], resultados[t][1]
+            def z(t):
                 nu = _gl(t, m, n)
-                return (pv, -(g - nu) / math.sqrt(2 * nu))
-            tipo = min(significativos, key=clave)
+                return (resultados[t][0] - nu) / math.sqrt(2 * nu)
+            tipo = significativos[0]
+            if len(significativos) == 2:
+                p_fil, p_col = resultados["fil"][1], resultados["col"][1]
+                # En empate (p. ej. bloque 2 x 2, donde ambos cortes coinciden) se
+                # prefiere el de filas; la tolerancia evita que decida el redondeo
+                if p_col < p_fil or (p_col == p_fil and z("col") > z("fil") + 1e-9 * max(1.0, abs(z("fil")))):
+                    tipo = "col"
         else:
             resultados["conj"] = self._prueba_dirigida(T, replicas, "conj")
-            tipo = "conj" if resultados["conj"][1] <= nodo.alfa else ""
+            tipo = "conj" if _rechaza(resultados["conj"][1], nodo.alfa) else ""
         nodo.p_cortes = {t: r[1] for t, r in resultados.items()}
         nodo.G2_cortes = {t: r[0] for t, r in resultados.items()}
         if not tipo:

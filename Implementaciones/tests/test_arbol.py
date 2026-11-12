@@ -8,7 +8,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from astcc.arbol import ASTCC, Parametros  # noqa: E402
+from astcc.arbol import ASTCC, Parametros, _rechaza  # noqa: E402
 from astcc.sinteticos import Patron, generar  # noqa: E402
 
 
@@ -70,3 +70,31 @@ def test_delta_detiene_patrones_irrelevantes(con_patron):
     r = ajustar(con_patron, nula="poisson", delta=0.5)
     assert all(not raiz.hijos for raiz in r.raices)
     assert any(raiz.estado == "homogenea" for raiz in r.raices)
+
+
+def test_bloque_vacio_con_N_min_cero_es_hoja(con_patron):
+    X = con_patron.X.copy()
+    g, h = np.unique(con_patron.rho)[0], np.unique(con_patron.tau)[0]
+    I, J = np.where(con_patron.rho == g)[0], np.where(con_patron.tau == h)[0]
+    X[:, I[:, None], J] = 0
+    r = ASTCC(Parametros(N_min=0, nula="poisson"), np.random.default_rng(0)).ajustar(
+        X, con_patron.rho, con_patron.tau)
+    vacio = [n for n in r.raices if set(n.filas) == set(I) and set(n.cols) == set(J)]
+    assert len(vacio) == 1 and vacio[0].es_hoja
+
+
+def test_descomposicion_con_etiquetas_no_contiguas(con_patron):
+    r = ajustar(con_patron, nula="poisson", delta=0.002)
+    O = con_patron.X.sum(0)
+    base = r.descomposicion(O)
+    r.rho = np.where(r.rho == 0, 3, 7)
+    r.tau = np.where(r.tau == 0, 3, 7)
+    d = r.descomposicion(O)
+    assert abs(d["error"]) < 1e-6 * d["total"]
+    for k in base:
+        assert d[k] == pytest.approx(base[k], abs=1e-9)
+
+
+def test_rechaza_tolera_empates_de_coma_flotante():
+    assert _rechaza(4 / 200, 0.02)
+    assert not _rechaza(0.0200001, 0.02)

@@ -101,6 +101,8 @@ def replicas_semirreales(Xb, R, rng, media_min=0.5, diarias=False, inflar=False,
     F_d = X_d / X_media. Un efecto de día común a todo el bloque, a una fila o a una
     columna multiplica e por un factor de rango 1 y conserva la independencia; la
     combinación de efectos y la variación propia de cada celda se trasladan tal cual.
+    En las celdas con media diaria menor que media_min el cociente F_d no es fiable:
+    se toma F_d = 1 y la celda se sortea como Poisson con esa media.
 
     Devuelve las tablas agregadas (R, m, n) o, con diarias=True, los días
     remuestreados (R, D, m, n), cuya suma es la tabla agregada. Con inflar=True se
@@ -118,18 +120,25 @@ def replicas_semirreales(Xb, R, rng, media_min=0.5, diarias=False, inflar=False,
     D = Xb.shape[0]
     media = Xb.mean(0)
     e = esperados(Xb.sum(0)) / D
-    F = np.where(media >= media_min, div(Xb, media), 1.0)
+    escasa = media < media_min
+    F = np.where(escasa, 1.0, div(Xb, media))
     estratos = np.zeros(D, int) if estratos is None else np.asarray(estratos)
     dias = np.empty((R, D), int)
     for s in np.unique(estratos):
         idx = np.where(estratos == s)[0]
         if inflar and len(idx) > 1:
             centro = F[idx].mean(0)
-            F[idx] = np.maximum(0.0, centro + np.sqrt(len(idx) / (len(idx) - 1)) * (F[idx] - centro))
+            inflado = np.maximum(0.0, centro + np.sqrt(len(idx) / (len(idx) - 1)) * (F[idx] - centro))
+            # El recorte en 0 sube la media del estrato; se reescala para conservarla
+            F[idx] = inflado * div(centro, inflado.mean(0))
         dias[:, idx] = idx[rng.integers(0, len(idx), size=(R, len(idx)))]
-    if diarias:
-        return redondeo_estocastico(e * F[dias], rng)
-    return redondeo_estocastico(e * F[dias].sum(1), rng)
+    v = e * F[dias] if diarias else e * F[dias].sum(1)
+    replicas = redondeo_estocastico(v, rng)
+    if escasa.any():
+        # Sin fluctuación diaria fiable, la celda recibe al menos el ruido de Poisson
+        # (con F = 1 quedaría casi determinista y la prueba sería liberal)
+        replicas[..., escasa] = rng.poisson(v[..., escasa])
+    return replicas
 
 
 def redondeo_estocastico(v, rng):

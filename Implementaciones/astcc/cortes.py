@@ -7,10 +7,26 @@ Las funciones trabajan sobre lotes de tablas (B, m, n) para poder repetir la
 búsqueda en todas las réplicas nulas a la vez (ajuste min-P, sec:prop-minP).
 """
 
+import os
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
 import numpy as np
 from scipy.special import xlogy
 
 from .estadisticos import G2
+
+# Hilos para la enumeración exhaustiva de cortes (variable de entorno ASTCC_HILOS).
+# El cálculo está limitado por la memoria: con más de 4 hilos ya no se gana nada.
+HILOS = max(1, int(os.environ.get("ASTCC_HILOS", min(4, os.cpu_count() or 1))))
+_EJECUTOR = None
+
+
+def _ejecutor():
+    global _EJECUTOR
+    if _EJECUTOR is None:
+        _EJECUTOR = ThreadPoolExecutor(HILOS)
+    return _EJECUTOR
 
 
 def _xlx(x):
@@ -25,20 +41,86 @@ def mascaras_biparticion(k):
     return ((codigos[:, None] >> np.arange(k - 1)[None, :]) & 1).astype(float) @ np.eye(k - 1, k, 1)
 
 
-def mejor_corte_columnas(T, ordenado=False):
+_LOCAL = threading.local()
+
+
+def _buferes(b, m, K):
+    """Arreglos de trabajo del hilo. Reservar temporales grandes en cada trozo cuesta
+    más que el propio cálculo (fallos de página) e impide que los hilos escalen."""
+    forma = getattr(_LOCAL, "forma", None)
+    if forma is None or forma[0] < b or forma[1:] != (m, K):
+        _LOCAL.forma = (b, m, K)
+        _LOCAL.grandes = [np.empty((b, m, K)) for _ in range(3)]
+        _LOCAL.chicos = [np.empty((b, K)) for _ in range(4)]
+    return [x[:b] for x in _LOCAL.grandes], [x[:b] for x in _LOCAL.chicos]
+
+
+def _xlx_en(x, aux):
+    """x log x sobre el propio x (x >= 0), con 0 log 0 = 0; aux es memoria de trabajo."""
+    np.maximum(x, 1e-300, out=aux)
+    np.log(aux, out=aux)
+    x *= aux
+    return x
+
+
+def _ganancias_cortes(T, Mt):
+    """G^2 de la tabla colapsada |I| x 2 para cada corte de columnas.
+    T: (b, m, n); Mt: (n, K) con las máscaras en columnas. Devuelve (b, K), en un
+    búfer del hilo que la siguiente llamada sobrescribe.
+
+    Con las sumas por fila O_i., el total N y los grupos uno/cero de cada fila,
+    G^2 / 2 = sum_i [xlx(uno_i) + xlx(cero_i)] - xlx(sum_i uno_i) - xlx(sum_i cero_i)
+              - sum_i xlx(O_i.) + xlx(N),
+    que evita construir los esperados de cada tabla colapsada."""
+    b, m, n = T.shape
+    K = Mt.shape[1]
+    (uno, cero, aux), (g, tot_uno, tot_cero, aux2) = _buferes(b, m, K)
+    filas = T.sum(-1)                                          # (b, m)
+    N = filas.sum(-1)                                          # (b,)
+    np.matmul(T.reshape(b * m, n), Mt, out=uno.reshape(b * m, K))
+    np.subtract(filas[:, :, None], uno, out=cero)
+    np.maximum(cero, 0.0, out=cero)                            # redondeo de la resta
+    np.sum(uno, axis=1, out=tot_uno)
+    np.subtract(N[:, None], tot_uno, out=tot_cero)
+    np.maximum(tot_cero, 0.0, out=tot_cero)
+    np.sum(_xlx_en(uno, aux), axis=1, out=g)
+    np.sum(_xlx_en(cero, aux), axis=1, out=aux2)
+    g += aux2
+    g -= _xlx_en(tot_uno, aux2)
+    g -= _xlx_en(tot_cero, aux2)
+    g += (_xlx(N) - _xlx(filas).sum(-1))[:, None]
+    g *= 2.0
+    return g
+
+
+def _mejor_en_trozo(T, Mt):
+    g = _ganancias_cortes(T, Mt)
+    k = np.argmax(g, axis=1)
+    return g[np.arange(len(T)), k], k
+
+
+def mejor_corte_columnas(T, ordenado=False, elementos_por_trozo=50_000):
     """Enumera todos los cortes de columnas (o solo los que respetan el orden si
-    ordenado=True). T: (B, m, n). Devuelve (ganancia máxima (B,), máscara (B, n))."""
-    T = np.asarray(T, float)
-    n = T.shape[-1]
+    ordenado=True). T: (B, m, n). Devuelve (ganancia máxima (B,), máscara (B, n)).
+
+    Las tablas se reparten en trozos que caben en la caché y se procesan en hilos
+    (NumPy libera el GIL). El resultado no depende del número de hilos."""
+    T = np.ascontiguousarray(T, dtype=float)
+    B, m, n = T.shape
     if ordenado:
         M = (np.arange(n)[None, :] >= np.arange(1, n)[:, None]).astype(float)
     else:
         M = mascaras_biparticion(n)
-    uno = np.einsum("bmn,kn->bkm", T, M)               # suma de las columnas del grupo 1
-    cero = T.sum(-1)[:, None, :] - uno
-    ganancias = G2(np.stack([cero, uno], axis=-1))     # (B, K)
-    k = np.argmax(ganancias, axis=1)
-    return ganancias[np.arange(len(T)), k], M[k]
+    Mt = np.ascontiguousarray(M.T)
+    paso = max(1, elementos_por_trozo // max(1, len(M) * m))
+    trozos = [T[s:s + paso] for s in range(0, B, paso)]
+    if len(trozos) > 1 and HILOS > 1:
+        partes = list(_ejecutor().map(lambda t: _mejor_en_trozo(t, Mt), trozos))
+    else:
+        partes = [_mejor_en_trozo(t, Mt) for t in trozos]
+    ganancias = np.concatenate([p[0] for p in partes])
+    k = np.concatenate([p[1] for p in partes])
+    return ganancias, M[k]
 
 
 def mejor_corte_filas_exacto(T):
@@ -172,6 +254,8 @@ def mejor_corte(T, tipo, rng, R_ini=10, exacto_hasta=14, max_elementos=4_000_000
     B, m, n = T.shape
     K = 2 ** (max(min(m, exacto_hasta), n) - 1)
     trozo = max(1, int(max_elementos // max(1, K * max(m, n) * 2)))
+    if tipo == "col" or (tipo == "fil" and m <= exacto_hasta):
+        trozo = max(B, 1)          # la enumeración exacta ya trocea y usa hilos
     gan, A, Bl = np.empty(B), np.zeros((B, m), int), np.zeros((B, n), int)
     for s in range(0, B, trozo):
         t = T[s:s + trozo]

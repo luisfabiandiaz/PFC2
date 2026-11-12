@@ -26,7 +26,11 @@ def esperados(T):
 def G2(T):
     """G^2 = 2 sum O log(O / E^B), con 0 log 0 = 0."""
     T = np.asarray(T, float)
-    return 2.0 * np.sum(xlogy(T, T) - xlogy(T, esperados(T)), axis=(-2, -1))
+    filas, cols = T.sum(-1), T.sum(-2)
+    N = filas.sum(-1)
+    # G^2 / 2 = sum xlx(O) - sum xlx(O_i.) - sum xlx(O_.j) + xlx(N), sin formar E^B
+    return 2.0 * (xlogy(T, T).sum((-2, -1)) - xlogy(filas, filas).sum(-1)
+                  - xlogy(cols, cols).sum(-1) + xlogy(N, N))
 
 
 def info_mutua(T):
