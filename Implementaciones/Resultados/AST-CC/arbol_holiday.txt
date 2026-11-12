@@ -19,7 +19,7 @@ Bloque (3,1): 15 regiones x 3 intervalos, N = 137,068, alfa_B = 0.0029, l = 1.05
 Bloque (3,2): 15 regiones x 2 intervalos, N = 29,466, alfa_B = 0.0006, l = 0.82  -> corte de fil: G2_s = 862.8, g~ = 0.0142, p = 0.000308, p_omn = 0.000308, I~ = 0.0182
     hijo 1: 10 regiones x 2 intervalos, N = 21,094, alfa_B = 0.0004, l = 0.75  -> hoja homogenea, p_omn = 0.000221, I~ = 0.0035
         regiones: Central Harlem North, East Chelsea, Flatiron, Gramercy, Greenwich Village South, Hudson Sq, Meatpacking/West Village West, Roosevelt Island, Seaport, West Village
-    hijo 2: 5 regiones x 2 intervalos, N = 8,372, alfa_B = 0.0002, l = 1.04  -> hoja homogenea, p_omn = 0.000263, I~ = 0.0041
+    hijo 2: 5 regiones x 2 intervalos, N = 8,372, alfa_B = 0.0002, l = 1.04  -> hoja homogenea, p_omn = 0.000263, I~ = 0.0042
         regiones: Highbridge Park, Kips Bay, Manhattanville, UN/Turtle Bay South, Washington Heights South
 Bloque (3,3): 15 regiones x 3 intervalos, N = 97,057, alfa_B = 0.0020, l = 1.36  -> hoja no_localizada, p_omn = 0.00101, I~ = 0.0073
 Bloque (4,0): 9 regiones x 4 intervalos, N = 63,545, alfa_B = 0.0013, l = 0.70  -> hoja homogenea, p_omn = 0.000664, I~ = 0.0016
@@ -33,4 +33,4 @@ Bloque (4,3): 9 regiones x 3 intervalos, N = 63,876, alfa_B = 0.0013, l = 1.81  
 Bloque (5,0): 11 regiones x 4 intervalos, N = 111,579, alfa_B = 0.0023, l = 0.99  -> hoja homogenea, p_omn = 0.00233, I~ = 0.0026
 Bloque (5,1): 11 regiones x 3 intervalos, N = 69,869, alfa_B = 0.0015, l = 0.87  -> hoja homogenea, p_omn = 0.00073, I~ = 0.0018
 Bloque (5,2): 11 regiones x 2 intervalos, N = 35,617, alfa_B = 0.0007, l = 1.61  -> hoja homogenea, p_omn = 0.01, I~ = 0.0114
-Bloque (5,3): 11 regiones x 3 intervalos, N = 41,777, alfa_B = 0.0009, l = 0.95  -> hoja homogenea, p_omn = 0.024, I~ = 0.0033
+Bloque (5,3): 11 regiones x 3 intervalos, N = 41,777, alfa_B = 0.0009, l = 0.95  -> hoja homogenea, p_omn = 0.023, I~ = 0.0033

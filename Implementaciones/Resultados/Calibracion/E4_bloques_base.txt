@@ -2,14 +2,14 @@ E4. Prueba ómnibus en los bloques base bajo independencia global (nivel 0.05, 2
 
 weekday (K_R = 8, K_T = 4)
   datos / partición      bloques  tasa 0.05 tasa 0.01  FWER 0.05
-  Poisson / BBAC            21.2      0.049     0.012      0.630
-  Poisson / aleatoria       21.2      0.053     0.009      0.665
-  semirreal / BBAC          21.7      0.061     0.013      0.460
-  semirreal / aleatoria     21.9      0.062     0.014      0.385
+  Poisson / BBAC            21.1      0.046     0.008      0.610
+  Poisson / aleatoria       21.0      0.050     0.010      0.675
+  semirreal / BBAC          21.7      0.060     0.012      0.445
+  semirreal / aleatoria     21.7      0.058     0.012      0.365
 
 holiday (K_R = 6, K_T = 4)
   datos / partición      bloques  tasa 0.05 tasa 0.01  FWER 0.05
-  Poisson / BBAC            21.2      0.052     0.010      0.700
-  Poisson / aleatoria       21.0      0.051     0.010      0.670
-  semirreal / BBAC          22.2      0.078     0.029      0.525
-  semirreal / aleatoria     22.2      0.090     0.034      0.500
+  Poisson / BBAC            20.9      0.047     0.012      0.625
+  Poisson / aleatoria       21.2      0.057     0.010      0.690
+  semirreal / BBAC          21.8      0.073     0.027      0.535
+  semirreal / aleatoria     21.9      0.092     0.037      0.570

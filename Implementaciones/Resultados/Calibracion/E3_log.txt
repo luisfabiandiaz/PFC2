@@ -17,61 +17,61 @@ weekday: D=12, phi^=3.17, Taylor cruda a=0.98 b=1.22, residual a=0.73 b=1.16
   bloque (5,0)  4x3 N=  18310  chi2=0.15  Poisson=0.14  phi cte=0.00  Taylor-C=0.01  Taylor-R=0.04  Boot-días=0.07  Boot-c=0.05  máx(B,T)=0.01
   bloque (5,2)  4x5 N= 395007  chi2=0.65  Poisson=0.65  phi cte=0.04  Taylor-C=0.00  Taylor-R=0.11  Boot-días=0.06  Boot-c=0.04  máx(B,T)=0.00
   bloque (5,3)  4x3 N= 170034  chi2=0.73  Poisson=0.73  phi cte=0.16  Taylor-C=0.07  Taylor-R=0.31  Boot-días=0.10  Boot-c=0.06  máx(B,T)=0.03
-  bloque (6,0)  7x3 N=   1033  chi2=0.10  Poisson=0.09  phi cte=0.00  Taylor-C=0.06  Taylor-R=0.09  Boot-días=0.14  Boot-c=0.13  máx(B,T)=0.05
-  bloque (6,2)  7x5 N=   3596  chi2=0.12  Poisson=0.13  phi cte=0.00  Taylor-C=0.04  Taylor-R=0.10  Boot-días=0.02  Boot-c=0.01  máx(B,T)=0.01
-  bloque (6,3)  7x3 N=   3363  chi2=0.07  Poisson=0.07  phi cte=0.00  Taylor-C=0.01  Taylor-R=0.05  Boot-días=0.03  Boot-c=0.03  máx(B,T)=0.01
-  bloque (7,0)  8x3 N=  26126  chi2=0.19  Poisson=0.20  phi cte=0.01  Taylor-C=0.01  Taylor-R=0.07  Boot-días=0.06  Boot-c=0.05  máx(B,T)=0.01
-  bloque (7,2)  8x5 N= 268900  chi2=0.79  Poisson=0.79  phi cte=0.10  Taylor-C=0.04  Taylor-R=0.34  Boot-días=0.06  Boot-c=0.06  máx(B,T)=0.03
-  bloque (7,3)  8x3 N= 157437  chi2=0.84  Poisson=0.84  phi cte=0.19  Taylor-C=0.11  Taylor-R=0.45  Boot-días=0.08  Boot-c=0.05  máx(B,T)=0.05
+  bloque (6,0)  7x3 N=   1033  chi2=0.15  Poisson=0.13  phi cte=0.00  Taylor-C=0.09  Taylor-R=0.12  Boot-días=0.07  Boot-c=0.05  máx(B,T)=0.04
+  bloque (6,2)  7x5 N=   3596  chi2=0.19  Poisson=0.18  phi cte=0.00  Taylor-C=0.04  Taylor-R=0.14  Boot-días=0.02  Boot-c=0.02  máx(B,T)=0.01
+  bloque (6,3)  7x3 N=   3363  chi2=0.09  Poisson=0.11  phi cte=0.00  Taylor-C=0.01  Taylor-R=0.07  Boot-días=0.04  Boot-c=0.03  máx(B,T)=0.00
+  bloque (7,0)  8x3 N=  26126  chi2=0.21  Poisson=0.22  phi cte=0.00  Taylor-C=0.01  Taylor-R=0.05  Boot-días=0.06  Boot-c=0.05  máx(B,T)=0.01
+  bloque (7,2)  8x5 N= 268900  chi2=0.75  Poisson=0.75  phi cte=0.09  Taylor-C=0.03  Taylor-R=0.24  Boot-días=0.06  Boot-c=0.06  máx(B,T)=0.03
+  bloque (7,3)  8x3 N= 157437  chi2=0.85  Poisson=0.84  phi cte=0.20  Taylor-C=0.12  Taylor-R=0.44  Boot-días=0.07  Boot-c=0.06  máx(B,T)=0.06
 holiday: D=9, phi^=17.07, Taylor cruda a=0.19 b=1.81, residual a=0.85 b=1.28
-  bloque (0,0)  15x2 N=  19891  chi2=0.70  Poisson=0.70  phi cte=0.00  Taylor-C=0.03  Taylor-R=0.25  Boot-días=0.15  Boot-c=0.13  máx(B,T)=0.01
-  bloque (0,1)  15x2 N=  48619  chi2=0.88  Poisson=0.88  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.24  Boot-días=0.04  Boot-c=0.02  máx(B,T)=0.00
-  bloque (0,2)  15x4 N= 189694  chi2=0.84  Poisson=0.82  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.07  Boot-días=0.07  Boot-c=0.06  máx(B,T)=0.00
-  bloque (0,3)  15x4 N= 161922  chi2=0.92  Poisson=0.92  phi cte=0.01  Taylor-C=0.01  Taylor-R=0.19  Boot-días=0.06  Boot-c=0.05  máx(B,T)=0.01
-  bloque (1,0)  10x2 N=  19590  chi2=0.85  Poisson=0.85  phi cte=0.00  Taylor-C=0.01  Taylor-R=0.31  Boot-días=0.16  Boot-c=0.13  máx(B,T)=0.01
-  bloque (1,1)  10x2 N=  49375  chi2=0.91  Poisson=0.91  phi cte=0.06  Taylor-C=0.05  Taylor-R=0.58  Boot-días=0.09  Boot-c=0.08  máx(B,T)=0.04
-  bloque (1,2)  10x4 N= 167099  chi2=0.87  Poisson=0.87  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.08  Boot-días=0.08  Boot-c=0.06  máx(B,T)=0.00
-  bloque (1,3)  10x4 N= 156907  chi2=0.97  Poisson=0.97  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.32  Boot-días=0.06  Boot-c=0.05  máx(B,T)=0.00
-  bloque (2,0)  13x2 N=  10278  chi2=0.52  Poisson=0.51  phi cte=0.00  Taylor-C=0.15  Taylor-R=0.27  Boot-días=0.31  Boot-c=0.29  máx(B,T)=0.15
-  bloque (2,1)  13x2 N=  19408  chi2=0.58  Poisson=0.57  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.06  Boot-días=0.08  Boot-c=0.05  máx(B,T)=0.00
-  bloque (2,2)  13x4 N=  55496  chi2=0.38  Poisson=0.36  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.01  Boot-días=0.08  Boot-c=0.05  máx(B,T)=0.00
-  bloque (2,3)  13x4 N=  60403  chi2=0.55  Poisson=0.56  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.03  Boot-días=0.06  Boot-c=0.04  máx(B,T)=0.00
-  bloque (3,0)  7x2 N=    974  chi2=0.38  Poisson=0.37  phi cte=0.00  Taylor-C=0.30  Taylor-R=0.26  Boot-días=0.05  Boot-c=0.03  máx(B,T)=0.03
-  bloque (3,1)  7x2 N=   1322  chi2=0.56  Poisson=0.54  phi cte=0.00  Taylor-C=0.42  Taylor-R=0.41  Boot-días=0.17  Boot-c=0.17  máx(B,T)=0.17
-  bloque (3,2)  7x4 N=   2847  chi2=0.44  Poisson=0.42  phi cte=0.00  Taylor-C=0.19  Taylor-R=0.20  Boot-días=0.07  Boot-c=0.06  máx(B,T)=0.06
-  bloque (3,3)  7x4 N=   3026  chi2=0.47  Poisson=0.45  phi cte=0.00  Taylor-C=0.21  Taylor-R=0.24  Boot-días=0.06  Boot-c=0.04  máx(B,T)=0.04
-  bloque (4,0)  10x2 N=  35345  chi2=0.95  Poisson=0.95  phi cte=0.04  Taylor-C=0.06  Taylor-R=0.69  Boot-días=0.39  Boot-c=0.33  máx(B,T)=0.02
-  bloque (4,1)  10x2 N=  81685  chi2=0.94  Poisson=0.94  phi cte=0.02  Taylor-C=0.01  Taylor-R=0.49  Boot-días=0.08  Boot-c=0.06  máx(B,T)=0.00
-  bloque (4,2)  10x4 N= 382566  chi2=0.98  Poisson=0.98  phi cte=0.03  Taylor-C=0.00  Taylor-R=0.44  Boot-días=0.06  Boot-c=0.04  máx(B,T)=0.00
-  bloque (4,3)  10x4 N= 281152  chi2=1.00  Poisson=1.00  phi cte=0.05  Taylor-C=0.00  Taylor-R=0.43  Boot-días=0.07  Boot-c=0.06  máx(B,T)=0.00
-  bloque (5,0)  11x2 N=  25366  chi2=0.80  Poisson=0.79  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.19  Boot-días=0.12  Boot-c=0.10  máx(B,T)=0.00
-  bloque (5,1)  11x2 N=  69007  chi2=0.84  Poisson=0.84  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.16  Boot-días=0.12  Boot-c=0.08  máx(B,T)=0.00
-  bloque (5,2)  11x4 N= 297397  chi2=0.96  Poisson=0.95  phi cte=0.01  Taylor-C=0.00  Taylor-R=0.12  Boot-días=0.05  Boot-c=0.04  máx(B,T)=0.00
-  bloque (5,3)  11x4 N= 250426  chi2=0.94  Poisson=0.94  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.21  Boot-días=0.06  Boot-c=0.04  máx(B,T)=0.00
+  bloque (0,0)  15x2 N=  19891  chi2=0.72  Poisson=0.72  phi cte=0.00  Taylor-C=0.01  Taylor-R=0.26  Boot-días=0.18  Boot-c=0.15  máx(B,T)=0.01
+  bloque (0,1)  15x2 N=  48619  chi2=0.92  Poisson=0.92  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.27  Boot-días=0.05  Boot-c=0.04  máx(B,T)=0.00
+  bloque (0,2)  15x4 N= 189694  chi2=0.82  Poisson=0.84  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.05  Boot-días=0.05  Boot-c=0.04  máx(B,T)=0.00
+  bloque (0,3)  15x4 N= 161922  chi2=0.94  Poisson=0.93  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.25  Boot-días=0.07  Boot-c=0.04  máx(B,T)=0.00
+  bloque (1,0)  10x2 N=  19590  chi2=0.86  Poisson=0.85  phi cte=0.00  Taylor-C=0.02  Taylor-R=0.32  Boot-días=0.21  Boot-c=0.19  máx(B,T)=0.02
+  bloque (1,1)  10x2 N=  49375  chi2=0.94  Poisson=0.94  phi cte=0.07  Taylor-C=0.06  Taylor-R=0.64  Boot-días=0.13  Boot-c=0.09  máx(B,T)=0.05
+  bloque (1,2)  10x4 N= 167099  chi2=0.86  Poisson=0.86  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.09  Boot-días=0.08  Boot-c=0.07  máx(B,T)=0.00
+  bloque (1,3)  10x4 N= 156907  chi2=0.96  Poisson=0.96  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.30  Boot-días=0.07  Boot-c=0.05  máx(B,T)=0.00
+  bloque (2,0)  13x2 N=  10278  chi2=0.58  Poisson=0.56  phi cte=0.00  Taylor-C=0.14  Taylor-R=0.33  Boot-días=0.36  Boot-c=0.34  máx(B,T)=0.14
+  bloque (2,1)  13x2 N=  19408  chi2=0.51  Poisson=0.51  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.06  Boot-días=0.07  Boot-c=0.06  máx(B,T)=0.00
+  bloque (2,2)  13x4 N=  55496  chi2=0.35  Poisson=0.35  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.00  Boot-días=0.06  Boot-c=0.04  máx(B,T)=0.00
+  bloque (2,3)  13x4 N=  60403  chi2=0.63  Poisson=0.63  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.03  Boot-días=0.04  Boot-c=0.03  máx(B,T)=0.00
+  bloque (3,0)  7x2 N=    974  chi2=0.34  Poisson=0.34  phi cte=0.00  Taylor-C=0.25  Taylor-R=0.21  Boot-días=0.04  Boot-c=0.03  máx(B,T)=0.03
+  bloque (3,1)  7x2 N=   1322  chi2=0.59  Poisson=0.59  phi cte=0.00  Taylor-C=0.47  Taylor-R=0.47  Boot-días=0.18  Boot-c=0.18  máx(B,T)=0.18
+  bloque (3,2)  7x4 N=   2847  chi2=0.48  Poisson=0.47  phi cte=0.00  Taylor-C=0.22  Taylor-R=0.24  Boot-días=0.07  Boot-c=0.06  máx(B,T)=0.06
+  bloque (3,3)  7x4 N=   3026  chi2=0.51  Poisson=0.51  phi cte=0.00  Taylor-C=0.21  Taylor-R=0.26  Boot-días=0.05  Boot-c=0.04  máx(B,T)=0.04
+  bloque (4,0)  10x2 N=  35345  chi2=0.91  Poisson=0.92  phi cte=0.03  Taylor-C=0.05  Taylor-R=0.65  Boot-días=0.34  Boot-c=0.29  máx(B,T)=0.01
+  bloque (4,1)  10x2 N=  81685  chi2=0.94  Poisson=0.94  phi cte=0.01  Taylor-C=0.01  Taylor-R=0.46  Boot-días=0.08  Boot-c=0.05  máx(B,T)=0.00
+  bloque (4,2)  10x4 N= 382566  chi2=0.99  Poisson=0.99  phi cte=0.04  Taylor-C=0.00  Taylor-R=0.42  Boot-días=0.05  Boot-c=0.04  máx(B,T)=0.00
+  bloque (4,3)  10x4 N= 281152  chi2=0.97  Poisson=0.97  phi cte=0.04  Taylor-C=0.00  Taylor-R=0.54  Boot-días=0.09  Boot-c=0.06  máx(B,T)=0.00
+  bloque (5,0)  11x2 N=  25366  chi2=0.76  Poisson=0.74  phi cte=0.00  Taylor-C=0.01  Taylor-R=0.16  Boot-días=0.13  Boot-c=0.10  máx(B,T)=0.01
+  bloque (5,1)  11x2 N=  69007  chi2=0.81  Poisson=0.81  phi cte=0.00  Taylor-C=0.00  Taylor-R=0.10  Boot-días=0.11  Boot-c=0.06  máx(B,T)=0.00
+  bloque (5,2)  11x4 N= 297397  chi2=0.94  Poisson=0.94  phi cte=0.01  Taylor-C=0.00  Taylor-R=0.14  Boot-días=0.08  Boot-c=0.06  máx(B,T)=0.00
+  bloque (5,3)  11x4 N= 250426  chi2=0.97  Poisson=0.97  phi cte=0.01  Taylor-C=0.00  Taylor-R=0.24  Boot-días=0.07  Boot-c=0.05  máx(B,T)=0.00
 
 E3. Error de tipo I con datos nulos semirreales (nivel 0.05; 300 réplicas por bloque,
     B = 199 réplicas por prueba; error Monte Carlo por bloque ~ 0.013)
 
 weekday (24 bloques)
   método       media  mediana    mín    máx  bloques > 0.05+2se
-  chi2         0.397    0.405   0.06   0.84   22/24
-  Poisson      0.396    0.413   0.06   0.84   22/24
-  phi cte      0.032    0.003   0.00   0.19    4/24
-  Taylor-C     0.019    0.007   0.00   0.11    1/24
-  Taylor-R     0.128    0.093   0.01   0.45   15/24
-  Boot-días    0.059    0.057   0.02   0.14    4/24
-  Boot-c       0.044    0.042   0.01   0.13    1/24
-  máx(B,T)     0.012    0.007   0.00   0.05    0/24
+  chi2         0.402    0.405   0.06   0.85   23/24
+  Poisson      0.400    0.413   0.06   0.84   23/24
+  phi cte      0.031    0.002   0.00   0.20    4/24
+  Taylor-C     0.020    0.007   0.00   0.12    2/24
+  Taylor-R     0.126    0.102   0.01   0.44   15/24
+  Boot-días    0.056    0.057   0.02   0.10    2/24
+  Boot-c       0.042    0.042   0.02   0.06    0/24
+  máx(B,T)     0.011    0.005   0.00   0.06    0/24
 
 holiday (24 bloques)
   método       media  mediana    mín    máx  bloques > 0.05+2se
-  chi2         0.758    0.843   0.38   1.00   24/24
-  Poisson      0.755    0.847   0.36   1.00   24/24
-  phi cte      0.009    0.000   0.00   0.06    0/24
-  Taylor-C     0.060    0.003   0.00   0.42    5/24
-  Taylor-R     0.261    0.243   0.01   0.69   20/24
-  Boot-días    0.107    0.075   0.04   0.39   12/24
-  Boot-c       0.087    0.058   0.02   0.33    8/24
-  máx(B,T)     0.023    0.003   0.00   0.17    2/24
+  chi2         0.762    0.838   0.34   0.99   24/24
+  Poisson      0.761    0.845   0.34   0.99   24/24
+  phi cte      0.009    0.000   0.00   0.07    0/24
+  Taylor-C     0.060    0.003   0.00   0.47    5/24
+  Taylor-R     0.270    0.253   0.00   0.65   20/24
+  Boot-días    0.111    0.077   0.04   0.36   12/24
+  Boot-c       0.091    0.058   0.03   0.34    7/24
+  máx(B,T)     0.023    0.003   0.00   0.18    2/24
 
-Tiempo total: 0.6 min
+Tiempo total: 3.4 min
