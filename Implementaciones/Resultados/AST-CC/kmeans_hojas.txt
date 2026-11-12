@@ -19,6 +19,27 @@ weekday: K-means sobre las 38 hojas de AST-CC (media y desviación típica de su
 
   De los 6 bloques base refinados, 4 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
 
+  Bloques refinados (figura antes_despues): estado del bloque entero -> estados de sus hojas
+  (media = drop-offs promedio por celda y día)
+    R2-T3 (12 regiones, 06-08 08-10): L (media 373)
+        -> VL (media 296): 5 regiones x 2 intervalos
+        -> L  (media 429): 7 regiones x 2 intervalos
+    R2-T1 (12 regiones, 00-02 02-04 20-22 22-24): L (media 239)
+        -> L  (media 330): 6 regiones x 4 intervalos
+        -> VL (media 148): 6 regiones x 4 intervalos
+    R7-T3 (4 regiones, 06-08 08-10): M (media 1078)
+        -> VL (media 123): 2 regiones x 2 intervalos
+        -> H  (media 2032): 2 regiones x 2 intervalos
+    R4-T3 (11 regiones, 06-08 08-10): VL (media 295)
+        -> L  (media 300): 6 regiones x 2 intervalos
+        -> VL (media 289): 5 regiones x 2 intervalos
+    R5-T3 (9 regiones, 06-08 08-10): L (media 695)
+        -> L  (media 602): 7 regiones x 2 intervalos
+        -> L  (media 1021): 2 regiones x 2 intervalos
+    R3-T3 (12 regiones, 06-08 08-10): VL (media 191)
+        -> VL (media 206): 7 regiones x 2 intervalos
+        -> VL (media 169): 5 regiones x 2 intervalos
+
 holiday: K-means sobre las 26 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
 
   Silhouette y SSE (K = 2 solo de referencia; el artículo lo excluye de la selección):
@@ -39,3 +60,12 @@ holiday: K-means sobre las 26 hojas de AST-CC (media y desviación típica de su
   High (promedio 713.0, 4 hojas de 4 bloques base distintos, 119 celdas)
 
   De los 2 bloques base refinados, 1 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
+
+  Bloques refinados (figura antes_despues): estado del bloque entero -> estados de sus hojas
+  (media = drop-offs promedio por celda y día)
+    R3-T1 (15 regiones, 06-08 08-10): VL (media 109)
+        -> VL (media 117): 10 regiones x 2 intervalos
+        -> VL (media 93): 5 regiones x 2 intervalos
+    R1-T2 (9 regiones, 00-02 02-04 04-06): L (media 263)
+        -> VL (media 137): 7 regiones x 3 intervalos
+        -> M  (media 703): 2 regiones x 3 intervalos

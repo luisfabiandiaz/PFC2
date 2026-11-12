@@ -129,6 +129,53 @@ def figura_kmeans(periodo, res, O, rho, tau, estado_de):
     plt.close(fig)
 
 
+def figura_antes_despues(periodo, res, O, rho, tau, estado_de, estado_base):
+    """Dos paneles con la misma geometría y la misma escala de colores: a la izquierda la
+    partición base (un estado por bloque, como en ST-CC) y a la derecha las hojas de AST-CC.
+    Los bloques sin cortes tienen el mismo color en ambos; los refinados llevan borde azul."""
+    orden_g, orden_h, ancho, alto, x_de, y_de = vis.disposicion_global(O, rho, tau)
+    nombre_g = {g: f"R{i + 1}" for i, g in enumerate(orden_g)}
+    nombre_h = {h: f"T{i + 1}" for i, h in enumerate(orden_h)}
+    fig, ejes = plt.subplots(1, 2, figsize=(15, 9.5), sharey=True)
+    for ax, despues in zip(ejes, (False, True)):
+        for raiz in res.raices:
+            g, h = rho[raiz.filas[0]], tau[raiz.cols[0]]
+            if despues:
+                piezas = [(estado_de[id(hoja)], x, y, w, alt) for hoja, x, y, w, alt in vis.disponer(raiz, x_de[h], y_de[g])]
+            else:
+                piezas = [(estado_base[id(raiz)], x_de[h], y_de[g], ancho[h], alto[g])]
+            for e, x, y, w, alt in piezas:
+                ax.add_patch(Rectangle((x, y), w, alt, facecolor=COLORES[e], edgecolor="0.25", linewidth=0.8))
+                ax.text(x + w / 2, y + alt / 2, SIGLAS[e], ha="center", va="center", fontsize=10, fontweight="bold")
+        for raiz in sorted(res.raices, key=lambda r: not r.es_hoja):      # los refinados al final, encima
+            g, h = rho[raiz.filas[0]], tau[raiz.cols[0]]
+            ax.add_patch(Rectangle((x_de[h], y_de[g]), ancho[h], alto[g], fill=False,
+                                   edgecolor="black" if raiz.es_hoja else "#1f4fd8",
+                                   linewidth=1.4 if raiz.es_hoja else 3.5))
+        ax.set_xlim(0, len(tau))
+        ax.set_ylim(0, len(rho))
+        ax.set_xticks([x_de[h] + ancho[h] / 2 for h in orden_h])
+        ax.set_xticklabels([nombre_h[h] + "\n" + "\n".join(vis.FRANJAS[j] for j in np.where(tau == h)[0])
+                            for h in orden_h], fontsize=7)
+        ax.set_yticks([y_de[g] + alto[g] / 2 for g in orden_g])
+        ax.set_yticklabels([f"{nombre_g[g]}\n({alto[g]} regiones)" for g in orden_g], fontsize=8)
+        ax.tick_params(labelleft=True)
+        ax.set_xlabel("grupos de intervalos (volumen creciente)")
+        ax.set_title(f"AST-CC: {len(res.hojas())} hojas (δ = {vis.DELTA})" if despues else
+                     f"Antes de refinar: rejilla base de {len(res.raices)} bloques, un estado por bloque (como ST-CC)",
+                     fontsize=10)
+    ejes[0].set_ylabel("grupos de regiones (volumen creciente hacia arriba)")
+    ejes[1].legend(handles=[Rectangle((0, 0), 1, 1, facecolor=c, edgecolor="0.25") for c in COLORES]
+                   + [Rectangle((0, 0), 1, 1, fill=False, edgecolor="#1f4fd8", linewidth=2.5)],
+                   labels=ESTADOS + ["bloque refinado"], loc="center left", bbox_to_anchor=(1.01, 0.5), fontsize=9)
+    fig.suptitle(f"{vis.TITULO[periodo].capitalize()}: la misma rejilla antes y después de los cortes de AST-CC "
+                 f"(misma escala de estados en ambos paneles)", fontsize=12)
+    fig.tight_layout()
+    fig.savefig(FIGURAS / f"antes_despues_{periodo}.png", dpi=150)
+    plt.close(fig)
+    return nombre_g, nombre_h
+
+
 def main():
     L = []
     for periodo in ("weekday", "holiday"):
@@ -185,6 +232,28 @@ def main():
         refinados = sum(1 for r in res.raices if not r.es_hoja)
         L += ["", f"  De los {refinados} bloques base refinados, {mezclan} contienen hojas de estados distintos "
                   f"(el corte separa niveles de actividad distintos)", ""]
+
+        # Antes y después con la misma escala: cada bloque base recibe el estado del centroide
+        # más cercano del K-means de las hojas (misma normalización). Un bloque sin cortes es
+        # él mismo una hoja, así que conserva su color.
+        a_hojas, a_base = atributos(O, D, hojas), atributos(O, D, res.raices)
+        mn, mx = a_hojas.min(0), a_hojas.max(0)
+        pred = ajuste.predict((a_base - mn) / np.where(mx - mn != 0, mx - mn, 1))
+        estado_base = {id(r): (estado_de[id(r)] if r.es_hoja else rango[p]) for r, p in zip(res.raices, pred)}
+        nombre_g, nombre_h = figura_antes_despues(periodo, res, O, rho, tau, estado_de, estado_base)
+        L += ["  Bloques refinados (figura antes_despues): estado del bloque entero -> estados de sus hojas",
+              "  (media = drop-offs promedio por celda y día)"]
+        for r, ab in zip(res.raices, a_base):
+            if r.es_hoja:
+                continue
+            L.append(f"    {nombre_g[rho[r.filas[0]]]}-{nombre_h[tau[r.cols[0]]]} ({len(r.filas)} regiones, "
+                     f"{' '.join(vis.FRANJAS[j] for j in r.cols)}): {SIGLAS[estado_base[id(r)]]} (media {ab[0]:.0f})")
+            for h in r.recorrer():
+                if h.es_hoja:
+                    v = V[np.ix_(h.filas, h.cols)]
+                    L.append(f"        -> {SIGLAS[estado_de[id(h)]]:<2} (media {v.mean():.0f}): {len(h.filas)} regiones x "
+                             f"{len(h.cols)} intervalos")
+        L.append("")
         print(f"{periodo}: listo", flush=True)
 
     texto = "\n".join(L)
