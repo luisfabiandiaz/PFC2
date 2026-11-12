@@ -50,7 +50,8 @@ Implementaciones/
 │   ├── 06_estabilidad.py           Frecuencia de soporte de las hojas y ajuste fuera de muestra (división de días) frente a rejillas C6
 │   ├── 07_visualizacion.py         Matriz teselada, mapas de profundidad y de bloques refinados, árbol anotado
 │   ├── 08_refinamiento_kmeans.py   K-means (K = 4, como ST-CC/04) sobre las hojas de AST-CC
-│   └── 09_rejillas_sinteticos.py   AST-CC frente a rejillas globales optimizadas para C6, con verdad conocida
+│   ├── 09_rejillas_sinteticos.py   AST-CC frente a rejillas globales optimizadas para C6, con verdad conocida
+│   └── 10_validacion_2017.py       Qué separa cada corte del árbol y si se repite en los otros once meses de 2017
 └── Resultados/                Todo lo que generan los scripts (figuras, tablas)
     ├── ST-CC/figuras/
     ├── Verificacion_teorica/
@@ -76,6 +77,11 @@ and Limousine Commission (TLC Trip Record Data):
 - `https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv`
 - `https://d37ci6vzurychx.cloudfront.net/misc/taxi_zones.zip` (descomprimir en `taxi_zones/`)
 
+`AST-CC/10_validacion_2017.py` usa además los otros once meses de 2017 (los mismos
+nombres con `2017-01` a `2017-12`, 1.55 GB en total). Solo hacen falta para recalcular
+`DATA/procesados/AST-CC/conteos_diarios_2017.npy`; si ese archivo existe, el script no
+lee los datos crudos.
+
 ## Uso
 
 ```
@@ -100,6 +106,7 @@ python AST-CC/06_estabilidad.py weekday    # o holiday; cada periodo tarda unos 
 python AST-CC/07_visualizacion.py          # usa los soportes de 06 si existen
 python AST-CC/08_refinamiento_kmeans.py
 python AST-CC/09_rejillas_sinteticos.py    # unos 8 min; admite un escenario como argumento
+python AST-CC/10_validacion_2017.py
 python -m pytest tests
 ```
 
