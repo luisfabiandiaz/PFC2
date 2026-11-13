@@ -78,7 +78,7 @@ HALLADOS = {
     "2017-02-19": "Toy Fair (Javits Center)",
     "2017-03-02": "The Armory Show, preinauguración (Piers 92/94)",
     "2017-03-04": "The Armory Show (Piers 92/94)",
-    "2017-03-05": "The Armory Show (Piers 92/94) / NYRR Washington Heights 5K",
+    "2017-03-05": "NYRR Washington Heights 5K",          # The Armory Show sigue ese día: lo anotan el 2 y el 4
     "2017-04-12": "New York Auto Show, días de prensa (Javits Center)",
     "2017-04-13": "New York Auto Show, días de prensa (Javits Center)",
     "2017-04-23": "9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)",
@@ -121,7 +121,7 @@ ZONAS = {
     "2017-11-29": ["Midtown Center", "Midtown North", "Times Sq"],
     "2017-01-29": ["Battery", "Financial", "World Trade"],
     "2017-02-18": ["Hudson Yards", "Clinton West"], "2017-02-19": ["Hudson Yards", "Clinton West"],
-    "2017-03-02": ["Clinton West"], "2017-03-04": ["Clinton West"], "2017-03-05": ["Clinton West", "Washington Heights"],
+    "2017-03-02": ["Clinton West"], "2017-03-04": ["Clinton West"], "2017-03-05": ["Washington Heights"],
     "2017-04-12": ["Hudson Yards"], "2017-04-13": ["Hudson Yards"],
     "2017-04-23": ["TriBeCa", "Battery", "World Trade"],
     "2017-04-30": ["Central Park", "Lincoln Square"],

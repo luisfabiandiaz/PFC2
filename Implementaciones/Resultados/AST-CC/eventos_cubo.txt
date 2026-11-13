@@ -257,7 +257,7 @@ puesto = posición del día entre los de su periodo según max |z| (1 = el más 
     2017-05-07 Sun  z =   +23.6  Randalls Island [14-16]  obs 154 / esp 9  amp 0.00
     2017-09-17 Sun  z =   +23.5  East Harlem South [06-08]  obs 710 / esp 153  amp 0.04
     2017-11-05 Sun  z =   +22.1  Midtown Center [04-06]  obs 468 / esp 95  amp 0.04   <- Maratón de NYC
-    2017-03-05 Sun  z =   +21.6  Washington Heights South [08-10]  obs 295 / esp 75  amp 0.04   (hallado: The Armory Show (Piers 92/94) / NYRR Washington Heights 5K)
+    2017-03-05 Sun  z =   +21.6  Washington Heights South [08-10]  obs 295 / esp 75  amp 0.04   (hallado: NYRR Washington Heights 5K)
     2017-06-03 Sat  z =   +21.4  Randalls Island [18-20]  obs 54 / esp 5  amp 0.00   (hallado: Governors Ball (Randalls Island))
     2017-04-23 Sun  z =   +21.2  TriBeCa/Civic Center [06-08]  obs 403 / esp 85  amp 0.00   (hallado: 9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca))
     2017-01-21 Sat  z =   +20.9  Sutton Place/Turtle Bay North [10-12]  obs 1192 / esp 464  amp 0.04   <- Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)

@@ -30,8 +30,9 @@ Con todos los días en un solo cubo, un evento puede pasar de un viernes a un s�
 
 Entradas: las de AST-CC/11, DATA/crudos/taxi_zones/taxi_zones.shp
 Salidas:  Resultados/AST-CC/eventos_agrupados.txt, eventos_agrupados.csv,
-          eventos_agrupados_huellas.json (celdas de cada evento, para AST-CC/15)
-          Resultados/AST-CC/figuras/eventos_agrupados.png
+          eventos_agrupados_huellas.json (celdas de cada evento, para AST-CC/15 y 16),
+          eventos_agrupados_calibracion.csv (eventos nulos y observados según el pico) y
+          eventos_agrupados_dias.csv (amplitud de cada día)
 """
 
 import importlib.util
@@ -40,9 +41,6 @@ import sys
 from pathlib import Path
 
 import geopandas as gpd
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
@@ -95,28 +93,6 @@ def tramos(js):
             partes.append(f"{FRANJAS[ini][:2]}-{FRANJAS[j][3:]}")
             ini = None
     return " ".join(partes) + " h"
-
-
-def figura(t, fechas, amp):
-    fig, ax = plt.subplots(figsize=(15, 5))
-    for d in np.flatnonzero(amp >= cubo.AMP_DIFUSO):
-        ax.axvline(fechas[d], color="0.85", lw=1.6, zorder=0)
-    color = {"agudo": "C3", "repartido": "C0"}
-    for clase, grupo in t[t.clase != "calendario"].groupby("clase"):
-        ax.scatter(pd.to_datetime(grupo.inicio), grupo.puntuacion, s=10 + 8 * np.sqrt(grupo.n_celdas),
-                   color=color[clase], alpha=0.6, edgecolor="none", label=clase)
-    for r in t[t.clase == "agudo"].nlargest(22, "puntuacion").itertuples():
-        ax.annotate(r.evento.split(" (")[0].split(",")[0] if r.evento else r.region_pico,
-                    (pd.Timestamp(r.inicio), r.puntuacion), fontsize=6.5, xytext=(3, 3), textcoords="offset points",
-                    color="black" if r.evento else "0.45")
-    ax.set_yscale("log")
-    ax.set_ylabel("Puntuación del evento (|z| máximo o z de G)")
-    ax.set_xlabel("2017; franjas grises = días de calendario; tamaño = celdas de la huella; "
-                  "en negro, eventos identificados; en gris, zona del pico sin explicar")
-    ax.legend(fontsize=8, loc="upper left")
-    fig.tight_layout()
-    fig.savefig(cubo.SALIDA / "figuras" / "eventos_agrupados.png", dpi=170)
-    plt.close(fig)
 
 
 def main():
@@ -280,7 +256,12 @@ def main():
     t = t.drop(columns="_celdas")
     t.round({"puntuacion": 1, "z_pico": 1, "esperado": 0, "exceso": 0, "amplitud": 2, "z_G": 1}).to_csv(
         cubo.SALIDA / "eventos_agrupados.csv", index=False)
-    figura(t, fechas, amp)
+    u = np.round(np.arange(t_z, 40.05, 0.1), 1)
+    pd.DataFrame({"pico": u, "nulos_por_año": [(pico_nulo >= v).sum() / R_NULA * normales for v in u],
+                  "observados": [int((pico_obs >= v).sum()) for v in u]}).to_csv(
+        cubo.SALIDA / "eventos_agrupados_calibracion.csv", index=False)
+    pd.DataFrame({"fecha": clave, "dia_semana": fechas.strftime("%a"), "amplitud": amp.round(3),
+                  "calendario": calendario.astype(int)}).to_csv(cubo.SALIDA / "eventos_agrupados_dias.csv", index=False)
 
     ag = t[t.clase == "agudo"]
     w_ini, w_fin = pd.to_datetime(ag.inicio).dt.dayofweek, pd.to_datetime(ag.fin).dt.dayofweek

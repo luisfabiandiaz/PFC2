@@ -16,7 +16,7 @@ fecha,dia,region,intervalo,z,observado,esperado,amplitud_hojas,clase,evento_cono
 2017-09-17,Sun,East Harlem South,06-08,23.5,710,152.7,0.04,local,,
 2017-11-05,Sun,Midtown Center,04-06,22.1,468,94.9,0.04,local,Maratón de NYC,
 2017-01-01,Sun,Yorkville East,00-02,21.9,764,352.2,0.54,difuso,,
-2017-03-05,Sun,Washington Heights South,08-10,21.6,295,75.1,0.04,local,,The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+2017-03-05,Sun,Washington Heights South,08-10,21.6,295,75.1,0.04,local,,NYRR Washington Heights 5K
 2017-06-03,Sat,Randalls Island,18-20,21.4,54,5.2,0.0,local,,Governors Ball (Randalls Island)
 2017-04-23,Sun,TriBeCa/Civic Center,06-08,21.2,403,85.1,0.0,local,,"9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)"
 2017-01-01,Sun,Manhattan Valley,02-04,21.1,413,152.4,0.54,difuso,,
@@ -117,7 +117,7 @@ fecha,dia,region,intervalo,z,observado,esperado,amplitud_hojas,clase,evento_cono
 2017-01-01,Sun,Sutton Place/Turtle Bay North,04-06,9.8,294,112.8,0.54,difuso,,
 2017-08-27,Sun,Greenwich Village North,06-08,9.8,102,40.0,0.0,local,,
 2017-12-31,Sun,Greenwich Village South,22-24,9.7,364,170.7,0.58,difuso,Nochevieja (Times Square),
-2017-03-05,Sun,Clinton West,12-14,9.7,1173,452.0,0.04,local,,The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+2017-03-05,Sun,Clinton West,12-14,9.7,1173,452.0,0.04,local,,
 2017-10-01,Sun,Central Park,06-08,9.6,269,86.1,0.0,local,,
 2017-01-01,Sun,Murray Hill,04-06,9.6,480,210.6,0.54,difuso,,
 2017-01-01,Sun,Alphabet City,04-06,9.5,270,108.2,0.54,difuso,,

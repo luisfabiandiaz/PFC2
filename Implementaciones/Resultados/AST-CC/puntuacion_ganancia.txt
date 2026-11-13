@@ -48,7 +48,7 @@ z celda = max |z| de celda (AST-CC/11); G = max sobre unidades del z de log g
   2017-02-18 hallado           35       18        3       20       19   Toy Fair (Javits Center)
   2017-02-19 hallado           36       22       56       46       46   Toy Fair (Javits Center)
   2017-03-04 hallado           38       65       43       74       75   The Armory Show (Piers 92/94)
-  2017-03-05 hallado           12       57       21       19        8   The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+  2017-03-05 hallado           12       57       21       19        8   NYRR Washington Heights 5K
   2017-04-23 hallado           14       96       40       16       17   9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)
   2017-04-30 hallado           24       84       38       39       39   SHAPE Women's Half Marathon (Central Park)
   2017-05-06 hallado           20       56       13       41       41   Frieze New York (Randalls Island)

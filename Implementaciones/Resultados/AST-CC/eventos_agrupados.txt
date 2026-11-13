@@ -33,7 +33,7 @@ umbrales con FDR estimada <= 0.01 (nula empírica); zonas colindantes: 162 pares
      4. 2017-09-01 Fri a 09-03  z =   +38.3  18 celdas, 12-24 h  Randalls Island   <- Electric Zoo (Randalls Island)
      6. 2017-07-27 Thu a 07-30  z =   +34.4  16 celdas, 08-22 h  Randalls Island   <- Panorama Festival (Randalls Island)
      7. 2017-06-02 Fri a 06-04  z =   +30.9  19 celdas, 08-22 h  Randalls Island   <- Governors Ball (Randalls Island)
-    22. 2017-03-01 Wed a 03-05  z =   +14.7  19 celdas, 10-20 h  Clinton West   <- The Armory Show, preinauguración (Piers 92/94) / The Armory Show (Piers 92/94) / The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    22. 2017-03-01 Wed a 03-05  z =   +14.7  19 celdas, 10-20 h  Clinton West   <- The Armory Show, preinauguración (Piers 92/94) / The Armory Show (Piers 92/94)
     30. 2017-08-20 Sun a 08-23  z =   +12.7  12 celdas, 06-16 h  West Chelsea/Hudson Yards   <- NY NOW (Javits Center)
     31. 2017-09-17 Sun a 09-19  z =   +12.7  9 celdas, 06-12 h  Clinton West
     32. 2017-03-29 Wed a 04-01  z =   +12.6  11 celdas, 06-16 h  West Chelsea/Hudson Yards
@@ -57,7 +57,7 @@ umbrales con FDR estimada <= 0.01 (nula empírica); zonas colindantes: 162 pares
      8. 2017-07-16 Sun          z =   +25.9    6 celdas,  4 reg., 04-08 h        obs 1183 / esp 450  Lincoln Square West   <- NYC Triathlon (salida 05:50, Riverside Park)
      9. 2017-05-15 Mon a 05-17  z =   +23.7    5 celdas,  1 reg., 06-10 h        obs 3637 / esp 1608  Morningside Heights   <- Graduación de Columbia University
     10. 2017-09-17 Sun          z =   +23.5    2 celdas,  2 reg., 06-08 h        obs 943 / esp 244  East Harlem South
-    11. 2017-03-05 Sun          z =   +21.6    1 celdas,  1 reg., 08-10 h        obs 295 / esp 75  Washington Heights South   <- The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    11. 2017-03-05 Sun          z =   +21.6    1 celdas,  1 reg., 08-10 h        obs 295 / esp 75  Washington Heights South   <- NYRR Washington Heights 5K
     12. 2017-04-23 Sun          z =   +21.2    1 celdas,  1 reg., 06-08 h        obs 403 / esp 85  TriBeCa/Civic Center   <- 9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)
     13. 2017-01-21 Sat          z =   +20.9    8 celdas,  4 reg., 08-14 h        obs 7452 / esp 4159  Sutton Place/Turtle Bay North   <- Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)
     14. 2017-05-07 Sun          z =   +19.5    2 celdas,  1 reg., 06-10 h        obs 931 / esp 340  Midtown South   <- Five Boro Bike Tour
@@ -68,7 +68,7 @@ umbrales con FDR estimada <= 0.01 (nula empírica); zonas colindantes: 162 pares
     19. 2017-03-02 Thu          z =   +15.3    1 celdas,  1 reg., 18-20 h        obs 552 / esp 272  Two Bridges/Seward Park
     20. 2017-01-13 Fri          z =   -14.8    8 celdas,  3 reg., 06-14 h        obs 7245 / esp 11999  Midtown Center
     21. 2017-01-28 Sat a 01-29  z =   +14.7    2 celdas,  1 reg., 06-08 h        obs 633 / esp 211  Clinton West
-    22. 2017-03-01 Wed a 03-05  z =   +14.7   19 celdas,  1 reg., 10-20 h        obs 16459 / esp 7455  Clinton West   <- The Armory Show, preinauguración (Piers 92/94) / The Armory Show (Piers 92/94) / The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    22. 2017-03-01 Wed a 03-05  z =   +14.7   19 celdas,  1 reg., 10-20 h        obs 16459 / esp 7455  Clinton West   <- The Armory Show, preinauguración (Piers 92/94) / The Armory Show (Piers 92/94)
     23. 2017-01-21 Sat          z =   +14.5   16 celdas, 16 reg., 04-06 h        obs 2966 / esp 1672  Garment District
     24. 2017-04-30 Sun          z =   +14.5    2 celdas,  2 reg., 06-08 h        obs 973 / esp 266  Central Park   <- SHAPE Women's Half Marathon (Central Park)
     25. 2017-12-13 Wed a 12-15  z =   +13.9   12 celdas,  5 reg., 00-04 22-24 h  obs 5422 / esp 3361  Yorkville West
@@ -146,7 +146,7 @@ umbrales con FDR estimada <= 0.01 (nula empírica); zonas colindantes: 162 pares
     2017-02-19  agudo      puesto  58  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 3 día(s), West Chelsea/Hudson Yards 06-10 h   Toy Fair (Javits Center)
     2017-03-02  agudo      puesto  22  1 evento(s) en su zona; el mayor: 19 celdas, 1 reg., 5 día(s), Clinton West 10-20 h   The Armory Show, preinauguración (Piers 92/94)
     2017-03-04  agudo      puesto  22  1 evento(s) en su zona; el mayor: 19 celdas, 1 reg., 5 día(s), Clinton West 10-20 h   The Armory Show (Piers 92/94)
-    2017-03-05  agudo      puesto  11  2 evento(s) en su zona; el mayor: 1 celdas, 1 reg., 1 día(s), Washington Heights South 08-10 h   The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    2017-03-05  agudo      puesto  11  1 evento(s) en su zona; el mayor: 1 celdas, 1 reg., 1 día(s), Washington Heights South 08-10 h   NYRR Washington Heights 5K
     2017-04-12  agudo      puesto  16  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 2 día(s), West Chelsea/Hudson Yards 04-10 h   New York Auto Show, días de prensa (Javits Center)
     2017-04-13  agudo      puesto  16  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 2 día(s), West Chelsea/Hudson Yards 04-10 h   New York Auto Show, días de prensa (Javits Center)
     2017-04-23  agudo      puesto  12  1 evento(s) en su zona; el mayor: 1 celdas, 1 reg., 1 día(s), TriBeCa/Civic Center 06-08 h   9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)
