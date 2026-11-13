@@ -120,29 +120,29 @@ puesto = posición del día entre los de su periodo según max |z| (1 = el más 
     2017-05-04 Thu  z =  +115.5  Randalls Island [10-12]  obs 247 / esp 4  amp 0.00   (hallado: Frieze New York, preinauguración (Randalls Island))
     2017-05-02 Tue  z =   +26.0  Randalls Island [08-10]  obs 48 / esp 3  amp 0.00
     2017-05-17 Wed  z =   +23.7  Morningside Heights [08-10]  obs 1634 / esp 530  amp 0.03   (hallado: Graduación de Columbia University)
-    2017-04-12 Wed  z =   +17.1  West Chelsea/Hudson Yards [04-06]  obs 222 / esp 69  amp 0.05
+    2017-04-12 Wed  z =   +17.1  West Chelsea/Hudson Yards [04-06]  obs 222 / esp 69  amp 0.05   (hallado: New York Auto Show, días de prensa (Javits Center))
     2017-05-03 Wed  z =   +17.0  Randalls Island [08-10]  obs 44 / esp 5  amp 0.03
     2017-06-27 Tue  z =   +16.2  Washington Heights North [18-20]  obs 235 / esp 85  amp 0.00
     2017-03-02 Thu  z =   +15.3  Two Bridges/Seward Park [18-20]  obs 552 / esp 272  amp 0.00
-    2017-03-02 Thu  z =   +14.7  Clinton West [14-16]  obs 726 / esp 346  amp 0.00
+    2017-03-02 Thu  z =   +14.7  Clinton West [14-16]  obs 726 / esp 346  amp 0.00   (hallado: The Armory Show, preinauguración (Piers 92/94))
     2017-03-01 Wed  z =   +13.9  Clinton West [12-14]  obs 752 / esp 297  amp 0.03
     2017-06-27 Tue  z =   +13.7  Washington Heights South [18-20]  obs 365 / esp 142  amp 0.00
     2017-11-01 Wed  z =   +12.8  West Chelsea/Hudson Yards [02-04]  obs 199 / esp 66  amp 0.08
-    2017-08-22 Tue  z =   +12.7  West Chelsea/Hudson Yards [10-12]  obs 1242 / esp 528  amp 0.03
+    2017-08-22 Tue  z =   +12.7  West Chelsea/Hudson Yards [10-12]  obs 1242 / esp 528  amp 0.03   (hallado: NY NOW (Javits Center))
     2017-01-19 Thu  z =   +12.4  Washington Heights South [22-24]  obs 417 / esp 214  amp 0.00
     2017-09-19 Tue  z =   -12.2  Midtown Center [12-14]  obs 721 / esp 1542  amp 0.11   <- Asamblea General de la ONU
     2017-04-25 Tue  z =   +12.1  Financial District South [04-06]  obs 77 / esp 16  amp 0.00
     2017-10-19 Thu  z =   +12.1  Two Bridges/Seward Park [08-10]  obs 195 / esp 74  amp 0.00
     2017-07-06 Thu  z =   +12.0  Randalls Island [20-22]  obs 26 / esp 3  amp 0.00
-    2017-06-01 Thu  z =   +11.8  West Chelsea/Hudson Yards [08-10]  obs 1645 / esp 864  amp 0.00
+    2017-06-01 Thu  z =   +11.8  West Chelsea/Hudson Yards [08-10]  obs 1645 / esp 864  amp 0.00   (hallado: BookExpo (Javits Center))
     2017-09-26 Tue  z =   -11.6  Sutton Place/Turtle Bay North [18-20]  obs 414 / esp 868  amp 0.00
     2017-09-27 Wed  z =   +11.5  Two Bridges/Seward Park [08-10]  obs 189 / esp 74  amp 0.00
     2017-09-19 Tue  z =   -11.3  UN/Turtle Bay South [18-20]  obs 239 / esp 501  amp 0.11   <- Asamblea General de la ONU
-    2017-08-23 Wed  z =   +11.0  West Chelsea/Hudson Yards [08-10]  obs 1554 / esp 722  amp 0.03
+    2017-08-23 Wed  z =   +11.0  West Chelsea/Hudson Yards [08-10]  obs 1554 / esp 722  amp 0.03   (hallado: NY NOW (Javits Center))
     2017-12-06 Wed  z =   +10.7  West Chelsea/Hudson Yards [06-08]  obs 730 / esp 379  amp 0.05
-    2017-09-21 Thu  z =   +10.3  Upper West Side South [10-12]  obs 913 / esp 578  amp 0.16   <- Asamblea General de la ONU
+    2017-09-21 Thu  z =   +10.3  Upper West Side South [10-12]  obs 913 / esp 578  amp 0.16
     2017-03-30 Thu  z =   -10.3  Upper East Side North [06-08]  obs 569 / esp 873  amp 0.03
-  De las 25: 3 en fechas de EVENTOS, 2 con evento identificado después, 20 sin explicar
+  De las 25: 2 en fechas de EVENTOS, 7 con evento identificado después, 16 sin explicar
 
 == holiday: 105 días; unidades: celda 792, stcc 24, base 24, hojas 26
 
@@ -246,7 +246,7 @@ puesto = posición del día entre los de su periodo según max |z| (1 = el más 
   Las 25 detecciones locales más fuertes:
     2017-11-05 Sun  z =  +131.9  Financial District South [06-08]  obs 863 / esp 28  amp 0.04   <- Maratón de NYC
     2017-11-05 Sun  z =  +102.2  Battery Park [06-08]  obs 323 / esp 6  amp 0.04   <- Maratón de NYC
-    2017-10-08 Sun  z =   +64.7  Financial District South [06-08]  obs 401 / esp 28  amp 0.04
+    2017-10-08 Sun  z =   +64.7  Financial District South [06-08]  obs 401 / esp 28  amp 0.04   (hallado: NYRR Staten Island Half (ferry desde Whitehall))
     2017-09-03 Sun  z =   +38.3  Randalls Island [16-18]  obs 115 / esp 4  amp 0.23   (hallado: Electric Zoo (Randalls Island))
     2017-03-19 Sun  z =   +35.2  Seaport [08-10]  obs 227 / esp 26  amp 0.00   <- Media maratón de NYC
     2017-09-02 Sat  z =   +33.5  Randalls Island [16-18]  obs 118 / esp 4  amp 0.12   (hallado: Electric Zoo (Randalls Island))
@@ -254,14 +254,14 @@ puesto = posición del día entre los de su periodo según max |z| (1 = el más 
     2017-07-16 Sun  z =   +25.9  Lincoln Square West [04-06]  obs 356 / esp 57  amp 0.00   (hallado: NYC Triathlon (salida 05:50, Riverside Park))
     2017-07-30 Sun  z =   +24.1  Randalls Island [18-20]  obs 80 / esp 4  amp 0.00   (hallado: Panorama Festival (Randalls Island))
     2017-03-19 Sun  z =   +23.6  Upper East Side South [06-08]  obs 856 / esp 190  amp 0.00   <- Media maratón de NYC
-    2017-05-07 Sun  z =   +23.6  Randalls Island [14-16]  obs 154 / esp 9  amp 0.00   <- Five Boro Bike Tour
+    2017-05-07 Sun  z =   +23.6  Randalls Island [14-16]  obs 154 / esp 9  amp 0.00
     2017-09-17 Sun  z =   +23.5  East Harlem South [06-08]  obs 710 / esp 153  amp 0.04
     2017-11-05 Sun  z =   +22.1  Midtown Center [04-06]  obs 468 / esp 95  amp 0.04   <- Maratón de NYC
-    2017-03-05 Sun  z =   +21.6  Washington Heights South [08-10]  obs 295 / esp 75  amp 0.04
+    2017-03-05 Sun  z =   +21.6  Washington Heights South [08-10]  obs 295 / esp 75  amp 0.04   (hallado: The Armory Show (Piers 92/94) / NYRR Washington Heights 5K)
     2017-06-03 Sat  z =   +21.4  Randalls Island [18-20]  obs 54 / esp 5  amp 0.00   (hallado: Governors Ball (Randalls Island))
     2017-04-23 Sun  z =   +21.2  TriBeCa/Civic Center [06-08]  obs 403 / esp 85  amp 0.00   (hallado: 9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca))
     2017-01-21 Sat  z =   +20.9  Sutton Place/Turtle Bay North [10-12]  obs 1192 / esp 464  amp 0.04   <- Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)
-    2017-10-08 Sun  z =   +20.0  Battery Park [06-08]  obs 85 / esp 7  amp 0.04
+    2017-10-08 Sun  z =   +20.0  Battery Park [06-08]  obs 85 / esp 7  amp 0.04   (hallado: NYRR Staten Island Half (ferry desde Whitehall))
     2017-05-07 Sun  z =   +19.5  Midtown South [08-10]  obs 752 / esp 246  amp 0.00   <- Five Boro Bike Tour
     2017-01-21 Sat  z =   +19.5  UN/Turtle Bay South [10-12]  obs 991 / esp 299  amp 0.04   <- Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)
     2017-03-19 Sun  z =   +17.9  Central Park [06-08]  obs 538 / esp 100  amp 0.00   <- Media maratón de NYC
@@ -269,4 +269,4 @@ puesto = posición del día entre los de su periodo según max |z| (1 = el más 
     2017-06-04 Sun  z =   +17.5  Randalls Island [18-20]  obs 63 / esp 4  amp 0.00   (hallado: Governors Ball (Randalls Island))
     2017-10-01 Sun  z =   +17.3  Upper East Side South [06-08]  obs 436 / esp 173  amp 0.00
     2017-05-06 Sat  z =   +17.2  Randalls Island [14-16]  obs 126 / esp 8  amp 0.00   (hallado: Frieze New York (Randalls Island))
-  De las 25: 11 en fechas de EVENTOS, 9 con evento identificado después, 5 sin explicar
+  De las 25: 10 en fechas de EVENTOS, 12 con evento identificado después, 3 sin explicar

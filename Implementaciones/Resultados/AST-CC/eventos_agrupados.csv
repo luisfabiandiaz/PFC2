@@ -1,0 +1,129 @@
+puesto,clase,inicio,fin,n_dias,signo,n_celdas,n_regiones,region_pico,intervalos,puntuacion,z_pico,observado,esperado,amplitud,z_G,regiones,exceso,dia_semana,evento
+1,agudo,2017-11-05,2017-11-05,1,+,5,3,Financial District South,04-08 h,131.9,131.9,1634,102.0,0.04,5.3,Financial District South; Battery Park; World Trade Center,1532.0,Sun,Maratón de NYC
+2,agudo,2017-05-01,2017-05-08,8,+,34,1,Randalls Island,06-20 h,115.5,115.5,2419,163.0,0.03,6.5,Randalls Island,2256.0,Mon,"Frieze New York, preinauguración (Randalls Island) / Frieze New York (Randalls Island)"
+3,agudo,2017-10-08,2017-10-08,1,+,3,2,Financial District South,04-08 h,64.7,64.7,502,38.0,0.04,1.1,Financial District South; Battery Park,464.0,Sun,NYRR Staten Island Half (ferry desde Whitehall)
+4,agudo,2017-09-01,2017-09-03,3,+,18,3,Randalls Island,12-24 h,38.3,38.3,2469,1239.0,0.23,2.7,Randalls Island; East Harlem South; East Harlem North,1230.0,Fri,Electric Zoo (Randalls Island)
+5,agudo,2017-03-19,2017-03-19,1,+,5,3,Seaport,06-12 h,35.2,35.2,991,364.0,0.0,5.4,Seaport; Financial District North; World Trade Center,627.0,Sun,Media maratón de NYC
+6,agudo,2017-07-27,2017-07-30,4,+,16,1,Randalls Island,08-22 h,34.4,34.4,842,81.0,0.12,2.8,Randalls Island,761.0,Thu,Panorama Festival (Randalls Island)
+7,agudo,2017-03-19,2017-03-19,1,+,7,6,Midtown North,04-08 h,32.2,32.2,3150,1004.0,0.0,5.0,Midtown North; Upper East Side South; Central Park; Lincoln Square East; Midtown Center; Times Sq/Theatre District,2146.0,Sun,Media maratón de NYC
+8,agudo,2017-06-02,2017-06-04,3,+,19,1,Randalls Island,08-22 h,30.9,30.9,1253,133.0,0.0,2.1,Randalls Island,1120.0,Fri,Governors Ball (Randalls Island)
+9,agudo,2017-07-16,2017-07-16,1,+,6,4,Lincoln Square West,04-08 h,25.9,25.9,1183,450.0,0.0,4.8,Lincoln Square West; Upper West Side South; Upper West Side North; Manhattan Valley,733.0,Sun,"NYC Triathlon (salida 05:50, Riverside Park)"
+10,agudo,2017-05-15,2017-05-17,3,+,5,1,Morningside Heights,06-10 h,23.7,23.7,3637,1608.0,0.03,4.2,Morningside Heights,2029.0,Mon,Graduación de Columbia University
+11,agudo,2017-09-17,2017-09-17,1,+,2,2,East Harlem South,06-08 h,23.5,23.5,943,244.0,0.04,2.0,East Harlem South; Central Park,699.0,Sun,
+12,agudo,2017-11-05,2017-11-05,1,+,6,5,Midtown Center,04-08 h,22.1,22.1,1808,690.0,0.04,5.3,Midtown Center; Central Park; Times Sq/Theatre District; Garment District; Midtown North,1118.0,Sun,Maratón de NYC
+13,agudo,2017-03-05,2017-03-05,1,+,1,1,Washington Heights South,08-10 h,21.6,21.6,295,75.0,0.04,5.1,Washington Heights South,220.0,Sun,The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+14,agudo,2017-04-23,2017-04-23,1,+,1,1,TriBeCa/Civic Center,06-08 h,21.2,21.2,403,85.0,0.0,4.2,TriBeCa/Civic Center,318.0,Sun,"9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)"
+15,agudo,2017-01-21,2017-01-21,1,+,8,4,Sutton Place/Turtle Bay North,08-14 h,20.9,20.9,7452,4159.0,0.04,4.2,Sutton Place/Turtle Bay North; UN/Turtle Bay South; Midtown East; Murray Hill,3293.0,Sat,"Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)"
+16,agudo,2017-05-07,2017-05-07,1,+,2,1,Midtown South,06-10 h,19.5,19.5,931,340.0,0.0,4.8,Midtown South,591.0,Sun,Five Boro Bike Tour
+17,agudo,2017-10-01,2017-10-01,1,+,2,2,Upper East Side South,06-08 h,17.3,17.3,705,259.0,0.0,1.7,Upper East Side South; Central Park,446.0,Sun,
+18,agudo,2017-04-12,2017-04-13,2,+,5,1,West Chelsea/Hudson Yards,04-10 h,17.1,17.1,2772,1777.0,0.05,2.2,West Chelsea/Hudson Yards,995.0,Wed,"New York Auto Show, días de prensa (Javits Center)"
+19,agudo,2017-09-24,2017-09-24,1,+,3,3,Financial District North,06-08 h,16.2,16.2,292,80.0,0.0,3.0,Financial District North; Financial District South; Seaport,212.0,Sun,Tunnel to Towers 5K (Lower Manhattan)
+20,agudo,2017-06-27,2017-06-27,1,+,14,4,Washington Heights North,10-20 h,16.2,16.2,2416,1266.0,0.0,4.2,Washington Heights North; Washington Heights South; Hamilton Heights; Inwood,1150.0,Tue,
+21,agudo,2017-03-02,2017-03-02,1,+,1,1,Two Bridges/Seward Park,18-20 h,15.3,15.3,552,272.0,0.0,1.7,Two Bridges/Seward Park,280.0,Thu,
+22,agudo,2017-01-13,2017-01-13,1,-,8,3,Midtown Center,06-14 h,14.8,-14.8,7245,11999.0,0.08,4.6,Midtown Center; Midtown North; Midtown East,-4754.0,Fri,
+23,agudo,2017-01-28,2017-01-29,2,+,2,1,Clinton West,06-08 h,14.7,14.7,633,211.0,0.0,3.9,Clinton West,422.0,Sat,
+24,agudo,2017-03-01,2017-03-05,5,+,19,1,Clinton West,10-20 h,14.7,14.7,16459,7455.0,0.08,5.7,Clinton West,9004.0,Wed,"The Armory Show, preinauguración (Piers 92/94) / The Armory Show (Piers 92/94) / The Armory Show (Piers 92/94) / NYRR Washington Heights 5K"
+25,agudo,2017-01-21,2017-01-21,1,+,16,16,Garment District,04-06 h,14.5,14.5,2966,1672.0,0.04,4.4,Garment District; Penn Station/Madison Sq West; West Chelsea/Hudson Yards; Lincoln Square West; Greenwich Village South; Greenwich Village North; TriBeCa/Civic Center; Upper West Side North; Lincoln Square East; Upper West Side South; West Village; Hudson Sq; Union Sq; Central Park; Clinton West; East Chelsea,1294.0,Sat,
+26,agudo,2017-04-30,2017-04-30,1,+,2,2,Central Park,06-08 h,14.5,14.5,973,266.0,0.0,2.5,Central Park; Lincoln Square East,707.0,Sun,SHAPE Women's Half Marathon (Central Park)
+27,agudo,2017-12-13,2017-12-15,3,+,12,5,Yorkville West,00-04 22-24 h,13.9,13.9,5422,3361.0,0.24,2.8,Yorkville West; Lenox Hill West; Yorkville East; Sutton Place/Turtle Bay North; Lenox Hill East,2061.0,Wed,
+28,agudo,2017-01-22,2017-01-22,1,+,3,3,Upper West Side North,06-08 h,13.3,13.3,742,255.0,0.04,2.1,Upper West Side North; Central Park; Manhattan Valley,487.0,Sun,
+29,agudo,2017-09-18,2017-09-22,5,-,92,8,Midtown Center,06-22 h,13.0,-13.0,58704,94476.0,0.21,6.2,Midtown Center; UN/Turtle Bay South; Midtown East; Midtown North; Sutton Place/Turtle Bay North; Lenox Hill West; Murray Hill; Garment District,-35772.0,Mon,Asamblea General de la ONU
+30,agudo,2017-09-10,2017-09-10,1,+,2,1,Hudson Sq,06-10 h,12.8,12.8,188,66.0,0.0,3.2,Hudson Sq,122.0,Sun,
+31,agudo,2017-11-01,2017-11-01,1,+,48,28,West Chelsea/Hudson Yards,00-06 h,12.8,12.8,8863,4618.0,0.08,7.2,West Chelsea/Hudson Yards; Meatpacking/West Village West; Gramercy; East Chelsea; Lower East Side; Garment District; Greenwich Village North; East Village; West Village; Penn Station/Madison Sq West; Little Italy/NoLiTa; TriBeCa/Civic Center; Flatiron; SoHo; Two Bridges/Seward Park; Financial District North; Clinton East; Alphabet City; Times Sq/Theatre District; World Trade Center; Murray Hill; Stuy Town/Peter Cooper Village; Kips Bay; Greenwich Village South; Hudson Sq; Union Sq; Clinton West; Chinatown,4245.0,Wed,
+32,agudo,2017-08-20,2017-08-23,4,+,12,2,West Chelsea/Hudson Yards,06-16 h,12.7,12.7,13624,5974.0,0.04,2.8,West Chelsea/Hudson Yards; East Chelsea,7650.0,Sun,NY NOW (Javits Center)
+33,agudo,2017-09-17,2017-09-19,3,+,9,4,Clinton West,06-12 h,12.7,12.7,8461,3799.0,0.11,3.1,Clinton West; West Chelsea/Hudson Yards; Clinton East; Lincoln Square West,4662.0,Sun,
+34,agudo,2017-03-29,2017-04-01,4,+,11,2,West Chelsea/Hudson Yards,06-16 h,12.6,12.6,10063,4967.0,0.05,3.3,West Chelsea/Hudson Yards; Clinton West,5096.0,Wed,
+35,agudo,2017-08-26,2017-08-26,1,+,3,2,Central Harlem North,06-10 h,12.5,12.5,441,187.0,0.0,3.7,Central Harlem North; Manhattanville,254.0,Sat,Percy Sutton Harlem 5K
+36,agudo,2017-01-19,2017-01-19,1,+,5,5,Washington Heights South,22-24 h,12.4,12.4,1218,650.0,0.0,3.1,Washington Heights South; Washington Heights North; Hamilton Heights; Inwood; Inwood Hill Park,568.0,Thu,
+37,agudo,2017-06-10,2017-06-10,1,+,3,3,Central Park,06-08 h,12.3,12.3,1070,500.0,0.0,2.2,Central Park; Lincoln Square East; Midtown North,570.0,Sat,"NYRR Mini 10K (salida 08:00, Central Park West)"
+38,agudo,2017-04-25,2017-04-25,1,+,1,1,Financial District South,04-06 h,12.1,12.1,77,16.0,0.0,2.6,Financial District South,61.0,Tue,
+39,agudo,2017-10-19,2017-10-19,1,+,2,1,Two Bridges/Seward Park,06-10 h,12.1,12.1,287,118.0,0.0,1.3,Two Bridges/Seward Park,169.0,Thu,
+40,agudo,2017-01-29,2017-01-29,1,+,3,3,Financial District South,14-16 h,12.1,12.1,1289,666.0,0.0,0.0,Financial District South; Battery Park City; World Trade Center,623.0,Sun,"Protesta contra el veto migratorio (Battery Park, 13:00)"
+41,agudo,2017-09-01,2017-09-01,1,+,4,4,Hamilton Heights,22-24 h,12.0,12.0,914,501.0,0.11,3.2,Hamilton Heights; Washington Heights South; Manhattanville; Washington Heights North,413.0,Fri,
+42,agudo,2017-07-06,2017-07-06,1,+,3,2,Randalls Island,18-22 h,12.0,12.0,514,341.0,0.0,2.8,Randalls Island; East Harlem North,173.0,Thu,
+43,agudo,2017-06-01,2017-06-03,3,+,7,1,West Chelsea/Hudson Yards,06-12 h,11.8,11.8,7009,4163.0,0.0,2.7,West Chelsea/Hudson Yards,2846.0,Thu,BookExpo (Javits Center)
+44,agudo,2017-09-26,2017-09-26,1,-,7,4,Sutton Place/Turtle Bay North,16-22 h,11.6,-11.6,3561,5582.0,0.0,4.9,Sutton Place/Turtle Bay North; Lenox Hill West; Lenox Hill East; Midtown East,-2021.0,Tue,
+45,agudo,2017-09-27,2017-09-28,2,+,3,1,Two Bridges/Seward Park,06-10 h,11.5,11.5,514,193.0,0.0,2.3,Two Bridges/Seward Park,321.0,Wed,
+46,agudo,2017-09-07,2017-09-11,5,+,12,2,Hudson Sq,10-18 h,11.4,11.4,3624,2471.0,0.0,2.0,Hudson Sq; Meatpacking/West Village West,1153.0,Thu,
+47,agudo,2017-02-03,2017-02-03,1,+,1,1,Morningside Heights,08-10 h,10.9,10.9,905,604.0,0.03,0.9,Morningside Heights,301.0,Fri,
+48,agudo,2017-08-12,2017-08-12,1,+,1,1,Two Bridges/Seward Park,16-18 h,10.9,10.9,307,122.0,0.0,2.1,Two Bridges/Seward Park,185.0,Sat,
+49,agudo,2017-05-05,2017-05-06,2,+,4,1,Two Bridges/Seward Park,10-16 h,10.9,10.9,917,468.0,0.03,3.5,Two Bridges/Seward Park,449.0,Fri,
+50,agudo,2017-10-30,2017-10-30,1,+,1,1,Roosevelt Island,18-20 h,10.9,10.9,74,22.0,0.05,2.0,Roosevelt Island,52.0,Mon,
+51,agudo,2017-11-05,2017-11-05,1,+,19,19,Union Sq,00-02 h,10.8,10.8,18586,12405.0,0.04,6.8,Union Sq; Murray Hill; Flatiron; Alphabet City; Gramercy; West Village; Stuy Town/Peter Cooper Village; Chinatown; Two Bridges/Seward Park; Kips Bay; East Village; Financial District North; UN/Turtle Bay South; Clinton East; Seaport; Meatpacking/West Village West; Midtown South; East Chelsea; TriBeCa/Civic Center,6181.0,Sun,
+52,agudo,2017-12-06,2017-12-06,1,+,3,2,West Chelsea/Hudson Yards,06-10 h,10.7,10.7,2929,1626.0,0.05,3.0,West Chelsea/Hudson Yards; Clinton West,1303.0,Wed,
+53,agudo,2017-08-13,2017-08-13,1,+,2,2,East Harlem South,06-08 h,10.7,10.7,489,196.0,0.0,0.8,East Harlem South; Central Park,293.0,Sun,
+54,agudo,2017-10-15,2017-10-15,1,+,1,1,Upper East Side South,06-08 h,10.5,10.5,378,189.0,0.0,0.4,Upper East Side South,189.0,Sun,
+55,agudo,2017-09-09,2017-09-09,1,-,2,1,Midtown Center,12-16 h,10.3,-10.3,1224,2314.0,0.0,2.6,Midtown Center,-1090.0,Sat,
+56,agudo,2017-09-21,2017-09-21,1,+,5,4,Upper West Side South,10-14 h,10.3,10.3,3758,2502.0,0.16,5.0,Upper West Side South; Manhattan Valley; Lincoln Square East; Upper West Side North,1256.0,Thu,
+57,agudo,2017-03-28,2017-03-31,4,-,8,3,Upper East Side North,06-10 h,10.3,-10.3,5818,7936.0,0.05,0.9,Upper East Side North; Yorkville West; Upper East Side South,-2118.0,Tue,
+58,agudo,2017-08-30,2017-08-30,1,+,2,1,Randalls Island,06-10 h,10.2,10.2,29,6.0,0.0,0.3,Randalls Island,23.0,Wed,
+59,agudo,2017-10-31,2017-11-01,2,-,30,8,Battery Park City,06-24 h,10.2,-10.2,7699,13801.0,0.08,7.2,Battery Park City; Greenwich Village South; West Village; TriBeCa/Civic Center; World Trade Center; Meatpacking/West Village West; SoHo; East Chelsea,-6102.0,Tue,Halloween y atentado del West Side Highway
+60,agudo,2017-10-15,2017-10-15,1,+,1,1,Randalls Island,06-08 h,10.1,10.1,48,5.0,0.0,0.4,Randalls Island,43.0,Sun,
+61,agudo,2017-02-17,2017-02-19,3,+,5,1,West Chelsea/Hudson Yards,06-10 h,10.1,10.1,6302,2458.0,0.08,4.0,West Chelsea/Hudson Yards,3844.0,Fri,Toy Fair (Javits Center)
+62,agudo,2017-02-18,2017-02-19,2,+,7,2,Lower East Side,10-18 h,10.1,10.1,3354,2318.0,0.08,2.0,Lower East Side; Chinatown,1036.0,Sat,
+63,agudo,2017-09-03,2017-09-03,1,+,5,4,Midtown South,20-24 h,9.9,9.9,2267,1293.0,0.23,3.6,Midtown South; Meatpacking/West Village West; Garment District; East Chelsea,974.0,Sun,
+64,agudo,2017-11-04,2017-11-04,1,+,4,2,UN/Turtle Bay South,06-10 h,9.9,9.9,1553,752.0,0.04,3.9,UN/Turtle Bay South; Sutton Place/Turtle Bay North,801.0,Sat,Abbott Dash to the Finish Line 5K (salida junto a la ONU)
+65,agudo,2017-02-05,2017-02-05,1,+,1,1,East Harlem South,08-10 h,9.9,9.9,534,209.0,0.0,1.2,East Harlem South,325.0,Sun,
+66,agudo,2017-12-02,2017-12-02,1,+,1,1,Hamilton Heights,18-20 h,9.8,9.8,282,158.0,0.0,0.8,Hamilton Heights,124.0,Sat,
+67,agudo,2017-12-30,2017-12-30,1,+,1,1,Midtown Center,16-18 h,9.8,9.8,1155,849.0,0.15,1.3,Midtown Center,306.0,Sat,
+68,agudo,2017-08-27,2017-08-27,1,+,7,4,Greenwich Village North,06-12 h,9.8,9.8,1557,1022.0,0.0,2.3,Greenwich Village North; East Village; Greenwich Village South; Gramercy,535.0,Sun,
+69,agudo,2017-03-18,2017-03-18,1,+,2,1,UN/Turtle Bay South,06-10 h,9.8,9.8,672,334.0,0.08,3.2,UN/Turtle Bay South,338.0,Sat,
+70,agudo,2017-02-13,2017-02-14,2,+,5,1,Clinton West,06-12 h,9.7,9.7,3315,1872.0,0.0,3.1,Clinton West,1443.0,Mon,
+71,agudo,2017-03-21,2017-03-24,4,-,7,2,Upper East Side North,06-10 h,9.7,-9.7,5304,7330.0,0.11,0.9,Upper East Side North; Upper East Side South,-2026.0,Tue,
+72,agudo,2017-01-21,2017-01-21,1,-,5,3,Midtown East,12-18 h,9.6,-9.6,2004,5093.0,0.04,3.6,Midtown East; Midtown Center; Midtown North,-3089.0,Sat,"Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)"
+73,agudo,2017-02-19,2017-02-19,1,+,8,5,Lower East Side,18-24 h,9.6,9.6,6105,4309.0,0.08,2.2,Lower East Side; East Village; Little Italy/NoLiTa; West Village; Greenwich Village South,1796.0,Sun,
+74,agudo,2017-11-13,2017-11-13,1,+,1,1,West Chelsea/Hudson Yards,10-12 h,9.5,9.5,1370,522.0,0.0,1.3,West Chelsea/Hudson Yards,848.0,Mon,
+75,agudo,2017-02-05,2017-02-05,1,+,12,12,Lenox Hill West,22-24 h,9.5,9.5,7425,4432.0,0.0,4.2,Lenox Hill West; Gramercy; Yorkville West; East Village; Upper East Side North; Yorkville East; Sutton Place/Turtle Bay North; Kips Bay; Alphabet City; UN/Turtle Bay South; Stuy Town/Peter Cooper Village; Lower East Side,2993.0,Sun,
+76,agudo,2017-10-31,2017-10-31,1,+,1,1,West Chelsea/Hudson Yards,10-12 h,9.3,9.3,769,537.0,0.03,0.3,West Chelsea/Hudson Yards,232.0,Tue,
+77,agudo,2017-01-15,2017-01-15,1,+,6,6,Flatiron,22-24 h,9.3,9.3,3540,2212.0,0.0,2.2,Flatiron; Gramercy; Penn Station/Madison Sq West; West Village; Meatpacking/West Village West; Union Sq,1328.0,Sun,
+78,agudo,2017-07-18,2017-07-19,2,+,4,1,Clinton West,08-14 h,9.2,9.2,2168,1364.0,0.0,3.2,Clinton West,804.0,Tue,
+79,agudo,2017-05-10,2017-05-11,2,+,2,1,Clinton West,08-10 h,9.2,9.2,1242,792.0,0.0,2.3,Clinton West,450.0,Wed,
+80,agudo,2017-04-12,2017-04-12,1,+,1,1,Inwood,02-04 h,9.1,9.1,50,15.0,0.05,2.3,Inwood,35.0,Wed,
+81,agudo,2017-12-14,2017-12-15,2,-,5,3,Midtown East,16-20 h,9.1,-9.1,3567,4938.0,0.24,1.6,Midtown East; Murray Hill; Sutton Place/Turtle Bay North,-1371.0,Thu,
+82,agudo,2017-06-17,2017-06-17,1,+,14,13,East Chelsea,10-14 h,9.1,9.1,9829,6974.0,0.04,2.7,East Chelsea; Stuy Town/Peter Cooper Village; Lower East Side; Greenwich Village North; Greenwich Village South; Alphabet City; Murray Hill; East Village; Two Bridges/Seward Park; Midtown Center; Kips Bay; West Village; Little Italy/NoLiTa,2855.0,Sat,
+83,agudo,2017-10-18,2017-10-18,1,+,1,1,Randalls Island,16-18 h,9.0,9.0,22,4.0,0.0,-1.5,Randalls Island,18.0,Wed,
+1,calendario,2017-11-22,2017-11-25,4,,697,64,East Harlem North,,35.5,35.5,885405,882192.0,0.79,10.2,,3213.0,Wed,Acción de Gracias (desfile de Macy's)
+2,calendario,2017-12-22,2017-12-29,8,,1289,62,Penn Station/Madison Sq West,,33.7,33.7,1789944,1782043.0,0.82,7.6,,7901.0,Fri,
+3,calendario,2017-02-20,2017-02-20,1,,234,59,East Village,,30.7,30.7,237265,235874.0,0.63,5.5,,1391.0,Mon,
+4,calendario,2017-05-29,2017-05-29,1,,285,63,East Village,,30.7,30.7,187707,186263.0,0.68,6.8,,1444.0,Mon,
+5,calendario,2017-01-07,2017-01-07,1,,63,34,East Harlem South,,30.2,30.2,278371,276588.0,0.27,2.8,,1783.0,Sat,
+6,calendario,2017-07-03,2017-07-04,2,,608,65,Lower East Side,,29.1,29.1,343165,341766.0,0.84,9.1,,1399.0,Mon,4 de julio
+7,calendario,2017-01-01,2017-01-03,3,,516,65,Upper West Side North,,28.7,28.7,703588,699532.0,0.66,6.4,,4056.0,Sun,
+8,calendario,2017-03-14,2017-03-17,4,,601,64,Murray Hill,,28.5,28.5,920959,919075.0,0.84,10.0,,1884.0,Tue,Nevada (Stella)
+9,calendario,2017-09-04,2017-09-04,1,,314,63,Kips Bay,,27.5,27.5,178865,178198.0,0.76,6.5,,667.0,Mon,
+10,calendario,2017-01-16,2017-01-16,1,,185,61,East Village,,21.2,21.2,238131,237180.0,0.53,5.7,,951.0,Mon,
+11,calendario,2017-06-25,2017-06-25,1,,71,33,West Village,,19.5,-19.5,216020,214739.0,0.38,7.3,,1281.0,Sun,"Marcha del Orgullo (5.ª Avenida, Village)"
+12,calendario,2017-12-31,2017-12-31,1,,162,58,Central Harlem,,18.2,18.2,223914,223301.0,0.58,4.6,,613.0,Sun,Nochevieja (Times Square)
+13,calendario,2017-02-09,2017-02-09,1,,261,62,Upper East Side North,,17.0,17.0,185453,185435.0,0.74,8.6,,18.0,Thu,Nevada
+14,calendario,2017-04-14,2017-04-14,1,,33,21,Times Sq/Theatre District,,14.3,-14.3,304364,303871.0,0.32,3.9,,493.0,Fri,
+15,calendario,2017-10-09,2017-10-09,1,,42,33,Chinatown,,7.8,-7.8,237287,236935.0,0.32,3.7,,352.0,Mon,
+16,calendario,2017-05-14,2017-05-14,1,,21,17,Upper East Side South,,7.1,7.1,268479,266979.0,0.27,1.2,,1500.0,Sun,
+17,calendario,2017-12-20,2017-12-20,1,,14,12,TriBeCa/Civic Center,,6.4,6.4,315738,314572.0,0.26,2.0,,1166.0,Wed,
+18,calendario,2017-08-18,2017-08-18,1,,12,12,Flatiron,,5.4,5.4,265468,264833.0,0.34,1.9,,635.0,Fri,
+1,repartido,2017-03-12,2017-03-12,1,,45,15,UN/Turtle Bay South,00-06 h,6.0,6.9,14269,15707.0,0.0,6.0,Central Harlem North; East Chelsea; Flatiron; Gramercy; Greenwich Village South; Highbridge Park; Hudson Sq; Kips Bay; Manhattanville; Meatpacking/West Village West; Roosevelt Island; Seaport; UN/Turtle Bay South; Washington Heights South; West Village,-1438.0,Sun,
+2,repartido,2017-03-12,2017-03-12,1,,42,14,Sutton Place/Turtle Bay North,00-06 h,5.1,5.7,15341,16524.0,0.0,5.1,Bloomingdale; Central Harlem; Chinatown; Clinton East; Clinton West; Greenwich Village North; Little Italy/NoLiTa; Midtown South; Murray Hill; Sutton Place/Turtle Bay North; TriBeCa/Civic Center; World Trade Center; Yorkville East; Yorkville West,-1183.0,Sun,
+3,repartido,2017-07-07,2017-07-07,1,,28,7,Upper West Side South,04-06 10-16 h,5.0,3.9,11725,11936.0,0.0,5.0,Greenwich Village North; Lenox Hill West; Lincoln Square East; Lincoln Square West; SoHo; Upper West Side North; Upper West Side South,-211.0,Fri,
+4,repartido,2017-05-18,2017-05-18,1,,36,9,West Chelsea/Hudson Yards,00-04 20-24 h,4.6,5.4,13499,13063.0,0.08,4.6,Garment District; Lenox Hill East; Midtown North; Midtown South; Morningside Heights; Randalls Island; Times Sq/Theatre District; Union Sq; West Chelsea/Hudson Yards,436.0,Thu,Atropello en Times Square
+5,repartido,2017-03-12,2017-03-12,1,,36,12,Upper West Side North,00-06 h,4.6,6.0,10877,11792.0,0.0,4.6,Battery Park City; Garment District; Lenox Hill West; Lincoln Square West; Manhattan Valley; Midtown East; Midtown North; SoHo; Times Sq/Theatre District; Union Sq; Upper West Side North; Upper West Side South,-915.0,Sun,
+6,repartido,2017-05-18,2017-05-18,1,,36,9,Garment District,04-06 10-16 h,4.6,7.8,18541,20254.0,0.08,4.6,Garment District; Lenox Hill East; Midtown North; Midtown South; Morningside Heights; Randalls Island; Times Sq/Theatre District; Union Sq; West Chelsea/Hudson Yards,-1713.0,Thu,Atropello en Times Square
+7,repartido,2017-07-01,2017-07-01,1,,45,15,Gramercy,18-24 h,4.5,4.7,12789,14619.0,0.12,4.5,Central Harlem North; East Chelsea; Flatiron; Gramercy; Greenwich Village South; Highbridge Park; Hudson Sq; Kips Bay; Manhattanville; Meatpacking/West Village West; Roosevelt Island; Seaport; UN/Turtle Bay South; Washington Heights South; West Village,-1830.0,Sat,
+8,repartido,2017-03-12,2017-03-12,1,,21,7,Alphabet City,00-06 h,4.4,5.3,4063,4422.0,0.0,4.4,Alphabet City; Financial District North; Hamilton Heights; Inwood; Stuy Town/Peter Cooper Village; Two Bridges/Seward Park; Washington Heights North,-359.0,Sun,
+9,repartido,2017-12-30,2017-12-30,1,,45,15,Flatiron,00-06 h,4.4,5.4,6866,8418.0,0.15,4.4,Central Harlem North; East Chelsea; Flatiron; Gramercy; Greenwich Village South; Highbridge Park; Hudson Sq; Kips Bay; Manhattanville; Meatpacking/West Village West; Roosevelt Island; Seaport; UN/Turtle Bay South; Washington Heights South; West Village,-1552.0,Sat,
+10,repartido,2017-09-21,2017-09-21,1,,10,5,UN/Turtle Bay South,06-10 h,4.4,3.3,2470,2693.0,0.16,4.4,Battery Park City; Chinatown; Financial District North; Hudson Sq; UN/Turtle Bay South,-223.0,Thu,Asamblea General de la ONU
+11,repartido,2017-07-05,2017-07-05,1,,32,8,Inwood,00-04 20-24 h,4.3,4.7,5207,5419.0,0.08,4.3,Alphabet City; East Village; Hamilton Heights; Inwood; Lower East Side; Roosevelt Island; Stuy Town/Peter Cooper Village; Washington Heights North,-212.0,Wed,
+12,repartido,2017-04-18,2017-04-18,1,,44,11,Clinton West,04-06 10-16 h,4.2,7.1,13282,12899.0,0.0,4.2,Clinton West; East Chelsea; East Harlem North; Flatiron; Gramercy; Highbridge Park; Marble Hill; Penn Station/Madison Sq West; Seaport; Sutton Place/Turtle Bay North; World Trade Center,383.0,Tue,
+13,repartido,2017-05-27,2017-05-27,1,,45,15,Kips Bay,00-06 h,4.2,4.3,9013,9883.0,0.0,4.2,Central Harlem North; East Chelsea; Flatiron; Gramercy; Greenwich Village South; Highbridge Park; Hudson Sq; Kips Bay; Manhattanville; Meatpacking/West Village West; Roosevelt Island; Seaport; UN/Turtle Bay South; Washington Heights South; West Village,-870.0,Sat,
+14,repartido,2017-03-12,2017-03-12,1,,33,11,Lenox Hill East,00-06 h,4.1,5.5,6009,6704.0,0.0,4.1,Battery Park; East Harlem North; East Harlem South; Financial District South; Inwood Hill Park; Lenox Hill East; Marble Hill; Morningside Heights; Penn Station/Madison Sq West; Randalls Island; West Chelsea/Hudson Yards,-695.0,Sun,
+15,repartido,2017-03-12,2017-03-12,1,,6,2,East Village,00-06 h,4.0,6.3,5775,6165.0,0.0,4.0,East Village; Lower East Side,-390.0,Sun,
+16,repartido,2017-09-02,2017-09-02,1,,36,12,Midtown North,18-24 h,4.0,7.7,20762,18069.0,0.12,4.0,Battery Park City; Garment District; Lenox Hill West; Lincoln Square West; Manhattan Valley; Midtown East; Midtown North; SoHo; Times Sq/Theatre District; Union Sq; Upper West Side North; Upper West Side South,2693.0,Sat,
+17,repartido,2017-02-15,2017-02-15,1,,32,8,Alphabet City,00-04 20-24 h,4.0,7.9,8209,7406.0,0.0,4.0,Alphabet City; East Village; Hamilton Heights; Inwood; Lower East Side; Roosevelt Island; Stuy Town/Peter Cooper Village; Washington Heights North,803.0,Wed,
+18,repartido,2017-12-30,2017-12-30,1,,21,7,Financial District North,00-06 h,3.8,3.8,2262,2306.0,0.15,3.8,Alphabet City; Financial District North; Hamilton Heights; Inwood; Stuy Town/Peter Cooper Village; Two Bridges/Seward Park; Washington Heights North,-44.0,Sat,
+19,repartido,2017-11-11,2017-11-11,1,,20,5,Midtown Center,10-18 h,3.7,8.3,21633,22905.0,0.04,3.7,Central Park; Lincoln Square East; Midtown Center; Upper East Side North; Upper East Side South,-1272.0,Sat,
+20,repartido,2017-02-10,2017-02-10,1,,44,11,Seaport,00-04 20-24 h,3.7,5.7,15017,15547.0,0.03,3.7,Clinton West; East Chelsea; East Harlem North; Flatiron; Gramercy; Highbridge Park; Marble Hill; Penn Station/Madison Sq West; Seaport; Sutton Place/Turtle Bay North; World Trade Center,-530.0,Fri,
+21,repartido,2017-07-05,2017-07-05,1,,48,12,Central Harlem North,00-04 20-24 h,3.7,7.6,11488,12002.0,0.08,3.7,Bloomingdale; Central Harlem; Central Harlem North; Clinton East; Greenwich Village South; Little Italy/NoLiTa; Manhattan Valley; Meatpacking/West Village West; Two Bridges/Seward Park; West Village; Yorkville East; Yorkville West,-514.0,Wed,
+22,repartido,2017-09-02,2017-09-02,1,,45,15,Manhattanville,00-06 h,3.7,3.4,8005,9089.0,0.12,3.7,Central Harlem North; East Chelsea; Flatiron; Gramercy; Greenwich Village South; Highbridge Park; Hudson Sq; Kips Bay; Manhattanville; Meatpacking/West Village West; Roosevelt Island; Seaport; UN/Turtle Bay South; Washington Heights South; West Village,-1084.0,Sat,
+23,repartido,2017-05-05,2017-05-05,1,,28,7,Upper West Side South,04-06 10-16 h,3.7,3.7,15209,14800.0,0.03,3.7,Greenwich Village North; Lenox Hill West; Lincoln Square East; Lincoln Square West; SoHo; Upper West Side North; Upper West Side South,409.0,Fri,
+24,repartido,2017-10-31,2017-10-31,1,,44,11,Penn Station/Madison Sq West,00-04 20-24 h,3.7,3.9,10673,11285.0,0.03,3.7,Clinton West; East Chelsea; East Harlem North; Flatiron; Gramercy; Highbridge Park; Marble Hill; Penn Station/Madison Sq West; Seaport; Sutton Place/Turtle Bay North; World Trade Center,-612.0,Tue,Halloween y atentado del West Side Highway
+25,repartido,2017-09-02,2017-09-02,1,,15,5,Midtown Center,18-24 h,3.7,7.3,8071,8684.0,0.12,3.7,Central Park; Lincoln Square East; Midtown Center; Upper East Side North; Upper East Side South,-613.0,Sat,
+26,repartido,2017-09-06,2017-09-06,1,,32,8,Stuy Town/Peter Cooper Village,00-04 20-24 h,3.6,5.0,6862,6737.0,0.03,3.6,Alphabet City; East Village; Hamilton Heights; Inwood; Lower East Side; Roosevelt Island; Stuy Town/Peter Cooper Village; Washington Heights North,125.0,Wed,
+27,repartido,2017-12-11,2017-12-11,1,,14,7,TriBeCa/Civic Center,06-10 h,3.5,4.7,5970,5876.0,0.05,3.5,East Harlem South; Inwood Hill Park; Kips Bay; Manhattanville; Murray Hill; TriBeCa/Civic Center; Washington Heights South,94.0,Mon,

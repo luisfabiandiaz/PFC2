@@ -1,0 +1,160 @@
+Segunda etapa: eventos en el cubo regiones x intervalos x días de 2017 (los 365 días)
+umbrales con FDR estimada <= 0.01 (nula empírica); zonas colindantes: 162 pares, 2 zonas sin vecinas
+
+  Umbral de celda: |z| >= 3.8 (s0 = 1.03); celdas marcadas: 7918 de 289080 (2.74%); extiende la huella
+  Nula simulada (100 cubos, binomial negativa por celda; sobredispersión mediana 3.00, percentil 90 6.78, máxima 38.0)
+    fracción de celdas con |z| >= 3, 4, 5, 6 en días normales: observada 2.151%, 0.799%, 0.379%, 0.210%; simulada 1.725%, 0.393%, 0.101%, 0.030%
+    pico |z| >=          4       5       6       7       8      10      12      15
+    nulos por año   1008.3   261.7    78.8    27.2    10.3     1.9     0.6     0.1
+    observados        1057     475     239     161     112      62      41      21
+    FDR estimada      0.95    0.55    0.33    0.17    0.09    0.03    0.01    0.01
+  Umbral de semilla: pico |z| >= 9.0 (FDR de eventos estimada <= 0.05)
+  Umbral de hoja (z de G): weekday >= 3.4 (368 pares día-hoja), holiday >= 3.6 (56 pares día-hoja)
+  Amplitud por día: [0.00, 0.05) 271, [0.05, 0.15) 47, [0.15, 0.25) 13, [0.25, 0.40) 12, [0.40, 0.60) 8, [0.60, 1.01) 14
+  Días de calendario (amplitud >= 0.25): 34; por día de la semana (lunes a domingo): 8 4 4 4 6 3 5
+
+  Eventos: 83 agudos (1291 componentes de 2510 celdas antes de exigir semilla; 16 de una sola celda, 26 de más de un día, 10 que pasan de laborables a fin de semana o al revés), 27 repartidos, 18 de calendario
+
+  Eventos agudos con explicación (fecha y zona de EVENTOS o HALLADOS), por |z| máximo:
+                                    >= 6        >= 8       >= 10       >= 15       >= 20
+  todos                         29 de 83    29 de 83    27 de 62    17 de 21    14 de 15
+  inicio de lunes a viernes     11 de 41    11 de 41    11 de 32      6 de 8      5 de 5
+  inicio en fin de semana       18 de 42    18 de 42    16 de 30    11 de 13     9 de 10
+
+  Eventos que pasan de laborables a fin de semana o al revés:
+     4. 2017-09-01 Fri a 09-03  z =   +38.3  18 celdas, 12-24 h  Randalls Island   <- Electric Zoo (Randalls Island)
+     6. 2017-07-27 Thu a 07-30  z =   +34.4  16 celdas, 08-22 h  Randalls Island   <- Panorama Festival (Randalls Island)
+     8. 2017-06-02 Fri a 06-04  z =   +30.9  19 celdas, 08-22 h  Randalls Island   <- Governors Ball (Randalls Island)
+    24. 2017-03-01 Wed a 03-05  z =   +14.7  19 celdas, 10-20 h  Clinton West   <- The Armory Show, preinauguración (Piers 92/94) / The Armory Show (Piers 92/94) / The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    32. 2017-08-20 Sun a 08-23  z =   +12.7  12 celdas, 06-16 h  West Chelsea/Hudson Yards   <- NY NOW (Javits Center)
+    33. 2017-09-17 Sun a 09-19  z =   +12.7  9 celdas, 06-12 h  Clinton West
+    34. 2017-03-29 Wed a 04-01  z =   +12.6  11 celdas, 06-16 h  West Chelsea/Hudson Yards
+    43. 2017-06-01 Thu a 06-03  z =   +11.8  7 celdas, 06-12 h  West Chelsea/Hudson Yards   <- BookExpo (Javits Center)
+    49. 2017-05-05 Fri a 05-06  z =   +10.9  4 celdas, 10-16 h  Two Bridges/Seward Park
+    61. 2017-02-17 Fri a 02-19  z =   +10.1  5 celdas, 06-10 h  West Chelsea/Hudson Yards   <- Toy Fair (Javits Center)
+
+  Los 40 eventos agudos más fuertes:
+     1. 2017-11-05 Sun          z =  +131.9    5 celdas,  3 reg., 04-08 h        obs 1634 / esp 102  Financial District South   <- Maratón de NYC
+     2. 2017-05-01 Mon a 05-08  z =  +115.5   34 celdas,  1 reg., 06-20 h        obs 2419 / esp 163  Randalls Island   <- Frieze New York, preinauguración (Randalls Island) / Frieze New York (Randalls Island)
+     3. 2017-10-08 Sun          z =   +64.7    3 celdas,  2 reg., 04-08 h        obs 502 / esp 38  Financial District South   <- NYRR Staten Island Half (ferry desde Whitehall)
+     4. 2017-09-01 Fri a 09-03  z =   +38.3   18 celdas,  3 reg., 12-24 h        obs 2469 / esp 1239  Randalls Island   <- Electric Zoo (Randalls Island)
+     5. 2017-03-19 Sun          z =   +35.2    5 celdas,  3 reg., 06-12 h        obs 991 / esp 364  Seaport   <- Media maratón de NYC
+     6. 2017-07-27 Thu a 07-30  z =   +34.4   16 celdas,  1 reg., 08-22 h        obs 842 / esp 81  Randalls Island   <- Panorama Festival (Randalls Island)
+     7. 2017-03-19 Sun          z =   +32.2    7 celdas,  6 reg., 04-08 h        obs 3150 / esp 1004  Midtown North   <- Media maratón de NYC
+     8. 2017-06-02 Fri a 06-04  z =   +30.9   19 celdas,  1 reg., 08-22 h        obs 1253 / esp 133  Randalls Island   <- Governors Ball (Randalls Island)
+     9. 2017-07-16 Sun          z =   +25.9    6 celdas,  4 reg., 04-08 h        obs 1183 / esp 450  Lincoln Square West   <- NYC Triathlon (salida 05:50, Riverside Park)
+    10. 2017-05-15 Mon a 05-17  z =   +23.7    5 celdas,  1 reg., 06-10 h        obs 3637 / esp 1608  Morningside Heights   <- Graduación de Columbia University
+    11. 2017-09-17 Sun          z =   +23.5    2 celdas,  2 reg., 06-08 h        obs 943 / esp 244  East Harlem South
+    12. 2017-11-05 Sun          z =   +22.1    6 celdas,  5 reg., 04-08 h        obs 1808 / esp 690  Midtown Center   <- Maratón de NYC
+    13. 2017-03-05 Sun          z =   +21.6    1 celdas,  1 reg., 08-10 h        obs 295 / esp 75  Washington Heights South   <- The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    14. 2017-04-23 Sun          z =   +21.2    1 celdas,  1 reg., 06-08 h        obs 403 / esp 85  TriBeCa/Civic Center   <- 9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)
+    15. 2017-01-21 Sat          z =   +20.9    8 celdas,  4 reg., 08-14 h        obs 7452 / esp 4159  Sutton Place/Turtle Bay North   <- Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)
+    16. 2017-05-07 Sun          z =   +19.5    2 celdas,  1 reg., 06-10 h        obs 931 / esp 340  Midtown South   <- Five Boro Bike Tour
+    17. 2017-10-01 Sun          z =   +17.3    2 celdas,  2 reg., 06-08 h        obs 705 / esp 259  Upper East Side South
+    18. 2017-04-12 Wed a 04-13  z =   +17.1    5 celdas,  1 reg., 04-10 h        obs 2772 / esp 1777  West Chelsea/Hudson Yards   <- New York Auto Show, días de prensa (Javits Center)
+    19. 2017-09-24 Sun          z =   +16.2    3 celdas,  3 reg., 06-08 h        obs 292 / esp 80  Financial District North   <- Tunnel to Towers 5K (Lower Manhattan)
+    20. 2017-06-27 Tue          z =   +16.2   14 celdas,  4 reg., 10-20 h        obs 2416 / esp 1266  Washington Heights North
+    21. 2017-03-02 Thu          z =   +15.3    1 celdas,  1 reg., 18-20 h        obs 552 / esp 272  Two Bridges/Seward Park
+    22. 2017-01-13 Fri          z =   -14.8    8 celdas,  3 reg., 06-14 h        obs 7245 / esp 11999  Midtown Center
+    23. 2017-01-28 Sat a 01-29  z =   +14.7    2 celdas,  1 reg., 06-08 h        obs 633 / esp 211  Clinton West
+    24. 2017-03-01 Wed a 03-05  z =   +14.7   19 celdas,  1 reg., 10-20 h        obs 16459 / esp 7455  Clinton West   <- The Armory Show, preinauguración (Piers 92/94) / The Armory Show (Piers 92/94) / The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    25. 2017-01-21 Sat          z =   +14.5   16 celdas, 16 reg., 04-06 h        obs 2966 / esp 1672  Garment District
+    26. 2017-04-30 Sun          z =   +14.5    2 celdas,  2 reg., 06-08 h        obs 973 / esp 266  Central Park   <- SHAPE Women's Half Marathon (Central Park)
+    27. 2017-12-13 Wed a 12-15  z =   +13.9   12 celdas,  5 reg., 00-04 22-24 h  obs 5422 / esp 3361  Yorkville West
+    28. 2017-01-22 Sun          z =   +13.3    3 celdas,  3 reg., 06-08 h        obs 742 / esp 255  Upper West Side North
+    29. 2017-09-18 Mon a 09-22  z =   -13.0   92 celdas,  8 reg., 06-22 h        obs 58704 / esp 94476  Midtown Center   <- Asamblea General de la ONU
+    30. 2017-09-10 Sun          z =   +12.8    2 celdas,  1 reg., 06-10 h        obs 188 / esp 66  Hudson Sq
+    31. 2017-11-01 Wed          z =   +12.8   48 celdas, 28 reg., 00-06 h        obs 8863 / esp 4618  West Chelsea/Hudson Yards
+    32. 2017-08-20 Sun a 08-23  z =   +12.7   12 celdas,  2 reg., 06-16 h        obs 13624 / esp 5974  West Chelsea/Hudson Yards   <- NY NOW (Javits Center)
+    33. 2017-09-17 Sun a 09-19  z =   +12.7    9 celdas,  4 reg., 06-12 h        obs 8461 / esp 3799  Clinton West
+    34. 2017-03-29 Wed a 04-01  z =   +12.6   11 celdas,  2 reg., 06-16 h        obs 10063 / esp 4967  West Chelsea/Hudson Yards
+    35. 2017-08-26 Sat          z =   +12.5    3 celdas,  2 reg., 06-10 h        obs 441 / esp 187  Central Harlem North   <- Percy Sutton Harlem 5K
+    36. 2017-01-19 Thu          z =   +12.4    5 celdas,  5 reg., 22-24 h        obs 1218 / esp 650  Washington Heights South
+    37. 2017-06-10 Sat          z =   +12.3    3 celdas,  3 reg., 06-08 h        obs 1070 / esp 500  Central Park   <- NYRR Mini 10K (salida 08:00, Central Park West)
+    38. 2017-04-25 Tue          z =   +12.1    1 celdas,  1 reg., 04-06 h        obs 77 / esp 16  Financial District South
+    39. 2017-10-19 Thu          z =   +12.1    2 celdas,  1 reg., 06-10 h        obs 287 / esp 118  Two Bridges/Seward Park
+    40. 2017-01-29 Sun          z =   +12.1    3 celdas,  3 reg., 14-16 h        obs 1289 / esp 666  Financial District South   <- Protesta contra el veto migratorio (Battery Park, 13:00)
+
+  Eventos repartidos:
+     1. 2017-03-12 Sun  z de G =   6.0  15 reg., 00-06 h        max |z| de celda 6.9  UN/Turtle Bay South...
+     2. 2017-03-12 Sun  z de G =   5.1  14 reg., 00-06 h        max |z| de celda 5.7  Sutton Place/Turtle Bay North...
+     3. 2017-07-07 Fri  z de G =   5.0   7 reg., 04-06 10-16 h  max |z| de celda 3.9  Upper West Side South...
+     4. 2017-05-18 Thu  z de G =   4.6   9 reg., 00-04 20-24 h  max |z| de celda 5.4  West Chelsea/Hudson Yards...   <- Atropello en Times Square
+     5. 2017-03-12 Sun  z de G =   4.6  12 reg., 00-06 h        max |z| de celda 6.0  Upper West Side North...
+     6. 2017-05-18 Thu  z de G =   4.6   9 reg., 04-06 10-16 h  max |z| de celda 7.8  Garment District...   <- Atropello en Times Square
+     7. 2017-07-01 Sat  z de G =   4.5  15 reg., 18-24 h        max |z| de celda 4.7  Gramercy...
+     8. 2017-03-12 Sun  z de G =   4.4   7 reg., 00-06 h        max |z| de celda 5.3  Alphabet City...
+     9. 2017-12-30 Sat  z de G =   4.4  15 reg., 00-06 h        max |z| de celda 5.4  Flatiron...
+    10. 2017-09-21 Thu  z de G =   4.4   5 reg., 06-10 h        max |z| de celda 3.3  UN/Turtle Bay South...   <- Asamblea General de la ONU
+    11. 2017-07-05 Wed  z de G =   4.3   8 reg., 00-04 20-24 h  max |z| de celda 4.7  Inwood...
+    12. 2017-04-18 Tue  z de G =   4.2  11 reg., 04-06 10-16 h  max |z| de celda 7.1  Clinton West...
+    13. 2017-05-27 Sat  z de G =   4.2  15 reg., 00-06 h        max |z| de celda 4.3  Kips Bay...
+    14. 2017-03-12 Sun  z de G =   4.1  11 reg., 00-06 h        max |z| de celda 5.5  Lenox Hill East...
+    15. 2017-03-12 Sun  z de G =   4.0   2 reg., 00-06 h        max |z| de celda 6.3  East Village...
+
+  Días de calendario:
+        2017-01-01 Sun a 01-03  amplitud 0.66, 516 celdas marcadas
+        2017-01-07 Sat          amplitud 0.27, 63 celdas marcadas
+        2017-01-16 Mon          amplitud 0.53, 185 celdas marcadas
+        2017-02-09 Thu          amplitud 0.74, 261 celdas marcadas   <- Nevada
+        2017-02-20 Mon          amplitud 0.63, 234 celdas marcadas
+        2017-03-14 Tue a 03-17  amplitud 0.84, 601 celdas marcadas   <- Nevada (Stella)
+        2017-04-14 Fri          amplitud 0.32, 33 celdas marcadas
+        2017-05-14 Sun          amplitud 0.27, 21 celdas marcadas
+        2017-05-29 Mon          amplitud 0.68, 285 celdas marcadas
+        2017-06-25 Sun          amplitud 0.38, 71 celdas marcadas   <- Marcha del Orgullo (5.ª Avenida, Village)
+        2017-07-03 Mon a 07-04  amplitud 0.84, 608 celdas marcadas   <- 4 de julio
+        2017-08-18 Fri          amplitud 0.34, 12 celdas marcadas
+        2017-09-04 Mon          amplitud 0.76, 314 celdas marcadas
+        2017-10-09 Mon          amplitud 0.32, 42 celdas marcadas
+        2017-11-22 Wed a 11-25  amplitud 0.79, 697 celdas marcadas   <- Acción de Gracias (desfile de Macy's)
+        2017-12-20 Wed          amplitud 0.26, 14 celdas marcadas
+        2017-12-22 Fri a 12-29  amplitud 0.82, 1289 celdas marcadas
+        2017-12-31 Sun          amplitud 0.58, 162 celdas marcadas   <- Nochevieja (Times Square)
+
+  Fechas con evento real: en qué quedaron
+    2017-01-21  agudo      puesto  15  2 evento(s) en su zona; el mayor: 8 celdas, 4 reg., 1 día(s), Sutton Place/Turtle Bay North 08-14 h   Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)
+    2017-02-09  calendario puesto  13  1 evento(s) en su zona; el mayor: 261 celdas, 62 reg., 1 día(s), Upper East Side North    Nevada
+    2017-03-14  calendario puesto   8  1 evento(s) en su zona; el mayor: 601 celdas, 64 reg., 4 día(s), Murray Hill    Nevada (Stella)
+    2017-03-19  agudo      puesto   5  2 evento(s) en su zona; el mayor: 5 celdas, 3 reg., 1 día(s), Seaport 06-12 h   Media maratón de NYC
+    2017-05-07  agudo      puesto  16  1 evento(s) en su zona; el mayor: 2 celdas, 1 reg., 1 día(s), Midtown South 06-10 h   Five Boro Bike Tour
+    2017-05-18  repartido  puesto   4  2 evento(s) en su zona; el mayor: 36 celdas, 9 reg., 1 día(s), West Chelsea/Hudson Yards 00-04 20-24 h   Atropello en Times Square
+    2017-06-11  NO DETECTADO   Desfile puertorriqueño (5.ª Avenida)  (0 evento(s) ese día en otras zonas)
+    2017-06-25  calendario puesto  11  1 evento(s) en su zona; el mayor: 71 celdas, 33 reg., 1 día(s), West Village    Marcha del Orgullo (5.ª Avenida, Village)
+    2017-07-04  calendario puesto   6  1 evento(s) en su zona; el mayor: 608 celdas, 65 reg., 2 día(s), Lower East Side    4 de julio
+    2017-09-19  agudo      puesto  29  1 evento(s) en su zona; el mayor: 92 celdas, 8 reg., 5 día(s), Midtown Center 06-22 h   Asamblea General de la ONU
+    2017-09-20  agudo      puesto  29  1 evento(s) en su zona; el mayor: 92 celdas, 8 reg., 5 día(s), Midtown Center 06-22 h   Asamblea General de la ONU
+    2017-09-21  agudo      puesto  29  2 evento(s) en su zona; el mayor: 92 celdas, 8 reg., 5 día(s), Midtown Center 06-22 h   Asamblea General de la ONU
+    2017-10-31  agudo      puesto  59  2 evento(s) en su zona; el mayor: 30 celdas, 8 reg., 2 día(s), Battery Park City 06-24 h   Halloween y atentado del West Side Highway
+    2017-11-05  agudo      puesto   1  2 evento(s) en su zona; el mayor: 5 celdas, 3 reg., 1 día(s), Financial District South 04-08 h   Maratón de NYC
+    2017-11-23  calendario puesto   1  1 evento(s) en su zona; el mayor: 697 celdas, 64 reg., 4 día(s), East Harlem North    Acción de Gracias (desfile de Macy's)
+    2017-11-29  NO DETECTADO   Encendido del árbol de Rockefeller Center  (0 evento(s) ese día en otras zonas)
+    2017-12-31  calendario puesto  12  1 evento(s) en su zona; el mayor: 162 celdas, 58 reg., 1 día(s), Central Harlem    Nochevieja (Times Square)
+    2017-01-29  agudo      puesto  40  1 evento(s) en su zona; el mayor: 3 celdas, 3 reg., 1 día(s), Financial District South 14-16 h   Protesta contra el veto migratorio (Battery Park, 13:00)
+    2017-02-18  agudo      puesto  61  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 3 día(s), West Chelsea/Hudson Yards 06-10 h   Toy Fair (Javits Center)
+    2017-02-19  agudo      puesto  61  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 3 día(s), West Chelsea/Hudson Yards 06-10 h   Toy Fair (Javits Center)
+    2017-03-02  agudo      puesto  24  1 evento(s) en su zona; el mayor: 19 celdas, 1 reg., 5 día(s), Clinton West 10-20 h   The Armory Show, preinauguración (Piers 92/94)
+    2017-03-04  agudo      puesto  24  1 evento(s) en su zona; el mayor: 19 celdas, 1 reg., 5 día(s), Clinton West 10-20 h   The Armory Show (Piers 92/94)
+    2017-03-05  agudo      puesto  13  2 evento(s) en su zona; el mayor: 1 celdas, 1 reg., 1 día(s), Washington Heights South 08-10 h   The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
+    2017-04-12  agudo      puesto  18  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 2 día(s), West Chelsea/Hudson Yards 04-10 h   New York Auto Show, días de prensa (Javits Center)
+    2017-04-13  agudo      puesto  18  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 2 día(s), West Chelsea/Hudson Yards 04-10 h   New York Auto Show, días de prensa (Javits Center)
+    2017-04-23  agudo      puesto  14  1 evento(s) en su zona; el mayor: 1 celdas, 1 reg., 1 día(s), TriBeCa/Civic Center 06-08 h   9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)
+    2017-04-30  agudo      puesto  26  1 evento(s) en su zona; el mayor: 2 celdas, 2 reg., 1 día(s), Central Park 06-08 h   SHAPE Women's Half Marathon (Central Park)
+    2017-05-04  agudo      puesto   2  1 evento(s) en su zona; el mayor: 34 celdas, 1 reg., 8 día(s), Randalls Island 06-20 h   Frieze New York, preinauguración (Randalls Island)
+    2017-05-06  agudo      puesto   2  1 evento(s) en su zona; el mayor: 34 celdas, 1 reg., 8 día(s), Randalls Island 06-20 h   Frieze New York (Randalls Island)
+    2017-05-17  agudo      puesto  10  1 evento(s) en su zona; el mayor: 5 celdas, 1 reg., 3 día(s), Morningside Heights 06-10 h   Graduación de Columbia University
+    2017-06-01  agudo      puesto  43  1 evento(s) en su zona; el mayor: 7 celdas, 1 reg., 3 día(s), West Chelsea/Hudson Yards 06-12 h   BookExpo (Javits Center)
+    2017-06-03  agudo      puesto   8  1 evento(s) en su zona; el mayor: 19 celdas, 1 reg., 3 día(s), Randalls Island 08-22 h   Governors Ball (Randalls Island)
+    2017-06-04  agudo      puesto   8  1 evento(s) en su zona; el mayor: 19 celdas, 1 reg., 3 día(s), Randalls Island 08-22 h   Governors Ball (Randalls Island)
+    2017-06-10  agudo      puesto  37  1 evento(s) en su zona; el mayor: 3 celdas, 3 reg., 1 día(s), Central Park 06-08 h   NYRR Mini 10K (salida 08:00, Central Park West)
+    2017-07-16  agudo      puesto   9  1 evento(s) en su zona; el mayor: 6 celdas, 4 reg., 1 día(s), Lincoln Square West 04-08 h   NYC Triathlon (salida 05:50, Riverside Park)
+    2017-07-29  agudo      puesto   6  1 evento(s) en su zona; el mayor: 16 celdas, 1 reg., 4 día(s), Randalls Island 08-22 h   Panorama Festival (Randalls Island)
+    2017-07-30  agudo      puesto   6  1 evento(s) en su zona; el mayor: 16 celdas, 1 reg., 4 día(s), Randalls Island 08-22 h   Panorama Festival (Randalls Island)
+    2017-08-22  agudo      puesto  32  1 evento(s) en su zona; el mayor: 12 celdas, 2 reg., 4 día(s), West Chelsea/Hudson Yards 06-16 h   NY NOW (Javits Center)
+    2017-08-23  agudo      puesto  32  1 evento(s) en su zona; el mayor: 12 celdas, 2 reg., 4 día(s), West Chelsea/Hudson Yards 06-16 h   NY NOW (Javits Center)
+    2017-08-26  agudo      puesto  35  1 evento(s) en su zona; el mayor: 3 celdas, 2 reg., 1 día(s), Central Harlem North 06-10 h   Percy Sutton Harlem 5K
+    2017-09-02  agudo      puesto   4  1 evento(s) en su zona; el mayor: 18 celdas, 3 reg., 3 día(s), Randalls Island 12-24 h   Electric Zoo (Randalls Island)
+    2017-09-03  agudo      puesto   4  1 evento(s) en su zona; el mayor: 18 celdas, 3 reg., 3 día(s), Randalls Island 12-24 h   Electric Zoo (Randalls Island)
+    2017-09-24  agudo      puesto  19  1 evento(s) en su zona; el mayor: 3 celdas, 3 reg., 1 día(s), Financial District North 06-08 h   Tunnel to Towers 5K (Lower Manhattan)
+    2017-10-08  agudo      puesto   3  1 evento(s) en su zona; el mayor: 3 celdas, 2 reg., 1 día(s), Financial District South 04-08 h   NYRR Staten Island Half (ferry desde Whitehall)
+    2017-11-04  agudo      puesto  64  1 evento(s) en su zona; el mayor: 4 celdas, 2 reg., 1 día(s), UN/Turtle Bay South 06-10 h   Abbott Dash to the Finish Line 5K (salida junto a la ONU)

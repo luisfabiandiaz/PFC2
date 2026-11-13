@@ -31,7 +31,7 @@ import pandas as pd
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
-from astcc.estadisticos import G2  # noqa: E402
+from astcc.eventos import ganancia  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -40,28 +40,6 @@ cubo = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(cubo)
 
 TOP = 25
-
-
-def ganancia(Y, fechas, us):
-    """z robusto de log g(d, u). Devuelve (días x unidades de más de una celda, índices de esas unidades)."""
-    dsem, dia = fechas.dayofweek.to_numpy(), fechas.dayofyear.to_numpy()
-    D = len(fechas)
-    validas = [k for k, (f, c) in enumerate(us) if len(f) * len(c) > 1]
-    g = np.zeros((D, len(validas)))
-    for a, k in enumerate(validas):
-        f, c = us[k]
-        T = Y[:, f][:, :, c].reshape(D, -1).astype(float)
-        for d in range(D):
-            base = (dsem == dsem[d]) & (np.abs(dia - dia[d]) <= cubo.VENTANA) & (np.arange(D) != d)
-            g[d, a] = G2(np.stack([T[d], T[base].sum(0)])) / (2 * max(T[d].sum(), 1))
-    lg = np.log(np.maximum(g, 1e-12))
-    Z = np.zeros_like(lg)
-    for w in np.unique(dsem):
-        k = dsem == w
-        med = np.median(lg[k], 0)
-        mad = 1.4826 * np.median(np.abs(lg[k] - med), 0)
-        Z[k] = (lg[k] - med) / np.maximum(mad, 1e-9)
-    return Z, validas
 
 
 def main():
@@ -81,7 +59,7 @@ def main():
         punt = {"z celda": np.abs(cubo.puntuar(Y, fechas, U["celda"])).max(1)}
         donde = {}
         for b in ("todo", "stcc", "base", "hojas"):
-            Z, validas = ganancia(Y, fechas, U[b])
+            Z, validas = ganancia(Y, fechas, U[b], cubo.VENTANA)
             punt[f"G {b}"] = Z.max(1)
             donde[b] = [U[b][validas[k]] for k in Z.argmax(1)]
         puesto = {b: pd.Series(-p).rank(method="min").astype(int).to_numpy() for b, p in punt.items()}

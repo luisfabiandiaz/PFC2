@@ -37,10 +37,13 @@ import pandas as pd  # noqa: E402
 sys.stdout.reconfigure(encoding="utf-8")
 
 RAIZ = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(RAIZ))
+
+from astcc.eventos import VENTANA, puntuar, residuo  # noqa: E402,F401
+
 DATOS, SALIDA, CRUDOS = RAIZ / "DATA/procesados", RAIZ / "Resultados/AST-CC", RAIZ / "DATA/crudos"
 FRANJAS = [f"{h:02d}-{h + 2:02d}" for h in range(0, 24, 2)]
 DIAS_SEMANA = {"weekday": [1, 2, 3], "holiday": [5, 6]}          # lunes = 0
-VENTANA = 91                                                       # días a cada lado para la línea base
 Z_AMP = 3                                                          # |z| de unidad que cuenta para la amplitud
 AMP_DIFUSO = 0.25                                                  # amplitud de hojas desde la que el día es difuso
 Z_DET = 8                                                          # |z| de celda para listar una detección
@@ -67,21 +70,80 @@ EVENTOS = {
     "2017-12-31": ("calendario", "Nochevieja (Times Square)"),
 }
 
-# Días que señaló el propio análisis y cuyo evento se identificó después (no cuentan como
-# validación a priori; solo anotan la lista de detecciones).
+# Días que señaló el propio análisis y cuyo evento se identificó después con una fuente que da
+# fecha y lugar (no cuentan como validación a priori; solo anotan las detecciones).
 HALLADOS = {
+    "2017-01-29": "Protesta contra el veto migratorio (Battery Park, 13:00)",
+    "2017-02-18": "Toy Fair (Javits Center)",
+    "2017-02-19": "Toy Fair (Javits Center)",
+    "2017-03-02": "The Armory Show, preinauguración (Piers 92/94)",
+    "2017-03-04": "The Armory Show (Piers 92/94)",
+    "2017-03-05": "The Armory Show (Piers 92/94) / NYRR Washington Heights 5K",
+    "2017-04-12": "New York Auto Show, días de prensa (Javits Center)",
+    "2017-04-13": "New York Auto Show, días de prensa (Javits Center)",
     "2017-04-23": "9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)",
+    "2017-04-30": "SHAPE Women's Half Marathon (Central Park)",
     "2017-05-04": "Frieze New York, preinauguración (Randalls Island)",
     "2017-05-06": "Frieze New York (Randalls Island)",
     "2017-05-17": "Graduación de Columbia University",
+    "2017-06-01": "BookExpo (Javits Center)",
     "2017-06-03": "Governors Ball (Randalls Island)",
     "2017-06-04": "Governors Ball (Randalls Island)",
+    "2017-06-10": "NYRR Mini 10K (salida 08:00, Central Park West)",
     "2017-07-16": "NYC Triathlon (salida 05:50, Riverside Park)",
     "2017-07-29": "Panorama Festival (Randalls Island)",
     "2017-07-30": "Panorama Festival (Randalls Island)",
+    "2017-08-22": "NY NOW (Javits Center)",
+    "2017-08-23": "NY NOW (Javits Center)",
+    "2017-08-26": "Percy Sutton Harlem 5K",
     "2017-09-02": "Electric Zoo (Randalls Island)",
     "2017-09-03": "Electric Zoo (Randalls Island)",
+    "2017-09-24": "Tunnel to Towers 5K (Lower Manhattan)",
+    "2017-10-08": "NYRR Staten Island Half (ferry desde Whitehall)",
+    "2017-11-04": "Abbott Dash to the Finish Line 5K (salida junto a la ONU)",
 }
+
+# Zonas donde se espera la huella de cada evento local. Una detección solo se atribuye al
+# evento si cae en una de ellas; sin entrada (días de calendario), vale cualquier zona.
+ZONAS = {
+    "2017-01-21": ["Turtle Bay", "Midtown", "Murray Hill"],
+    "2017-03-19": ["Central Park", "Midtown", "Times Sq", "Seaport", "Battery", "Financial", "Upper East Side South",
+                   "Lincoln Square"],
+    "2017-05-07": ["Battery", "Financial", "World Trade", "TriBeCa", "Midtown", "Central Park"],
+    "2017-05-18": ["Times Sq"],
+    "2017-06-11": ["Upper East Side", "Lenox Hill", "Midtown", "Central Park"],
+    "2017-09-19": ["Turtle Bay", "Midtown East", "Midtown Center", "Murray Hill"],
+    "2017-09-20": ["Turtle Bay", "Midtown East", "Midtown Center", "Murray Hill"],
+    "2017-09-21": ["Turtle Bay", "Midtown East", "Midtown Center", "Murray Hill"],
+    "2017-10-31": ["TriBeCa", "Battery Park City", "West Village", "Hudson Sq", "World Trade", "Greenwich Village"],
+    "2017-11-05": ["Financial District South", "Battery Park", "Midtown Center", "Central Park", "Lincoln Square",
+                   "Upper East Side", "East Harlem", "Upper West Side"],
+    "2017-11-29": ["Midtown Center", "Midtown North", "Times Sq"],
+    "2017-01-29": ["Battery", "Financial", "World Trade"],
+    "2017-02-18": ["Hudson Yards", "Clinton West"], "2017-02-19": ["Hudson Yards", "Clinton West"],
+    "2017-03-02": ["Clinton West"], "2017-03-04": ["Clinton West"], "2017-03-05": ["Clinton West", "Washington Heights"],
+    "2017-04-12": ["Hudson Yards"], "2017-04-13": ["Hudson Yards"],
+    "2017-04-23": ["TriBeCa", "Battery", "World Trade"],
+    "2017-04-30": ["Central Park", "Lincoln Square"],
+    "2017-05-04": ["Randalls"], "2017-05-06": ["Randalls"],
+    "2017-05-17": ["Morningside"],
+    "2017-06-01": ["Hudson Yards"],
+    "2017-06-03": ["Randalls"], "2017-06-04": ["Randalls"],
+    "2017-06-10": ["Central Park", "Lincoln Square", "Midtown North"],
+    "2017-07-16": ["Lincoln Square", "Upper West Side"],
+    "2017-07-29": ["Randalls"], "2017-07-30": ["Randalls"],
+    "2017-08-22": ["Hudson Yards"], "2017-08-23": ["Hudson Yards"],
+    "2017-08-26": ["Harlem", "Manhattanville"],
+    "2017-09-02": ["Randalls"], "2017-09-03": ["Randalls"],
+    "2017-09-24": ["Financial", "Seaport", "Battery", "World Trade"],
+    "2017-10-08": ["Financial District South", "Battery Park"],
+    "2017-11-04": ["Turtle Bay", "Sutton"],
+}
+
+
+def coincide(fecha, regiones):
+    """¿Cae la detección (nombres de sus regiones) en la zona esperada del evento de esa fecha?"""
+    return fecha not in ZONAS or any(k in regiones for k in ZONAS[fecha])
 
 
 def unidades(periodo, zonas):
@@ -106,39 +168,6 @@ def unidades(periodo, zonas):
             cubre[np.ix_(f, c)] += 1
         assert (cubre == 1).all(), nombre
     return U
-
-
-def z_robusto(S, N, fechas):
-    """z robusto de las cuotas S (días x unidades, con denominadores N del mismo tamaño)
-    frente a los demás días del mismo día de la semana a menos de VENTANA días."""
-    Z = np.zeros_like(S)
-    dsem, dia = fechas.dayofweek.to_numpy(), fechas.dayofyear.to_numpy()
-    for w in np.unique(dsem):
-        k = np.flatnonzero(dsem == w)
-        for a in k:                                                # dejar el día fuera
-            resto = k[(k != a) & (np.abs(dia[k] - dia[a]) <= VENTANA)]
-            med = np.median(S[resto], 0)
-            mad = 1.4826 * np.median(np.abs(S[resto] - med), 0)
-            poisson = np.sqrt(np.maximum(med, 1 / N[a]) / N[a])    # suelo para unidades escasas
-            Z[a] = (S[a] - med) / np.maximum(mad, poisson)
-    return Z
-
-
-def puntuar(Y, fechas, us):
-    """Nivel 1: z de la cuota de cada unidad en el total del día. Devuelve días x unidades."""
-    N = Y.sum((1, 2)).astype(float)
-    C = np.stack([Y[:, f][:, :, c].sum((1, 2)) for f, c in us], 1)
-    return z_robusto(C / N[:, None], np.broadcast_to(N[:, None], C.shape), fechas)
-
-
-def residuo(Y, fechas, us):
-    """Nivel 2: z de la cuota de cada celda dentro de su unidad, N(d, celda) / N(d, unidad).
-    Si la unidad entera sube o baja ese día, la cuota no cambia. Devuelve días x 792."""
-    Nu = np.ones(Y.shape)
-    for f, c in us:
-        Nu[np.ix_(range(len(Y)), f, c)] = np.maximum(Y[:, f][:, :, c].sum((1, 2)), 1)[:, None, None]
-    D = len(Y)
-    return z_robusto((Y / Nu).reshape(D, -1), Nu.reshape(D, -1), fechas)
 
 
 def describir(u, zonas, nombres, k=3):
@@ -280,8 +309,10 @@ def main():
                           "observado": int(Y[d, i, j]), "esperado": round(float(esperado), 1),
                           "amplitud_hojas": round(float(amp["hojas"][d]), 2),
                           "clase": "difuso" if amp["hojas"][d] >= AMP_DIFUSO else "local",
-                          "evento_conocido": EVENTOS.get(fechas[d].strftime("%Y-%m-%d"), ("", ""))[1],
-                          "evento_hallado": HALLADOS.get(fechas[d].strftime("%Y-%m-%d"), ""),
+                          "evento_conocido": EVENTOS.get(fechas[d].strftime("%Y-%m-%d"), ("", ""))[1]
+                          if coincide(fechas[d].strftime("%Y-%m-%d"), nombres[zonas[i]]) else "",
+                          "evento_hallado": HALLADOS.get(fechas[d].strftime("%Y-%m-%d"), "")
+                          if coincide(fechas[d].strftime("%Y-%m-%d"), nombres[zonas[i]]) else "",
                           "_d": d, "_i": i})
         det = pd.DataFrame(filas).sort_values("z", key=np.abs, ascending=False)
         det.drop(columns=["_d", "_i"]).to_csv(SALIDA / f"eventos_cubo_detecciones_{periodo}.csv", index=False)

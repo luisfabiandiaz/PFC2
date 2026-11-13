@@ -15,18 +15,24 @@ z celda = max |z| de celda (AST-CC/11); G = max sobre unidades del z de log g
   2017-10-31 local             31       16       20       20       16   Halloween y atentado del West Side Highway  ->  Battery Park City, Inwood Hill Park, Kips Bay y 3 más [00-02 02-04 20-22 22-24]
   2017-11-23 calendario         2        1        2        1        1   Acción de Gracias (desfile de Macy's)  ->  Bloomingdale, Central Harlem, Central Harlem North y 9 más [04-06 10-12 12-14 14-16]
   2017-11-29 local            106       79       93       43       45   Encendido del árbol de Rockefeller Center  ->  Battery Park, Financial District South, Midtown Center y 1 más [16-18 18-20]
+  2017-03-02 hallado           14       81       22       18       18   The Armory Show, preinauguración (Piers 92/94)
+  2017-04-12 hallado            9       30       34       45       47   New York Auto Show, días de prensa (Javits Center)
+  2017-04-13 hallado           97       91       82      108       84   New York Auto Show, días de prensa (Javits Center)
   2017-05-04 hallado            1       19        9        7        6   Frieze New York, preinauguración (Randalls Island)
   2017-05-17 hallado            6       24        7       22       22   Graduación de Columbia University
+  2017-06-01 hallado           23       75       70       41       42   BookExpo (Javits Center)
+  2017-08-22 hallado           17       22       46       61       72   NY NOW (Javits Center)
+  2017-08-23 hallado           26       26       26       30       34   NY NOW (Javits Center)
   mediana local                36       16       22       18       18
   mediana calendario            4        2        2        2        2
-  mediana hallado               4       22        8       14       14
+  mediana hallado              16       28       30       36       38
 
   Los 25 días más atípicos de cada puntuación: cuántos son de EVENTOS local, de calendario o difusos (amplitud >= 0.25), hallados, o sin explicar
                           z celda   G todo   G stcc   G base  G hojas
   local                         1        5        5        5        5
-  hallado                       2        2        2        2        2
+  hallado                       6        3        3        3        3
   difuso                        7       11       10       10       10
-  sin explicar                 15        7        8        8        8
+  sin explicar                 11        6        7        7        7
 
 == holiday: 105 días
 
@@ -38,22 +44,33 @@ z celda = max |z| de celda (AST-CC/11); G = max sobre unidades del z de log g
   2017-06-25 local             16        8        9        1        1   Marcha del Orgullo (5.ª Avenida, Village)  ->  Central Harlem North, East Chelsea, Flatiron y 12 más [18-20 20-22 22-24]
   2017-11-05 local              1        7        4        2        2   Maratón de NYC  ->  Central Harlem North, East Chelsea, Flatiron y 12 más [00-02 02-04 04-06]
   2017-12-31 calendario        17        2       10       10       11   Nochevieja (Times Square)  ->  Battery Park City, Garment District, Lenox Hill West y 9 más [18-20 20-22 22-24]
+  2017-01-29 hallado           30       53       34       22       21   Protesta contra el veto migratorio (Battery Park, 13:00)
+  2017-02-18 hallado           35       18        3       20       19   Toy Fair (Javits Center)
+  2017-02-19 hallado           36       22       56       46       46   Toy Fair (Javits Center)
+  2017-03-04 hallado           38       65       43       74       75   The Armory Show (Piers 92/94)
+  2017-03-05 hallado           12       57       21       19        8   The Armory Show (Piers 92/94) / NYRR Washington Heights 5K
   2017-04-23 hallado           14       96       40       16       17   9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)
+  2017-04-30 hallado           24       84       38       39       39   SHAPE Women's Half Marathon (Central Park)
   2017-05-06 hallado           20       56       13       41       41   Frieze New York (Randalls Island)
   2017-06-03 hallado           13       47       26       52       52   Governors Ball (Randalls Island)
   2017-06-04 hallado           18       58       53       80       83   Governors Ball (Randalls Island)
+  2017-06-10 hallado           29      100       29       47       47   NYRR Mini 10K (salida 08:00, Central Park West)
   2017-07-16 hallado            8       67       27        8        9   NYC Triathlon (salida 05:50, Riverside Park)
   2017-07-29 hallado           22       24       32       75       76   Panorama Festival (Randalls Island)
   2017-07-30 hallado            9       60       77       79       81   Panorama Festival (Randalls Island)
+  2017-08-26 hallado           28       32       36       26       24   Percy Sutton Harlem 5K
   2017-09-02 hallado            5        6       11       21       20   Electric Zoo (Randalls Island)
   2017-09-03 hallado            3       13       37       24       25   Electric Zoo (Randalls Island)
+  2017-09-24 hallado           21       90       69       31       32   Tunnel to Towers 5K (Lower Manhattan)
+  2017-10-08 hallado            2       41       23       73       74   NYRR Staten Island Half (ferry desde Whitehall)
+  2017-11-04 hallado           37       54        6       18       22   Abbott Dash to the Finish Line 5K (salida junto a la ONU)
   mediana local                12       20        8        7        8
   mediana calendario           17        2       10       10       11
-  mediana hallado              13       56       32       41       41
+  mediana hallado              20       55       33       35       36
 
   Los 25 días más atípicos de cada puntuación: cuántos son de EVENTOS local, de calendario o difusos (amplitud >= 0.25), hallados, o sin explicar
                           z celda   G todo   G stcc   G base  G hojas
   local                         4        2        4        4        4
-  hallado                       9        3        2        4        4
+  hallado                      13        5        6        8        9
   difuso                        4        8        7        6        6
-  sin explicar                  8       12       12       11       11
+  sin explicar                  4       10        8        7        6
