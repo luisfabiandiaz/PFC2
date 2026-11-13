@@ -1,0 +1,65 @@
+Factibilidad de aplicar el árbol sobre el cubo regiones x intervalos x días (todo 2017)
+ganancias en nats por observación del bloque; delta de referencia: 0.005, 0.001, 0.0005, 0.0001
+
+== weekday: D = 156 días, 38 hojas
+
+  1. Nula de Poisson: G^2 / gl de la tabla días x celdas (1 = sin sobredispersión)
+     todo: 6.9; hojas: mínimo 1.5, mediana 4.2, máximo 11.3
+     información total entre días (nats/obs): todo 0.0092; hojas mediana 0.0059, máximo 0.0124
+
+  2. Corte {d} frente al resto: pares (hoja, día) con ganancia >= delta, de 5928 pares; cota por peso del día ~ 1/D = 0.0064
+     delta 0.005: 0 pares en 0 días; delta 0.001: 0 pares en 0 días; delta 0.0005: 13 pares en 5 días; delta 0.0001: 342 pares en 85 días
+     ganancia típica de un día cualquiera en una hoja: mediana 0.000026, percentil 99 0.000283
+     fecha            todo  mejor hoja  puesto   evento (hoja donde más gana; puesto del día en esa hoja)
+     2017-02-09   0.000233    0.000329       1   Nevada (Alphabet City, East Village, Hamilton Heights y 5 más [04-06 10-12 12-14 14-16])
+     2017-03-14   0.000299    0.000440       2   Nevada (Stella) (Chinatown, East Harlem South, Financial District North y 3 más [00-02 02-04 20-22 22-24])
+     2017-05-18   0.000114    0.000238       2   Atropello en Times Square (Garment District, Lenox Hill East, Midtown North y 6 más [16-18 18-20])
+     2017-07-04   0.000564    0.000672       2   4 de julio (Alphabet City, East Village, Hamilton Heights y 5 más [00-02 02-04 20-22 22-24])
+     2017-09-19   0.000121    0.000369       2   Asamblea General de la ONU (Battery Park City, Chinatown, Financial District North y 2 más [06-08 08-10])
+     2017-09-20   0.000068    0.000199       3   Asamblea General de la ONU (Battery Park City, Chinatown, Financial District North y 2 más [06-08 08-10])
+     2017-09-21   0.000083    0.000149       5   Asamblea General de la ONU (Battery Park City, Chinatown, Financial District North y 2 más [06-08 08-10])
+     2017-10-31   0.000099    0.000309       1   Halloween y atentado del West Side Highway (Bloomingdale, Central Harlem, Central Harlem North y 9 más [16-18 18-20])
+     2017-11-23   0.000544    0.000962       1   Acción de Gracias (desfile de Macy's) (Alphabet City, East Village, Hamilton Heights y 5 más [00-02 02-04 20-22 22-24])
+     2017-11-29   0.000032    0.000081      19   Encendido del árbol de Rockefeller Center (Alphabet City, East Village, Hamilton Heights y 5 más [04-06 10-12 12-14 14-16])
+
+  3. Mejor bipartición de días (2-medias KL): qué separaría el primer corte de días
+     todo: ganancia 0.00120, grupo menor de 75 días; V de Cramér con día de la semana 0.76, verano 0.26, semestre 0.12
+     hojas: ganancia mediana 0.00100, máxima 0.00356; >= 0.005: 0; >= 0.001: 18; >= 0.0005: 35; >= 0.0001: 38
+     tamaño del grupo menor: mínimo 16, mediana 55; hojas con grupo menor <= 3 días: 0
+     V de Cramér mediana en las hojas: día de la semana 0.14, verano 0.33, semestre 0.18
+
+  4. Cortes de días sucesivos hasta aislar el día del evento (tamaño del grupo que lo contiene -> ganancia del corte en ese nodo)
+     2017-07-04 4 de julio, todo: 156 -> 75 (0.00120) -> 4 (0.00192) -> 3 (0.01495) -> 1 (0.01843)
+     2017-07-04 4 de julio, hoja 14: 156 -> 63 (0.00273) -> 7 (0.00348) -> 2 (0.00838) -> 1 (0.01630)
+     2017-09-19 Asamblea General de la ONU, todo: 156 -> 81 (0.00120) -> 62 (0.00066) -> 23 (0.00052) -> 8 (0.00078) -> 2 (0.00269) -> 1 (0.00768)
+     2017-09-19 Asamblea General de la ONU, hoja 2: 156 -> 78 (0.00064) -> 4 (0.00124) -> 3 (0.00393) -> 1 (0.00293)
+
+== holiday: D = 105 días, 26 hojas
+
+  1. Nula de Poisson: G^2 / gl de la tabla días x celdas (1 = sin sobredispersión)
+     todo: 12.9; hojas: mínimo 2.7, mediana 7.3, máximo 20.9
+     información total entre días (nats/obs): todo 0.0183; hojas mediana 0.0110, máximo 0.0541
+
+  2. Corte {d} frente al resto: pares (hoja, día) con ganancia >= delta, de 2730 pares; cota por peso del día ~ 1/D = 0.0095
+     delta 0.005: 1 pares en 1 días; delta 0.001: 26 pares en 19 días; delta 0.0005: 74 pares en 41 días; delta 0.0001: 1166 pares en 105 días
+     ganancia típica de un día cualquiera en una hoja: mediana 0.000090, percentil 99 0.000967
+     fecha            todo  mejor hoja  puesto   evento (hoja donde más gana; puesto del día en esa hoja)
+     2017-01-21   0.000274    0.001082       3   Marcha de las Mujeres (Midtown) (Highbridge Park, Kips Bay, Manhattanville y 2 más [06-08 08-10])
+     2017-03-19   0.000205    0.002497       1   Media maratón de NYC (Central Park, Lincoln Square East, Midtown Center y 2 más [06-08 08-10])
+     2017-05-07   0.000184    0.000806       1   Five Boro Bike Tour (Bloomingdale, Central Harlem, Chinatown y 11 más [06-08 08-10])
+     2017-06-11   0.000096    0.000392      39   Desfile puertorriqueño (5.ª Avenida) (Battery Park, East Harlem North, East Harlem South y 8 más [06-08 08-10])
+     2017-06-25   0.000375    0.001098      11   Marcha del Orgullo (5.ª Avenida, Village) (Battery Park, East Harlem North, East Harlem South y 8 más [06-08 08-10])
+     2017-11-05   0.000466    0.006391       1   Maratón de NYC (Battery Park, East Harlem North, East Harlem South y 8 más [06-08 08-10])
+     2017-12-31   0.000445    0.001064       1   Nochevieja (Times Square) (Battery Park City, Garment District, Lenox Hill West y 9 más [18-20 20-22 22-24])
+
+  3. Mejor bipartición de días (2-medias KL): qué separaría el primer corte de días
+     todo: ganancia 0.00552, grupo menor de 48 días; V de Cramér con día de la semana 0.91, verano 0.01, semestre 0.06
+     hojas: ganancia mediana 0.00268, máxima 0.02010; >= 0.005: 4; >= 0.001: 24; >= 0.0005: 26; >= 0.0001: 26
+     tamaño del grupo menor: mínimo 12, mediana 44; hojas con grupo menor <= 3 días: 0
+     V de Cramér mediana en las hojas: día de la semana 0.20, verano 0.18, semestre 0.17
+
+  4. Cortes de días sucesivos hasta aislar el día del evento (tamaño del grupo que lo contiene -> ganancia del corte en ese nodo)
+     2017-11-05 Maratón de NYC, todo: 105 -> 48 (0.00552) -> 36 (0.00190) -> 18 (0.00117) -> 13 (0.00197) -> 4 (0.00152) -> 2 (0.00503) -> 1 (0.01027)
+     2017-11-05 Maratón de NYC, hoja 25: 105 -> 83 (0.02010) -> 27 (0.00732) -> 1 (0.02314)
+     2017-03-19 Media maratón de NYC, todo: 105 -> 48 (0.00552) -> 36 (0.00190) -> 18 (0.00114) -> 9 (0.00115) -> 6 (0.00156) -> 2 (0.00161) -> 1 (0.00607)
+     2017-03-19 Media maratón de NYC, hoja 7: 105 -> 15 (0.00450) -> 2 (0.00827) -> 1 (0.01040)

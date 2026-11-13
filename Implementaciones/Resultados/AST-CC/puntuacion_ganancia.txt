@@ -1,0 +1,59 @@
+Ganancia del corte «día d frente a su línea base» como puntuación de la segunda etapa
+puesto = posición del día entre los de su periodo (1 = el más atípico)
+z celda = max |z| de celda (AST-CC/11); G = max sobre unidades del z de log g
+
+== weekday: 156 días
+
+  fecha      tipo         z celda   G todo   G stcc   G base  G hojas   evento  ->  hoja con mayor ganancia
+  2017-02-09 calendario        11        4       11        4        4   Nevada  ->  Battery Park City, Chinatown, East Harlem South y 9 más [04-06 10-12 12-14 14-16]
+  2017-03-14 calendario         4        2        3        2        2   Nevada (Stella)  ->  Alphabet City, East Village, Hamilton Heights y 5 más [04-06 10-12 12-14 14-16]
+  2017-05-18 local             42       17       17       19       19   Atropello en Times Square  ->  Garment District, Lenox Hill East, Midtown North y 6 más [00-02 02-04 20-22 22-24]
+  2017-07-04 calendario         3        3        1        3        3   4 de julio  ->  Clinton West, East Chelsea, East Harlem North y 8 más [00-02 02-04 20-22 22-24]
+  2017-09-19 local             19        9       18        8        7   Asamblea General de la ONU  ->  Battery Park City, Chinatown, Financial District North y 2 más [06-08 08-10]
+  2017-09-20 local             52       14       25        6       20   Asamblea General de la ONU  ->  Midtown Center, Midtown East [06-08 08-10]
+  2017-09-21 local             28       15       23       16       15   Asamblea General de la ONU  ->  Greenwich Village North, Lenox Hill West, Lincoln Square East y 4 más [04-06 10-12 12-14 14-16]
+  2017-10-31 local             31       16       20       20       16   Halloween y atentado del West Side Highway  ->  Battery Park City, Inwood Hill Park, Kips Bay y 3 más [00-02 02-04 20-22 22-24]
+  2017-11-23 calendario         2        1        2        1        1   Acción de Gracias (desfile de Macy's)  ->  Bloomingdale, Central Harlem, Central Harlem North y 9 más [04-06 10-12 12-14 14-16]
+  2017-11-29 local            106       79       93       43       45   Encendido del árbol de Rockefeller Center  ->  Battery Park, Financial District South, Midtown Center y 1 más [16-18 18-20]
+  2017-05-04 hallado            1       19        9        7        6   Frieze New York, preinauguración (Randalls Island)
+  2017-05-17 hallado            6       24        7       22       22   Graduación de Columbia University
+  mediana local                36       16       22       18       18
+  mediana calendario            4        2        2        2        2
+  mediana hallado               4       22        8       14       14
+
+  Los 25 días más atípicos de cada puntuación: cuántos son de EVENTOS local, de calendario o difusos (amplitud >= 0.25), hallados, o sin explicar
+                          z celda   G todo   G stcc   G base  G hojas
+  local                         1        5        5        5        5
+  hallado                       2        2        2        2        2
+  difuso                        7       11       10       10       10
+  sin explicar                 15        7        8        8        8
+
+== holiday: 105 días
+
+  fecha      tipo         z celda   G todo   G stcc   G base  G hojas   evento  ->  hoja con mayor ganancia
+  2017-01-21 local             15       10       14       13       14   Marcha de las Mujeres (Dag Hammarskjold Plaza, 2.ª Avenida)  ->  Battery Park, East Harlem North, East Harlem South y 8 más [00-02 02-04 04-06]
+  2017-03-19 local              4       31        1        5        5   Media maratón de NYC  ->  Central Harlem North, East Chelsea, Flatiron y 7 más [06-08 08-10]
+  2017-05-07 local             10       46        7        9       10   Five Boro Bike Tour  ->  Bloomingdale, Central Harlem, Chinatown y 11 más [06-08 08-10]
+  2017-06-11 local             92       86       99       92       94   Desfile puertorriqueño (5.ª Avenida)  ->  Central Park, Lincoln Square East, Midtown Center y 2 más [10-12 12-14 14-16 16-18]
+  2017-06-25 local             16        8        9        1        1   Marcha del Orgullo (5.ª Avenida, Village)  ->  Central Harlem North, East Chelsea, Flatiron y 12 más [18-20 20-22 22-24]
+  2017-11-05 local              1        7        4        2        2   Maratón de NYC  ->  Central Harlem North, East Chelsea, Flatiron y 12 más [00-02 02-04 04-06]
+  2017-12-31 calendario        17        2       10       10       11   Nochevieja (Times Square)  ->  Battery Park City, Garment District, Lenox Hill West y 9 más [18-20 20-22 22-24]
+  2017-04-23 hallado           14       96       40       16       17   9/11 Memorial 5K (salida 08:00, Pier 26, Tribeca)
+  2017-05-06 hallado           20       56       13       41       41   Frieze New York (Randalls Island)
+  2017-06-03 hallado           13       47       26       52       52   Governors Ball (Randalls Island)
+  2017-06-04 hallado           18       58       53       80       83   Governors Ball (Randalls Island)
+  2017-07-16 hallado            8       67       27        8        9   NYC Triathlon (salida 05:50, Riverside Park)
+  2017-07-29 hallado           22       24       32       75       76   Panorama Festival (Randalls Island)
+  2017-07-30 hallado            9       60       77       79       81   Panorama Festival (Randalls Island)
+  2017-09-02 hallado            5        6       11       21       20   Electric Zoo (Randalls Island)
+  2017-09-03 hallado            3       13       37       24       25   Electric Zoo (Randalls Island)
+  mediana local                12       20        8        7        8
+  mediana calendario           17        2       10       10       11
+  mediana hallado              13       56       32       41       41
+
+  Los 25 días más atípicos de cada puntuación: cuántos son de EVENTOS local, de calendario o difusos (amplitud >= 0.25), hallados, o sin explicar
+                          z celda   G todo   G stcc   G base  G hojas
+  local                         4        2        4        4        4
+  hallado                       9        3        2        4        4
+  difuso                        4        8        7        6        6
+  sin explicar                  8       12       12       11       11
