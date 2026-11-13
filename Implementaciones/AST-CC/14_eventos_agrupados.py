@@ -29,11 +29,13 @@ viernes usan las hojas del árbol de laborables y los sábados y domingos las de
 Con todos los días en un solo cubo, un evento puede pasar de un viernes a un sábado.
 
 Entradas: las de AST-CC/11, DATA/crudos/taxi_zones/taxi_zones.shp
-Salidas:  Resultados/AST-CC/eventos_agrupados.txt, eventos_agrupados.csv
+Salidas:  Resultados/AST-CC/eventos_agrupados.txt, eventos_agrupados.csv,
+          eventos_agrupados_huellas.json (celdas de cada evento, para AST-CC/15)
           Resultados/AST-CC/figuras/eventos_agrupados.png
 """
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -62,9 +64,11 @@ cubo = _cargar("cubo11", "11_eventos_cubo.py")
 
 Q = 0.01                    # tasa de falsos descubrimientos admitida
 FDR_EVENTO = 0.05           # fracción admitida de eventos agudos que serían ruido
-R_NULA = 100                # cubos simulados para la nula
+R_NULA = 100                # cubos simulados para la nula de los eventos agudos
+R_NULA_G = 50               # cubos simulados para la nula de los eventos repartidos
 SEMILLA = 20261004
 CORTES_NULA = (4, 5, 6, 7, 8, 10, 12, 15)
+CORTES_G = (3, 3.5, 4, 4.5, 5, 6)
 MARGEN = 50                 # pies: holgura para decidir que dos zonas colindan
 FRANJAS = cubo.FRANJAS
 CORTES = (6, 8, 10, 15, 20)
@@ -151,10 +155,14 @@ def main():
     phi = ev.dispersion(Y, E, ~calendario)
     pico_nulo, colas = ev.picos_nulos(E, phi, t_z, fechas, vecinas, np.random.default_rng(SEMILLA), R_NULA)
     normales = (~calendario).mean()
-    rejilla = np.arange(t_z, 40, 0.1)
-    nulos = np.array([(pico_nulo >= u).sum() / R_NULA * normales for u in rejilla])
-    obs = np.array([(pico_obs >= u).sum() for u in rejilla])
-    t_s = float(next(u for u, a, b in zip(rejilla, nulos, obs) if a / max(b, 1) <= FDR_EVENTO))
+    t_s = ev.umbral_nulo(pico_obs, pico_nulo, R_NULA, FDR_EVENTO, normales, desde=t_z)
+    # Umbral de los eventos repartidos: la misma regla con el z de G de cada hoja
+    for g in G.values():
+        rng_g = np.random.default_rng(SEMILLA + 1)
+        g["nulo"] = ev.ganancias_nulas(E[g["dias"]], phi, fechas[g["dias"]], g["hojas"], rng_g, R_NULA_G)
+        g["obs"] = g["ZG"][~calendario[g["dias"]]]
+        g["t_normal"] = g["t"]
+        g["t"] = ev.umbral_nulo(g["obs"], g["nulo"], R_NULA_G, FDR_EVENTO, normales)
     colas_obs = [(np.abs(Zc[~calendario]) >= u).mean() for u in (3, 4, 5, 6)]
 
     L = ["Segunda etapa: eventos en el cubo regiones x intervalos x días de 2017 (los 365 días)",
@@ -172,8 +180,15 @@ def main():
          f"    {'FDR estimada':<14}" + "".join(f"{(pico_nulo >= u).sum() / R_NULA * normales / max((pico_obs >= u).sum(), 1):>8.2f}"
                                                for u in CORTES_NULA),
          f"  Umbral de semilla: pico |z| >= {t_s:.1f} (FDR de eventos estimada <= {FDR_EVENTO})",
-         "  Umbral de hoja (z de G): " + ", ".join(f"{g} >= {G[g]['t']:.1f} ({(G[g]['ZG'] >= G[g]['t']).sum()} pares día-hoja)"
-                                                   for g in G),
+         f"  Eventos repartidos: z de G de cada hoja frente a la nula simulada ({R_NULA_G} cubos)",
+         *[linea for g in G for linea in (
+             f"    {g}: {'z de G >=':<14}" + "".join(f"{u:>8}" for u in CORTES_G),
+             f"    {'':<{len(g) + 2}}{'nulos por año':<14}"
+             + "".join(f"{(G[g]['nulo'] >= u).sum() / R_NULA_G * normales:>8.1f}" for u in CORTES_G),
+             f"    {'':<{len(g) + 2}}{'observados':<14}" + "".join(f"{int((G[g]['obs'] >= u).sum()):>8}" for u in CORTES_G),
+             f"    {'':<{len(g) + 2}}umbral: " + (f"z de G >= {G[g]['t']:.1f}" if np.isfinite(G[g]['t'])
+                                                   else "ninguno cumple la FDR; no se listan eventos repartidos")
+             + f" (con la nula normal era {G[g]['t_normal']:.1f})")],
          "  Amplitud por día: " + ", ".join(f"[{a:.2f}, {b:.2f}) {((amp >= a) & (amp < b)).sum()}"
                                             for a, b in [(0, .05), (.05, .15), (.15, .25), (.25, .4), (.4, .6), (.6, 1.01)]),
          f"  Días de calendario (amplitud >= {cubo.AMP_DIFUSO}): {int(calendario.sum())}; por día de la semana "
@@ -196,17 +211,21 @@ def main():
                       "signo": "", "n_celdas": int(m.sum()), "n_regiones": int(m.any((0, 2)).sum()),
                       "region_pico": nom[pico[1]], "intervalos": "", "puntuacion": float(np.abs(Zc[dias]).max()),
                       "z_pico": float(Zc[dias][pico]), "observado": int(Y[dias].sum()), "esperado": float(E[dias].sum()),
-                      "amplitud": float(amp[dias].max()), "z_G": float(zg_dia[dias].max()), "regiones": ""})
+                      "amplitud": float(amp[dias].max()), "z_G": float(zg_dia[dias].max()), "regiones": "",
+                      "_celdas": [[int(dias[a]), int(b), int(c)] for a, b, c in np.argwhere(m)]})
         d = fin + 1
 
     # 3. Eventos agudos: componentes conexas fuera de los días de calendario
-    for e in range(n_comp):
-        c = nodos[etiq == e]
+    # Los fragmentos de un solo día que coinciden en día y hora se funden en un solo evento
+    retenidos = [nodos[etiq == e] for e in np.flatnonzero(pico_obs >= t_s)]
+    grupo_de = ev.fusionar(retenidos, [np.sign(Zc[tuple(c[0])]) for c in retenidos])
+    for e in range(grupo_de.max() + 1 if len(retenidos) else 0):
+        partes = [retenidos[k] for k in np.flatnonzero(grupo_de == e)]
+        partes.sort(key=lambda c: -np.abs(Zc[tuple(c.T)]).max())
+        c = np.concatenate(partes)
         dd, ii, jj = c.T
         z = Zc[dd, ii, jj]
         p = int(np.abs(z).argmax())
-        if abs(z[p]) < t_s:
-            continue
         zg = []
         for dia in np.unique(dd):
             g = G[grupo[dia]]
@@ -222,7 +241,10 @@ def main():
                       "puntuacion": float(np.abs(z).max()), "z_pico": float(z[p]),
                       "observado": int(Y[dd, ii, jj].sum()), "esperado": float(E[dd, ii, jj].sum()),
                       "amplitud": float(amp[np.unique(dd)].max()), "z_G": float(max(zg)) if zg else np.nan,
-                      "regiones": "; ".join(nom[i] for i in orden)})
+                      "regiones": "; ".join(nom[i] for i in orden), "n_fragmentos": len(partes), "_celdas": c.tolist(),
+                      "fragmentos": " | ".join(
+                          f"{nom[q[np.abs(Zc[tuple(q.T)]).argmax()][1]]} {tramos(q[:, 2])} "
+                          f"(z {Zc[tuple(q[np.abs(Zc[tuple(q.T)]).argmax()])]:+.0f})" for q in partes)})
 
     # 4. Eventos repartidos: hojas con G alta que ningún evento agudo toca
     for g in G.values():
@@ -237,10 +259,13 @@ def main():
                           "intervalos": tramos(c), "puntuacion": float(g["ZG"][ld, a]), "z_pico": float(zc.max()),
                           "observado": int(Y[d][np.ix_(f, c)].sum()), "esperado": float(E[d][np.ix_(f, c)].sum()),
                           "amplitud": float(amp[d]), "z_G": float(g["ZG"][ld, a]),
-                          "regiones": "; ".join(nom[i] for i in f)})
+                          "regiones": "; ".join(nom[i] for i in f),
+                          "_celdas": [[int(d), int(i), int(j)] for i in f for j in c]})
 
     t = pd.DataFrame(filas)
     t["exceso"] = t.observado - t.esperado
+    t["n_fragmentos"] = t.n_fragmentos.fillna(1).astype(int)
+    t["fragmentos"] = t.fragmentos.fillna("")
     t["dia_semana"] = pd.to_datetime(t.inicio).dt.strftime("%a")
     t["evento"] = [" / ".join(dict.fromkeys(
         conocidos[f] for f in clave[clave.index(a):clave.index(b) + 1]
@@ -248,6 +273,11 @@ def main():
         for a, b, c, r in zip(t.inicio, t.fin, t.clase, t.regiones)]
     t = t.sort_values(["clase", "puntuacion"], ascending=[True, False]).reset_index(drop=True)
     t.insert(0, "puesto", t.groupby("clase").cumcount() + 1)
+    (cubo.SALIDA / "eventos_agrupados_huellas.json").write_text(json.dumps({
+        "t_z": round(t_z, 1), "t_s": round(t_s, 1),
+        "eventos": [{"clase": c, "puesto": int(q), "celdas": h} for c, q, h in zip(t.clase, t.puesto, t["_celdas"])]}),
+        encoding="utf-8")
+    t = t.drop(columns="_celdas")
     t.round({"puntuacion": 1, "z_pico": 1, "esperado": 0, "exceso": 0, "amplitud": 2, "z_G": 1}).to_csv(
         cubo.SALIDA / "eventos_agrupados.csv", index=False)
     figura(t, fechas, amp)
@@ -256,7 +286,8 @@ def main():
     w_ini, w_fin = pd.to_datetime(ag.inicio).dt.dayofweek, pd.to_datetime(ag.fin).dt.dayofweek
     finde = (w_ini >= 5).to_numpy()
     cruza = ag[(ag.n_dias > 1) & ((w_ini < 5) != (w_fin < 5))]
-    L += [f"  Eventos: {len(ag)} agudos ({n_comp} componentes de {int(M.sum())} celdas antes de exigir semilla; "
+    L += [f"  Eventos: {len(ag)} agudos ({n_comp} componentes de {int(M.sum())} celdas; {len(retenidos)} con pico sobre el "
+          f"umbral, que la fusión por día y hora deja en {len(ag)}; {int((ag.n_fragmentos > 1).sum())} con más de un fragmento; "
           f"{int((ag.n_celdas == 1).sum())} de una sola celda, {int((ag.n_dias > 1).sum())} de más de un día, "
           f"{len(cruza)} que pasan de laborables a fin de semana o al revés), {int((t.clase == 'repartido').sum())} repartidos, "
           f"{int((t.clase == 'calendario').sum())} de calendario", "",
@@ -272,6 +303,10 @@ def main():
     for r in cruza.itertuples():
         L.append(f"   {r.puesto:>3}. {r.inicio} {r.dia_semana} a {r.fin[5:]}  z = {r.z_pico:+7.1f}  {r.n_celdas} celdas, "
                  f"{r.intervalos}  {r.region_pico}{'   <- ' + r.evento if r.evento else ''}")
+    L += ["", "  Eventos fundidos (fragmentos de un solo día que coinciden en día y hora):"]
+    for r in ag[ag.n_fragmentos > 1].itertuples():
+        L.append(f"   {r.puesto:>3}. {r.inicio} {r.dia_semana}{' a ' + r.fin[5:] if r.n_dias > 1 else '':<9} "
+                 f"{r.n_fragmentos} fragmentos: {r.fragmentos}{'   <- ' + r.evento if r.evento else ''}")
     L += ["", "  Los 40 eventos agudos más fuertes:"]
     for r in ag.head(40).itertuples():
         L.append(f"   {r.puesto:>3}. {r.inicio} {r.dia_semana}{' a ' + r.fin[5:] if r.n_dias > 1 else '':<9} z = {r.z_pico:+7.1f}  "

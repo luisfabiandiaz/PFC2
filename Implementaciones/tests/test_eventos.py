@@ -271,3 +271,66 @@ def test_picos_nulos_es_reproducible_y_raro_por_encima_del_umbral(cubo):
     assert (a >= 3.5).all()
     assert (a >= 9).mean() < 0.05
     assert colas[0] > colas[1] >= colas[2] >= colas[3]
+
+
+# ----------------------------------------------------------------------------
+# Umbral por nula simulada y fusión de fragmentos
+# ----------------------------------------------------------------------------
+
+def test_umbral_nulo_elige_el_primer_umbral_con_poco_ruido():
+    obs = np.r_[np.full(100, 3.0), np.full(20, 10.0)]       # 100 valores bajos y 20 altos
+    nulos = np.full(200, 3.0)                              # 2 réplicas con 100 valores bajos cada una
+    t = ev.umbral_nulo(obs, nulos, R=2, q=0.05)
+    assert 3.0 < t <= 3.2                                  # justo por encima del ruido
+    assert (obs >= t).sum() == 20
+
+
+def test_umbral_nulo_usa_el_factor_de_tamaño():
+    obs, nulos = np.full(10, 5.0), np.full(10, 5.0)
+    assert ev.umbral_nulo(obs, nulos, R=1, q=0.05) == float("inf")
+    assert ev.umbral_nulo(obs, nulos, R=1, q=0.05, factor=0.04) == pytest.approx(2.0)
+
+
+def test_umbral_nulo_sin_solucion_devuelve_infinito():
+    """Si lo observado nunca supera al ruido, no hay umbral: no vale el que deja cero observados."""
+    rng = np.random.default_rng(4)
+    assert ev.umbral_nulo(rng.normal(size=500), rng.normal(size=5000), R=10, q=0.05) == float("inf")
+
+
+def huella(*celdas):
+    return np.array(celdas)
+
+
+@pytest.mark.parametrize("a, b, juntas", [
+    (huella((3, 0, 2), (3, 0, 3)), huella((3, 9, 3)), True),        # mismo día, comparten un intervalo, zonas lejanas
+    (huella((3, 0, 2)), huella((3, 9, 3)), False),                  # mismo día, intervalos contiguos pero distintos
+    (huella((3, 0, 2)), huella((4, 9, 2)), False),                  # misma hora, otro día
+    (huella((3, 0, 2), (4, 0, 2)), huella((3, 9, 2)), False),       # una huella de varios días no se funde
+])
+def test_fusionar_solo_une_fragmentos_de_un_dia_con_horas_comunes(a, b, juntas):
+    grupos = ev.fusionar([a, b], [1, 1])
+    assert (grupos[0] == grupos[1]) == juntas
+
+
+def test_fusionar_respeta_el_signo_y_la_holgura():
+    a, b = huella((3, 0, 2)), huella((3, 9, 3))
+    assert len(set(ev.fusionar([a, b], [1, 1], holgura=1))) == 1
+    assert len(set(ev.fusionar([a, huella((3, 9, 2))], [1, -1]))) == 2
+    assert len(ev.fusionar([], [])) == 0
+
+
+def test_fusionar_encadena_tres_fragmentos():
+    f = [huella((3, 0, 1), (3, 0, 2)), huella((3, 5, 2), (3, 5, 3)), huella((3, 9, 3)), huella((3, 7, 7))]
+    g = ev.fusionar(f, [1, 1, 1, 1])
+    assert g[0] == g[1] == g[2] != g[3]
+
+
+def test_ganancias_nulas_forma_y_semilla(cubo):
+    Y, fechas, _ = cubo
+    E = ev.esperados(Y, fechas)
+    phi = np.ones(E.shape[1:])
+    us = [(np.array([0]), np.array([0])), (np.arange(1, 4), np.arange(N_INT))]
+    a = ev.ganancias_nulas(E, phi, fechas, us, np.random.default_rng(6), R=2)
+    b = ev.ganancias_nulas(E, phi, fechas, us, np.random.default_rng(6), R=2)
+    assert a.shape == (2, len(fechas), 1)
+    assert np.array_equal(a, b)

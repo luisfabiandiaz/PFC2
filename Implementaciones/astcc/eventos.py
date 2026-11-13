@@ -203,3 +203,55 @@ def picos_nulos(E, phi, t, fechas, vecinas, rng, R, ventana=VENTANA):
         todos.append(picos(Zs, np.abs(Zs) >= t, fechas, vecinas)[0])
         colas.append([(np.abs(Zs) >= u).mean() for u in (3, 4, 5, 6)])
     return np.concatenate(todos), np.mean(colas, 0)
+
+
+def ganancias_nulas(E, phi, fechas, us, rng, R, ventana=VENTANA):
+    """z de la ganancia de cada unidad en R cubos de `simular` (sin eventos).
+    Devuelve (R, días, unidades válidas)."""
+    return np.stack([ganancia(simular(E, phi, rng), fechas, us, ventana)[0] for _ in range(R)])
+
+
+def umbral_nulo(obs, nulos, R, q=0.05, factor=1.0, desde=2.0, hasta=40.0):
+    """Menor umbral u (en pasos de 0.1) con
+
+        (nº de valores nulos >= u por réplica) x factor / (nº de observados >= u) <= q,
+
+    es decir, con una fracción estimada de ruido entre lo detectado de q como mucho.
+    `nulos` reúne los valores de R réplicas simuladas; `factor` ajusta el tamaño de la
+    réplica al de los datos (por ejemplo, la fracción de días que se analizan). Si ningún
+    umbral lo cumple mientras queda algo observado, devuelve infinito: lo observado no se
+    distingue del ruido."""
+    obs, nulos = np.asarray(obs).ravel(), np.asarray(nulos).ravel()
+    for u in np.arange(desde, hasta, 0.1):
+        n_obs = (obs >= u).sum()
+        if n_obs == 0:
+            break
+        if (nulos >= u).sum() / R * factor / n_obs <= q:
+            return float(u)
+    return float("inf")
+
+
+def fusionar(huellas, signos, holgura=0):
+    """Une los fragmentos de un mismo evento. Dos huellas (arreglos (n, 3) de día, región,
+    intervalo) del mismo signo, cada una de un solo día, se juntan si son del mismo día y
+    comparten algún intervalo (o distan `holgura` como mucho), estén donde estén sus
+    regiones. Las huellas de varios días no se funden con nada: una feria de cuatro días
+    coincide en hora con casi cualquier otro evento de esos días.
+    Devuelve la etiqueta de grupo de cada huella."""
+    n = len(huellas)
+    if n == 0:
+        return np.zeros(0, int)
+    horas = [{} for _ in range(n)]                    # día -> intervalos de la huella ese día
+    for k, h in enumerate(huellas):
+        for d, _, j in h:
+            horas[k].setdefault(int(d), set()).add(int(j))
+    a, b = [], []
+    for k in range(n):
+        for m in range(k + 1, n):
+            if signos[k] != signos[m] or len(horas[k]) > 1 or len(horas[m]) > 1:
+                continue
+            if any(abs(x - y) <= holgura for d in horas[k].keys() & horas[m].keys()
+                   for x in horas[k][d] for y in horas[m][d]):
+                a.append(k)
+                b.append(m)
+    return connected_components(coo_matrix((np.ones(len(a)), (a, b)), shape=(n, n)), directed=False)[1]
