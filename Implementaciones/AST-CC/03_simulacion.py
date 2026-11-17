@@ -16,7 +16,10 @@ A. Calibración (sin patrones: ningún bloque base debe refinarse).
    FWER = proporción de réplicas con al menos un corte. Con delta = 0 se mide la
    validez de las pruebas; con delta = 0.005, el comportamiento práctico.
    Se usa la partición base verdadera y, en el escenario realista, también la
-   estimada con BBAC C5 (incluye el efecto de la selección).
+   estimada con BBAC C5 (incluye el efecto de la selección). BBAC C5 corresponde al
+   generador y recupera sus bloques, así que dentro de ellos se cumple la nula. Con el
+   esquema de ST-CC (C2), la base de los datos reales, la nula no se cumple dentro de
+   los bloques estimados y los cortes reparan la base: eso se evalúa en AST-CC/12.
 
 B. Potencia y recuperación (escenario realista, nula de bootstrap).
    Dos patrones plantados en bloques distintos: la mitad de las filas del bloque

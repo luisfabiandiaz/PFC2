@@ -3,16 +3,17 @@ Refinamiento AST-CC sobre los datos reales y sensibilidad a delta
 =================================================================
 Cap_3.tex, Algoritmos 1 y 2, y sec:prop-parada ("Elección de delta").
 
-Para cada periodo (laborable, feriado) y cada partición base (C5, la adoptada, y
-C2, la variante) se ajusta AST-CC con la nula de bootstrap de días y se recorre la
-rejilla de delta de la Propuesta. Para cada configuración se reporta:
+Para cada periodo (laborable, feriado) y cada partición base (la de ST-CC, la adoptada,
+y las de BBAC C5 y la rejilla C6, de sensibilidad; astcc.referencia) se ajusta AST-CC con
+la nula de bootstrap de días y se recorre la rejilla de delta. Para cada configuración se reporta:
   - hojas por tipo y número de cortes de cada tipo
   - profundidad máxima
   - fracción del término de interacción local (iii) de ST-CC que explica el árbol,
     sum G2_{B,s} / sum G2_gh (Corolario cor:stcc), y comprobación del corolario
   - réplicas usadas y tiempo
 
-Para delta = 0.005 se guardan los descriptores de hoja (sec:prop-representacion):
+Para la base de ST-CC y los dos niveles de delta de astcc.referencia (completo y resumen)
+se guardan los descriptores de hoja (sec:prop-representacion):
 regiones, intervalos, masa, I~_L, tipo, motivo por el que la hoja no se refinó
 (astcc.arbol.MOTIVOS, que separa lo que decide la prueba de lo que decide delta), el
 corte significativo descartado por delta si lo hubo, y dos niveles de actividad relativa:
@@ -23,13 +24,13 @@ columnas, porque E^P reproduce los totales de fila y de columna del padre; solo
 es informativa tras un corte conjunto.
 
 Nota: ambos periodos usan el bootstrap sin estratificar por tipo de día. En el
-feriado, estratificar no mejora la calibración (E5: tipo I medio 0.109 frente a 0.045
+feriado, estratificar no mejora la calibración (E5: tipo I medio 0.112 frente a 0.045
 sin estratos) y queda como limitación conocida en los bloques nocturnos, 5 de 24
 sobre el nivel nominal (Cap_3, sec:prop-bootstrap y sec:prop-limitaciones).
 
 Salidas:
   Resultados/AST-CC/refinamiento.txt
-  Resultados/AST-CC/hojas_{periodo}_{base}.csv
+  Resultados/AST-CC/hojas_{periodo}_{completo,resumen}.csv
 """
 
 import sys
@@ -44,6 +45,7 @@ sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.estadisticos import esperados  # noqa: E402
+from astcc.referencia import BASE, BASES, DELTA_COMPLETO, DELTA_RESUMEN, NOMBRE_BASE, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -52,8 +54,7 @@ SALIDA = RAIZ / "Resultados/AST-CC"
 SALIDA.mkdir(parents=True, exist_ok=True)
 
 SEMILLA = 20261004
-DELTAS = [0.001, 0.0025, 0.005, 0.01, 0.02]
-DELTA_DETALLE = 0.005
+DELTAS = [0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.02]
 FRANJAS = [f"{h:02d}-{h + 2:02d}" for h in range(0, 24, 2)]
 
 
@@ -95,10 +96,10 @@ def main():
     for periodo in ("weekday", "holiday"):
         X = np.load(DATOS / f"Calibracion/conteos_diarios_{periodo}.npy")
         O = X.sum(0)
-        for base in ("C5", "C2"):
-            rho = np.load(DATOS / f"AST-CC/{periodo}_{base}_rho.npy")
-            tau = np.load(DATOS / f"AST-CC/{periodo}_{base}_tau.npy")
-            L.append(f"{periodo}, partición base {base}")
+        niveles = {DELTA_COMPLETO: "completo", DELTA_RESUMEN[periodo]: "resumen"}
+        for base in BASES:
+            rho, tau = cargar_base(periodo, base)
+            L.append(f"{periodo}, partición base {NOMBRE_BASE[base]}")
             L.append(f"  {'delta':>7} {'hojas':>5} {'homog.':>6} {'(I~<d)':>6} {'no loc.':>7} {'(g~<d)':>6} "
                      f"{'triv.':>5} {'inalc.':>6}  "
                      f"{'fil':>3} {'col':>3} {'conj':>4} {'prof.':>5}  {'(iii) expl.':>11} {'err. cor.':>9} "
@@ -118,8 +119,8 @@ def main():
                          f"{d['explicada'] / iii:>11.1%} {d['error'] / d['total']:>9.0e} "
                          f"{max(n.B_usadas for n in res.nodos()):>6} {res.segundos:>5.1f}")
                 print(L[-1], flush=True)
-                if delta == DELTA_DETALLE:
-                    descriptores(res, O, zonas).to_csv(SALIDA / f"hojas_{periodo}_{base}.csv", index=False)
+                if base == BASE and delta in niveles:
+                    descriptores(res, O, zonas).to_csv(SALIDA / f"hojas_{periodo}_{niveles[delta]}.csv", index=False)
             L.append("")
     texto = "\n".join(L)
     print("\n" + texto)

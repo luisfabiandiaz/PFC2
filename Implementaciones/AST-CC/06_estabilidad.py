@@ -5,21 +5,23 @@ Cap_3, sec:prop-representacion ("Frecuencia de soporte") y sec:prop-limitaciones
 ("Parámetros", "Validez de las pruebas"); cierra la cautela de 05_comparacion.py, cuyo
 D_I y cuyo BIC no descuentan que la partición y los cortes se eligen con los mismos datos.
 
-A. Frecuencia de soporte. La referencia es el árbol de AST-CC/02 (partición base de
-   BBAC C5 con 200 inicializaciones, delta = 0.005). Se repite el procedimiento
-   R_SOPORTE veces con una partición base distinta, la de UNA sola inicialización de
-   BBAC (la más sensible a los mínimos locales), y se mide en qué proporción de las
-   ejecuciones reaparece cada hoja de referencia con Jaccard >= kappa = 0.5 sobre celdas.
-   Una hoja que aparece en menos de la mitad no debe interpretarse como hallazgo.
+A. Frecuencia de soporte. La referencia es el árbol resumido de AST-CC/02 (partición base
+   de ST-CC, delta de astcc.referencia). Se repite el procedimiento R_SOPORTE veces con una
+   partición base distinta, la de UNA sola inicialización de BBAC C2 (el esquema de ST-CC:
+   su partición coincide con la de BBAC C2 con ARI 0.867, AST-CC/01; es la más sensible a
+   los mínimos locales), y se mide en qué proporción de las ejecuciones reaparece cada hoja
+   de referencia con Jaccard >= kappa = 0.5 sobre celdas. Una hoja que aparece en menos de
+   la mitad no debe interpretarse como hallazgo. El soporte frente a la variabilidad de los
+   días, con la base fija, está en AST-CC/11.
 
 B. División de días. Se parten los D días en dos mitades al azar, R_DIVISION veces. Con una
    mitad se ajusta cada modelo y se mide D_I en la otra mitad, en ambos sentidos. Un
    modelo que solo se ajusta al ruido de su mitad empeora fuera de ella. Los modelos son:
    rejillas globales evaluadas con la base C6 y optimizadas para C6 (BBAC C5 mejorado con
    astcc.bbac.optimizar_c6; la rejilla de BBAC sin mejorar se conserva como "rejilla BBAC"
-   porque fue la comparación anterior), y AST-CC con dos valores de delta y dos
-   particiones base estimadas solo con esa mitad: la de BBAC C5 y la misma rejilla optimizada
-   para C6. Para cada AST-CC se compara con la rejilla de C6 de menos parámetros que tenga
+   porque fue la comparación anterior), y AST-CC con los dos niveles de delta y tres
+   particiones base estimadas solo con esa mitad: la de BBAC C2 (el esquema de ST-CC), la de
+   BBAC C5 y la misma rejilla optimizada para C6. Para cada AST-CC se compara con la rejilla de C6 de menos parámetros que tenga
    al menos tantos como él (ventaja para la rejilla) y con la de más parámetros que tenga
    a lo sumo tantos (ventaja para el árbol), y se cuenta en cuántos ajustes gana el árbol.
 
@@ -47,6 +49,7 @@ sys.path.insert(0, str(RAIZ))
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.bbac import aproximacion, bbac, d_I, optimizar_c6  # noqa: E402
 from astcc.estabilidad import KAPPA, divergencia_fuera_de_muestra, frecuencia_de_soporte  # noqa: E402
+from astcc.referencia import DELTA_COMPLETO, DELTA_RESUMEN, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -58,8 +61,6 @@ SEMILLA = 20261030
 K_BASE = {"weekday": (8, 4), "holiday": (6, 4)}
 REJILLAS = {"weekday": [(8, 4), (12, 4), (16, 4), (20, 4), (12, 6), (16, 6), (24, 8)],
             "holiday": [(6, 4), (8, 4), (10, 4), (12, 4), (8, 6), (12, 6), (24, 8)]}
-DELTA_REF = 0.005
-DELTAS = [0.001, 0.005]
 R_SOPORTE = 20
 R_DIVISION = 8
 NRUNS_REJILLA = 20
@@ -75,15 +76,15 @@ def k_rejilla(m, n, KR, KT):
 
 def soporte(periodo, X, O, L):
     kr, kt = K_BASE[periodo]
-    rho = np.load(DATOS / f"AST-CC/{periodo}_C5_rho.npy")
-    tau = np.load(DATOS / f"AST-CC/{periodo}_C5_tau.npy")
+    DELTA_REF = DELTA_RESUMEN[periodo]
+    rho, tau = cargar_base(periodo)
     ref = ASTCC(Parametros(delta=DELTA_REF), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
     hojas_ref = ref.hojas()
     rng = np.random.default_rng(SEMILLA + 1)
     ejecuciones, aris, optimo = [], [], []
-    d_ref = d_I(O, aproximacion(O, rho, tau, "C5", kr, kt))
+    d_ref = d_I(O, aproximacion(O, rho, tau, "C2", kr, kt))
     for r in range(R_SOPORTE):
-        b = bbac(O, kr, kt, base="C5", nruns=1, rng=rng)
+        b = bbac(O, kr, kt, base="C2", nruns=1, rng=rng)
         res = ASTCC(Parametros(delta=DELTA_REF), np.random.default_rng(SEMILLA + 100 + r)).ajustar(X, b.rho, b.tau)
         ejecuciones.append(res.hojas())
         aris.append((ari(rho, b.rho), ari(tau, b.tau)))
@@ -99,9 +100,9 @@ def soporte(periodo, X, O, L):
     refinada = tabla["profundidad"] > 0
     aris = np.array(aris)
     L += [f"A. Frecuencia de soporte (referencia: delta = {DELTA_REF}, {len(hojas_ref)} hojas; "
-          f"{R_SOPORTE} ejecuciones con una sola inicialización de BBAC; kappa = {KAPPA})", "",
-          f"  La partición base de una inicialización iguala el óptimo de 200 en {np.mean(optimo):.0%} de las "
-          f"ejecuciones; ARI medio con la de referencia: filas {aris[:, 0].mean():.2f}, columnas {aris[:, 1].mean():.2f}",
+          f"{R_SOPORTE} ejecuciones con una sola inicialización de BBAC C2; kappa = {KAPPA})", "",
+          f"  La partición base de una inicialización alcanza o mejora la D_I (base C2) de ST-CC en "
+          f"{np.mean(optimo):.0%} de las ejecuciones; ARI medio con la de ST-CC: filas {aris[:, 0].mean():.2f}, columnas {aris[:, 1].mean():.2f}",
           f"  Soporte medio de las hojas: {sop.mean():.2f}; con soporte >= 0.5: {np.mean(sop >= 0.5):.0%} "
           f"({int((sop >= 0.5).sum())} de {len(sop)})",
           f"    hojas que son bloques base (sin cortes encima):   {int((~refinada).sum()):>3}, "
@@ -118,6 +119,7 @@ def soporte(periodo, X, O, L):
 
 
 def division(periodo, X, L):
+    deltas = (DELTA_COMPLETO, DELTA_RESUMEN[periodo])
     D, m, n = X.shape
     kr, kt = K_BASE[periodo]
     rng = np.random.default_rng(SEMILLA + 2)
@@ -135,8 +137,9 @@ def division(periodo, X, L):
                 ajustes[f"rejilla {KR}x{KT}"] = ("rejilla", k, aproximacion(Oe, rho6, tau6, "C6", KR, KT), 0)
                 ajustes[f"rejilla BBAC {KR}x{KT}"] = ("rejilla BBAC", k, aproximacion(Oe, b.rho, b.tau, "C6", KR, KT), 0)
                 if (KR, KT) == (kr, kt):
-                    bases = {"C5": (b.rho, b.tau), "C6": (rho6, tau6)}
-            for delta in DELTAS:
+                    b2 = bbac(Oe, KR, KT, base="C2", nruns=NRUNS_REJILLA, rng=rng)
+                    bases = {"ST": (b2.rho, b2.tau), "C5": (b.rho, b.tau), "C6": (rho6, tau6)}
+            for delta in deltas:
                 for nb, (rho_b, tau_b) in bases.items():
                     res = ASTCC(Parametros(delta=delta), rng).ajustar(Xe, rho_b, tau_b)
                     ajustes[f"AST-CC d={delta:g} base {nb}"] = ("AST-CC", k_hojas(res), res.aproximacion(Oe),
@@ -166,8 +169,8 @@ def division(periodo, X, L):
           "    k<= : la rejilla de más parámetros que tiene a lo sumo tantos como el árbol (ventaja para el árbol)",
           "    rejilla BBAC: la rejilla k>= con la partición de BBAC sin optimizar para C6 (comparación anterior)", "",
           f"  {'modelo':<24} {'comparado con':<14} {'k árbol':>7} {'k rej.':>6} {'dif. D_I prueba':>15} {'gana el árbol':>14}"]
-    for delta in DELTAS:
-        for nb in ("C5", "C6"):
+    for delta in deltas:
+        for nb in ("ST", "C5", "C6"):
             nombre = f"AST-CC d={delta:g} base {nb}"
             for etiqueta, tipo, mayor in (("k>=", "rejilla", True), ("k<=", "rejilla", False),
                                           ("rejilla BBAC", "rejilla BBAC", True)):

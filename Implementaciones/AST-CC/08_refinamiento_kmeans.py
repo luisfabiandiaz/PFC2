@@ -18,7 +18,7 @@ de las celdas de todas sus hojas.
 Dos hojas lejanas en la teselación, incluso de bloques base distintos, pueden quedar en
 el mismo grupo: esa es la señal "non-checkerboard".
 
-Se usa el árbol de AST-CC/07 (partición base C5, delta = 0.005).
+Se usa el árbol de AST-CC/07 (partición base de ST-CC, delta del árbol resumido; astcc.referencia).
 Salidas: Resultados/AST-CC/figuras/kmeans_hojas_{periodo}.png, elbow_hojas_{periodo}.png
          Resultados/AST-CC/kmeans_hojas_{periodo}.csv, kmeans_hojas.txt
 """
@@ -48,6 +48,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
+from astcc.referencia import cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -120,7 +121,7 @@ def figura_kmeans(periodo, res, O, rho, tau, estado_de):
     ax.set_xlabel("grupos de intervalos de la partición base (orden de volumen creciente)")
     ax.set_ylabel("grupos de regiones (volumen creciente hacia arriba)")
     ax.set_title(f"{vis.TITULO[periodo].capitalize()}: {K_FINAL} clusters refinados (non-checkerboard) "
-                 f"sobre las {len(res.hojas())} hojas de AST-CC\n(δ = {vis.DELTA}; borde grueso = hoja "
+                 f"sobre las {len(res.hojas())} hojas de AST-CC\n(δ = {vis.DELTA[periodo]}; borde grueso = hoja "
                  f"producida por un corte)", fontsize=9)
     ax.legend(handles=[Rectangle((0, 0), 1, 1, facecolor=c, edgecolor="0.25") for c in COLORES],
               labels=ESTADOS, loc="center left", bbox_to_anchor=(1.01, 0.5), fontsize=9)
@@ -161,7 +162,7 @@ def figura_antes_despues(periodo, res, O, rho, tau, estado_de, estado_base):
         ax.set_yticklabels([f"{nombre_g[g]}\n({alto[g]} regiones)" for g in orden_g], fontsize=8)
         ax.tick_params(labelleft=True)
         ax.set_xlabel("grupos de intervalos (volumen creciente)")
-        ax.set_title(f"AST-CC: {len(res.hojas())} hojas (δ = {vis.DELTA})" if despues else
+        ax.set_title(f"AST-CC: {len(res.hojas())} hojas (δ = {vis.DELTA[periodo]})" if despues else
                      f"Antes de refinar: rejilla base de {len(res.raices)} bloques, un estado por bloque (como ST-CC)",
                      fontsize=10)
     ejes[0].set_ylabel("grupos de regiones (volumen creciente hacia arriba)")
@@ -181,9 +182,8 @@ def main():
     for periodo in ("weekday", "holiday"):
         X = np.load(DATOS / f"Calibracion/conteos_diarios_{periodo}.npy")
         O, D = X.sum(0), X.shape[0]
-        rho = np.load(DATOS / f"AST-CC/{periodo}_C5_rho.npy")
-        tau = np.load(DATOS / f"AST-CC/{periodo}_C5_tau.npy")
-        res = ASTCC(Parametros(delta=vis.DELTA), np.random.default_rng(vis.SEMILLA)).ajustar(X, rho, tau)
+        rho, tau = cargar_base(periodo)
+        res = ASTCC(Parametros(delta=vis.DELTA[periodo]), np.random.default_rng(vis.SEMILLA)).ajustar(X, rho, tau)
         hojas = res.hojas()
         Z = normalizar(atributos(O, D, hojas))
 

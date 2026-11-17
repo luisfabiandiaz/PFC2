@@ -1,82 +1,119 @@
-weekday: K-means sobre las 41 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
+weekday: K-means sobre las 45 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
 
   Silhouette y SSE (K = 2 solo de referencia; el artículo lo excluye de la selección):
-    K=2: silhouette = 0.5502, SSE = 1.786
-    K=3: silhouette = 0.4624, SSE = 1.079
-    K=4: silhouette = 0.4628, SSE = 0.733
-    K=5: silhouette = 0.4345, SSE = 0.504
-    K=6: silhouette = 0.4166, SSE = 0.375
-    K=7: silhouette = 0.4002, SSE = 0.281
-    K=8: silhouette = 0.3851, SSE = 0.265
-  Mejor silhouette entre K >= 3: K = 4; se usa K = 4, como ST-CC
+    K=2: silhouette = 0.6607, SSE = 1.538
+    K=3: silhouette = 0.6231, SSE = 0.832
+    K=4: silhouette = 0.5115, SSE = 0.547
+    K=5: silhouette = 0.5197, SSE = 0.342
+    K=6: silhouette = 0.4504, SSE = 0.260
+    K=7: silhouette = 0.4421, SSE = 0.216
+    K=8: silhouette = 0.4015, SSE = 0.206
+  Mejor silhouette entre K >= 3: K = 3; se usa K = 4, como ST-CC
 
-  Con K = 4: silhouette = 0.4628
+  Con K = 4: silhouette = 0.5115
 
-  Very Low (promedio 182.0, 13 hojas de 10 bloques base distintos, 206 celdas)
-  Low (promedio 397.3, 21 hojas de 20 bloques base distintos, 522 celdas)
-  Medium (promedio 786.9, 6 hojas de 6 bloques base distintos, 60 celdas)
-  High (promedio 2032.4, 1 hojas de 1 bloques base distintos, 4 celdas)
+  Very Low (promedio 103.9, 24 hojas de 17 bloques base distintos, 441 celdas)
+  Low (promedio 488.6, 11 hojas de 9 bloques base distintos, 201 celdas)
+  Medium (promedio 978.3, 7 hojas de 6 bloques base distintos, 124 celdas)
+  High (promedio 1343.1, 3 hojas de 3 bloques base distintos, 26 celdas)
 
-  De los 7 bloques base refinados, 5 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
+  De los 10 bloques base refinados, 3 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
 
   Bloques refinados (figura antes_despues): estado del bloque entero -> estados de sus hojas
   (media = drop-offs promedio por celda y día)
-    R2-T3 (12 regiones, 06-08 08-10): L (media 373)
-        -> VL (media 175): 5 regiones x 1 intervalos
-        -> VL (media 416): 5 regiones x 1 intervalos
-        -> L  (media 429): 7 regiones x 2 intervalos
-    R2-T1 (12 regiones, 00-02 02-04 20-22 22-24): L (media 239)
-        -> L  (media 330): 6 regiones x 4 intervalos
-        -> VL (media 69): 6 regiones x 2 intervalos
-        -> VL (media 227): 6 regiones x 2 intervalos
-    R7-T3 (4 regiones, 06-08 08-10): M (media 1078)
-        -> VL (media 123): 2 regiones x 2 intervalos
-        -> H  (media 2032): 2 regiones x 2 intervalos
-    R4-T3 (11 regiones, 06-08 08-10): VL (media 295)
-        -> L  (media 300): 6 regiones x 2 intervalos
-        -> VL (media 289): 5 regiones x 2 intervalos
-    R5-T3 (9 regiones, 06-08 08-10): L (media 695)
-        -> L  (media 602): 7 regiones x 2 intervalos
-        -> L  (media 1021): 2 regiones x 2 intervalos
-    R3-T3 (12 regiones, 06-08 08-10): VL (media 191)
-        -> VL (media 206): 7 regiones x 2 intervalos
-        -> VL (media 169): 5 regiones x 2 intervalos
-    R3-T1 (12 regiones, 00-02 02-04 20-22 22-24): L (media 318)
-        -> VL (media 114): 12 regiones x 2 intervalos
-        -> L  (media 522): 12 regiones x 2 intervalos
+    R2-T3 (13 regiones, 08-10 10-12 12-14 14-16 16-18): VL (media 110)
+        -> VL (media 81): 6 regiones x 5 intervalos
+        -> VL (media 126): 6 regiones x 5 intervalos
+        -> VL (media 192): 1 regiones x 5 intervalos
+    R3-T1 (13 regiones, 00-02 02-04 04-06): VL (media 72)
+        -> VL (media 70): 4 regiones x 3 intervalos
+        -> VL (media 72): 9 regiones x 3 intervalos
+    R3-T3 (13 regiones, 08-10 10-12 12-14 14-16 16-18): VL (media 277)
+        -> L  (media 307): 2 regiones x 5 intervalos
+        -> L  (media 359): 2 regiones x 5 intervalos
+        -> VL (media 242): 4 regiones x 5 intervalos
+        -> VL (media 259): 5 regiones x 5 intervalos
+    R6-T1 (10 regiones, 00-02 02-04 04-06): VL (media 150)
+        -> VL (media 188): 10 regiones x 2 intervalos
+        -> VL (media 74): 10 regiones x 1 intervalos
+    R6-T3 (10 regiones, 08-10 10-12 12-14 14-16 16-18): L (media 656)
+        -> M  (media 651): 6 regiones x 5 intervalos
+        -> L  (media 663): 4 regiones x 5 intervalos
+    R7-T3 (6 regiones, 08-10 10-12 12-14 14-16 16-18): M (media 1038)
+        -> M  (media 892): 2 regiones x 5 intervalos
+        -> M  (media 1110): 4 regiones x 5 intervalos
+    R4-T1 (5 regiones, 00-02 02-04 04-06): VL (media 92)
+        -> VL (media 83): 4 regiones x 3 intervalos
+        -> VL (media 129): 1 regiones x 3 intervalos
+    R4-T3 (5 regiones, 08-10 10-12 12-14 14-16 16-18): L (media 423)
+        -> L  (media 376): 5 regiones x 3 intervalos
+        -> L  (media 494): 5 regiones x 2 intervalos
+    R8-T1 (4 regiones, 00-02 02-04 04-06): VL (media 127)
+        -> VL (media 175): 1 regiones x 3 intervalos
+        -> VL (media 111): 3 regiones x 3 intervalos
+    R8-T3 (4 regiones, 08-10 10-12 12-14 14-16 16-18): H (media 1646)
+        -> H  (media 1550): 2 regiones x 5 intervalos
+        -> M  (media 1741): 2 regiones x 5 intervalos
 
-holiday: K-means sobre las 28 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
+holiday: K-means sobre las 39 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
 
   Silhouette y SSE (K = 2 solo de referencia; el artículo lo excluye de la selección):
-    K=2: silhouette = 0.4546, SSE = 1.244
-    K=3: silhouette = 0.4759, SSE = 0.613
-    K=4: silhouette = 0.4783, SSE = 0.429
-    K=5: silhouette = 0.4825, SSE = 0.277
-    K=6: silhouette = 0.3957, SSE = 0.186
-    K=7: silhouette = 0.4765, SSE = 0.099
-    K=8: silhouette = 0.4189, SSE = 0.084
-  Mejor silhouette entre K >= 3: K = 5; se usa K = 4, como ST-CC
+    K=2: silhouette = 0.6294, SSE = 1.612
+    K=3: silhouette = 0.5726, SSE = 0.818
+    K=4: silhouette = 0.5624, SSE = 0.538
+    K=5: silhouette = 0.4776, SSE = 0.443
+    K=6: silhouette = 0.4706, SSE = 0.328
+    K=7: silhouette = 0.4415, SSE = 0.243
+    K=8: silhouette = 0.4456, SSE = 0.223
+  Mejor silhouette entre K >= 3: K = 3; se usa K = 4, como ST-CC
 
-  Con K = 4: silhouette = 0.4783
+  Con K = 4: silhouette = 0.5624
 
-  Very Low (promedio 159.0, 12 hojas de 10 bloques base distintos, 242 celdas)
-  Low (promedio 324.7, 11 hojas de 11 bloques base distintos, 425 celdas)
-  Medium (promedio 702.9, 1 hojas de 1 bloques base distintos, 6 celdas)
-  High (promedio 713.0, 4 hojas de 4 bloques base distintos, 119 celdas)
+  Very Low (promedio 89.0, 21 hojas de 13 bloques base distintos, 348 celdas)
+  Low (promedio 357.2, 11 hojas de 9 bloques base distintos, 262 celdas)
+  Medium (promedio 607.8, 3 hojas de 2 bloques base distintos, 34 celdas)
+  High (promedio 812.8, 4 hojas de 4 bloques base distintos, 148 celdas)
 
-  De los 4 bloques base refinados, 2 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
+  De los 12 bloques base refinados, 4 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
 
   Bloques refinados (figura antes_despues): estado del bloque entero -> estados de sus hojas
   (media = drop-offs promedio por celda y día)
-    R4-T1 (14 regiones, 06-08 08-10): VL (media 164)
-        -> VL (media 94): 14 regiones x 1 intervalos
-        -> VL (media 234): 14 regiones x 1 intervalos
-    R3-T1 (15 regiones, 06-08 08-10): VL (media 109)
-        -> VL (media 117): 10 regiones x 2 intervalos
-        -> VL (media 93): 5 regiones x 2 intervalos
-    R3-T2 (15 regiones, 00-02 02-04 04-06): L (media 240)
-        -> L  (media 320): 15 regiones x 2 intervalos
-        -> VL (media 80): 15 regiones x 1 intervalos
-    R1-T2 (9 regiones, 00-02 02-04 04-06): L (media 263)
-        -> VL (media 137): 7 regiones x 3 intervalos
-        -> M  (media 703): 2 regiones x 3 intervalos
+    R3-T1 (15 regiones, 04-06 06-08): VL (media 74)
+        -> VL (media 70): 15 regiones x 1 intervalos
+        -> VL (media 78): 15 regiones x 1 intervalos
+    R3-T2 (15 regiones, 02-04 08-10): VL (media 180)
+        -> VL (media 198): 9 regiones x 1 intervalos
+        -> VL (media 163): 9 regiones x 1 intervalos
+        -> VL (media 175): 5 regiones x 2 intervalos
+        -> L  (media 200): 1 regiones x 2 intervalos
+    R4-T1 (10 regiones, 04-06 06-08): VL (media 109)
+        -> VL (media 79): 5 regiones x 2 intervalos
+        -> VL (media 139): 5 regiones x 2 intervalos
+    R4-T2 (10 regiones, 02-04 08-10): L (media 274)
+        -> L  (media 266): 7 regiones x 2 intervalos
+        -> L  (media 294): 3 regiones x 2 intervalos
+    R2-T1 (13 regiones, 04-06 06-08): VL (media 44)
+        -> VL (media 37): 10 regiones x 2 intervalos
+        -> VL (media 67): 3 regiones x 2 intervalos
+    R2-T2 (13 regiones, 02-04 08-10): VL (media 83)
+        -> VL (media 106): 13 regiones x 1 intervalos
+        -> VL (media 60): 13 regiones x 1 intervalos
+    R1-T4 (7 regiones, 12-14 14-16 16-18 18-20): VL (media 11)
+        -> VL (media 9): 3 regiones x 4 intervalos
+        -> VL (media 13): 4 regiones x 4 intervalos
+    R1-T3 (7 regiones, 00-02 10-12 20-22 22-24): VL (media 12)
+        -> VL (media 10): 2 regiones x 4 intervalos
+        -> VL (media 13): 5 regiones x 4 intervalos
+    R6-T1 (10 regiones, 04-06 06-08): L (media 196)
+        -> VL (media 211): 4 regiones x 2 intervalos
+        -> L  (media 186): 6 regiones x 2 intervalos
+    R6-T2 (10 regiones, 02-04 08-10): M (media 454)
+        -> L  (media 456): 3 regiones x 2 intervalos
+        -> M  (media 584): 1 regiones x 2 intervalos
+        -> M  (media 431): 6 regiones x 2 intervalos
+    R6-T3 (10 regiones, 00-02 10-12 20-22 22-24): M (media 781)
+        -> H  (media 846): 5 regiones x 4 intervalos
+        -> M  (media 716): 5 regiones x 4 intervalos
+    R5-T2 (11 regiones, 02-04 08-10): L (media 349)
+        -> L  (media 356): 5 regiones x 2 intervalos
+        -> L  (media 342): 6 regiones x 2 intervalos

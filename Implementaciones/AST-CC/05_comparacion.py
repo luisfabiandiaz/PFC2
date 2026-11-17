@@ -25,8 +25,9 @@ búsqueda local) y las mejora con astcc.bbac.optimizar_c6, que minimiza D_I(O ||
 directamente. BBAC solo optimiza C2 y C5, y una rejilla evaluada con C6 pero optimizada
 con otro criterio queda muy por debajo de lo que puede dar (33-70 % de D_I en los datos
 reales); la columna D_I_bbac del CSV conserva ese valor, que fue el de la versión anterior
-de esta comparación. Por la misma razón, AST-CC se ajusta con dos particiones base: la de
-BBAC C5 (la de AST-CC/01) y la misma rejilla K_R x K_T optimizada para C6 (base C6).
+de esta comparación. AST-CC se ajusta con tres particiones base (astcc.referencia): la de
+ST-CC, la adoptada, y de sensibilidad la de BBAC C5 (AST-CC/01) y la misma rejilla
+K_R x K_T optimizada para C6 (base C6).
 
 Como la matriz es una suma de días con varianza mayor que la de Poisson, J se reporta
 también con la devianza dividida entre la dispersión de Pearson del modelo
@@ -62,6 +63,7 @@ sys.path.insert(0, str(RAIZ))
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.bbac import bbac, d_I, divergencia, optimizar_c6  # noqa: E402
 from astcc.nulas import ajuste_sin_interaccion_triple  # noqa: E402
+from astcc.referencia import cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -197,8 +199,9 @@ def main():
             f["J_phi"] = f["D_I"] / phi + 0.5 * np.log(N) * f["k"]
         pareto = frontera(rej)
 
-        # AST-CC con dos particiones base: BBAC C5 (AST-CC/01) y la misma rejilla optimizada para C6
-        bases = {"C5": (np.load(DATOS / f"AST-CC/{periodo}_C5_rho.npy"), np.load(DATOS / f"AST-CC/{periodo}_C5_tau.npy")),
+        # AST-CC con tres particiones base (astcc.referencia): la de ST-CC, la adoptada; BBAC C5
+        # (AST-CC/01) y la misma rejilla optimizada para C6, de sensibilidad
+        bases = {"ST": cargar_base(periodo, "ST"), "C5": cargar_base(periodo, "C5"),
                  "C6": base_c6(O, kr, kt, periodo)}
         for nombre_base, (rho, tau) in bases.items():
             print(f"  {periodo}: base {nombre_base}: D_I(C6) = {divergencia(O, rho, tau, 'C6', kr, kt):,.0f}", flush=True)
@@ -236,9 +239,9 @@ def main():
                      f"{fila_r(r1)} | {fila_r(r2)} | {igual}")
         L.append("")
         L += ["  Referencia (comparación anterior): D_I de la mejor rejilla con a lo sumo los parámetros de AST-CC",
-              "  (base C5), con la partición de BBAC sin optimizar para C6 y optimizada para C6", ""]
+              "  (base ST-CC), con la partición de BBAC sin optimizar para C6 y optimizada para C6", ""]
         for f in ast:
-            if f["base_ast"] != "C5":
+            if f["base_ast"] != "ST":
                 continue
             r = mejor_con_a_lo_sumo(rej, f["k"])
             if r is not None:
@@ -278,7 +281,7 @@ def main():
         ax.scatter([f["k"] for f in rej], [f["D_I"] for f in rej], s=14, c="0.75", label="rejillas globales (C6)")
         ax.plot([f["k"] for f in pareto], [f["D_I"] for f in pareto], "-", c="0.35", lw=1.2,
                 label="mejor rejilla con ≤ k parámetros")
-        for nombre_base, color in (("C5", "C3"), ("C6", "C1")):
+        for nombre_base, color in (("ST", "C2"), ("C5", "C3"), ("C6", "C1")):
             sub = [f for f in ast if f["base_ast"] == nombre_base]
             ax.plot([f["k"] for f in sub], [f["D_I"] for f in sub], "o-", c=color, label=f"AST-CC (δ), base {nombre_base}")
             for f in sub:

@@ -2,8 +2,8 @@
 Representación de los resultados de AST-CC
 ==========================================
 Cap_3.tex, sec:prop-representacion: los productos que acompañan al árbol, para cada
-periodo, con la partición base de BBAC C5 (AST-CC/01) y delta = 0.005 (el árbol de
-AST-CC/02, con la misma semilla):
+periodo, con la partición base de ST-CC y el delta del árbol resumido (astcc.referencia;
+el árbol de AST-CC/02, con la misma semilla):
 
   Matriz teselada      cada bloque base con sus cortes y, dentro de cada hoja, las celdas
                        reales (drop-offs promedio por día) con la paleta y el orden por
@@ -47,6 +47,7 @@ sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.estadisticos import esperados  # noqa: E402
+from astcc.referencia import DELTA_RESUMEN, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -57,7 +58,7 @@ FIGURAS = SALIDA / "figuras"
 FIGURAS.mkdir(parents=True, exist_ok=True)
 
 SEMILLA = 20261004                 # la de 02_refinamiento.py
-DELTA = 0.005
+DELTA = DELTA_RESUMEN                 # por periodo
 FRANJAS = [f"{h:02d}-{h + 2:02d}" for h in range(0, 24, 2)]
 COLOR_PROFUNDIDAD = ["#d9d9d9", "#fdae6b", "#e6550d", "#a63603"]
 COLOR_HIJOS = ["#2b8cbe", "#e34a33", "#31a354", "#fec44f"]
@@ -176,7 +177,7 @@ def figura_teselada(periodo, res, O, D, rho, tau, soporte, modo):
     ax.set_ylabel("grupos de regiones (volumen creciente hacia arriba)")
     nombre = "teselada" if datos else "actividad"
     ax.set_title(f"{'Matriz teselada de AST-CC' if datos else 'Actividad relativa de las hojas de AST-CC'}, "
-                 f"{TITULO[periodo]} (δ = {DELTA})\n"
+                 f"{TITULO[periodo]} (δ = {DELTA[periodo]})\n"
                  f"{len(res.hojas())} hojas; borde grueso = hoja producida por un corte; "
                  f"discontinuo = soporte < 0.5", fontsize=9)
     barra = fig.colorbar(plt.cm.ScalarMappable(norma, cmap), ax=ax, fraction=0.03, pad=0.02)
@@ -210,7 +211,7 @@ def figura_profundidad(periodo, res, zonas_gdf, zonas):
     a2.set_yticks(range(0, max(int(pc.max()), 1) + 1))
     a2.set_ylabel("profundidad máxima")
     a2.set_title("profundidad máxima por intervalo", fontsize=10)
-    fig.suptitle(f"Dónde y cuándo la partición base resulta insuficiente, {TITULO[periodo]} (δ = {DELTA})",
+    fig.suptitle(f"Dónde y cuándo la partición base resulta insuficiente, {TITULO[periodo]} (δ = {DELTA[periodo]})",
                  fontsize=11)
     fig.tight_layout()
     fig.savefig(FIGURAS / f"profundidad_{periodo}.png", dpi=150)
@@ -253,7 +254,7 @@ def figura_refinados(periodo, res, O, rho, tau, zonas_gdf, zonas):
                      f"g̃ = {nodo.g_corr:.4f}, p = {nodo.p_cortes[nodo.corte]:.3g}\nintervalos: {ints}",
                      fontsize=8)
         ax.text(0.5, -0.02, "\n".join(lineas), transform=ax.transAxes, ha="center", va="top", fontsize=7)
-    fig.suptitle(f"Bloques base refinados por AST-CC, {TITULO[periodo]} (δ = {DELTA}); "
+    fig.suptitle(f"Bloques base refinados por AST-CC, {TITULO[periodo]} (δ = {DELTA[periodo]}); "
                  f"gris = regiones que no pertenecen al bloque", fontsize=10)
     fig.tight_layout(rect=(0, 0.02, 1, 0.97))
     fig.savefig(FIGURAS / f"refinados_{periodo}.png", dpi=150)
@@ -262,7 +263,7 @@ def figura_refinados(periodo, res, O, rho, tau, zonas_gdf, zonas):
 
 def arbol_anotado(periodo, res, O, rho, tau, zonas, nombres):
     E_global = esperados(O)
-    L = [f"Árbol de AST-CC, {TITULO[periodo]} (alfa = 0.05, delta = {DELTA}, nula de bootstrap de días)",
+    L = [f"Árbol de AST-CC, {TITULO[periodo]} (alfa = 0.05, delta = {DELTA[periodo]}, nula de bootstrap de días)",
          "G2_s: estadístico del corte; g~: ganancia corregida por sesgo; p: p-valor min-P del corte;",
          "p_omn e I~: prueba ómnibus del nodo y su información mutua corregida; l: nivel de actividad", ""]
 
@@ -303,10 +304,9 @@ def main():
     for periodo in ("weekday", "holiday"):
         X = np.load(DATOS / f"Calibracion/conteos_diarios_{periodo}.npy")
         O = X.sum(0)
-        rho = np.load(DATOS / f"AST-CC/{periodo}_C5_rho.npy")
-        tau = np.load(DATOS / f"AST-CC/{periodo}_C5_tau.npy")
-        res = ASTCC(Parametros(delta=DELTA), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
-        previas = pd.read_csv(SALIDA / f"hojas_{periodo}_C5.csv")
+        rho, tau = cargar_base(periodo)
+        res = ASTCC(Parametros(delta=DELTA[periodo]), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
+        previas = pd.read_csv(SALIDA / f"hojas_{periodo}_resumen.csv")
         coincide = len(previas) == len(res.hojas()) and np.array_equal(previas["N"], [int(h.N) for h in res.hojas()])
         # El soporte de 06_estabilidad.py se calculó con otra semilla: el árbol es el mismo
         # pero los dos hijos de un corte pueden salir en otro orden, así que las hojas se
@@ -322,7 +322,7 @@ def main():
             if len(por_clave) == len(s) and all(k in por_clave for k in claves):
                 soporte = {id(h): por_clave[k] for h, k in zip(res.hojas(), claves)}
         print(f"{periodo}: {len(res.hojas())} hojas, {len(res.internos())} cortes; "
-              f"coincide con hojas_{periodo}_C5.csv: {coincide}; soporte: {'sí' if soporte is not None else 'no'}")
+              f"coincide con hojas_{periodo}_resumen.csv: {coincide}; soporte: {'sí' if soporte is not None else 'no'}")
         for modo in ("datos", "actividad"):
             figura_teselada(periodo, res, O, X.shape[0], rho, tau, soporte, modo)
         pr, pc = figura_profundidad(periodo, res, zonas_gdf, zonas)

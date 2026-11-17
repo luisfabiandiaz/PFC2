@@ -1,7 +1,7 @@
 """
 ¿Qué separan los cortes de AST-CC y se repiten fuera de noviembre?
 ==================================================================
-El árbol de AST-CC/07 (partición base C5, delta = 0.005) se ajusta con los días de
+El árbol resumido de AST-CC/07 (partición base de ST-CC, astcc.referencia) se ajusta con los días de
 noviembre de 2017. Dentro de un bloque el modelo supone independencia: todas las regiones
 reparten sus llegadas entre los intervalos del bloque en la misma proporción. Un corte de
 filas separa las regiones en grupos con repartos distintos.
@@ -37,6 +37,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
+from astcc.referencia import cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -97,16 +98,15 @@ def main():
     fechas = pd.date_range("2017-01-01", "2017-12-31")
     usable = ~fechas.isin(pd.to_datetime(ATIPICOS)) & (fechas.month != 11)
 
-    L = ["Cortes de AST-CC (noviembre de 2017, base C5, delta = 0.005) y su repetición en el resto de 2017",
+    L = ["Cortes del árbol resumido de AST-CC (noviembre de 2017, base de ST-CC; delta: " + ", ".join(f"{p} {d:g}" for p, d in vis.DELTA.items()) + ") y su repetición en el resto de 2017",
          "cuota = fracción de las llegadas del grupo que cae en cada intervalo del bloque",
          "I = información mutua entre grupo e intervalo en la tabla colapsada (nats por observación)", ""]
     filas_csv, filas_tex = [], []
     for periodo in ("weekday", "holiday"):
         X = np.load(DATOS / f"Calibracion/conteos_diarios_{periodo}.npy")
         O = X.sum(0)
-        rho = np.load(DATOS / f"AST-CC/{periodo}_C5_rho.npy")
-        tau = np.load(DATOS / f"AST-CC/{periodo}_C5_tau.npy")
-        res = ASTCC(Parametros(delta=vis.DELTA), np.random.default_rng(vis.SEMILLA)).ajustar(X, rho, tau)
+        rho, tau = cargar_base(periodo)
+        res = ASTCC(Parametros(delta=vis.DELTA[periodo]), np.random.default_rng(vis.SEMILLA)).ajustar(X, rho, tau)
         dias = usable & np.isin(fechas.dayofweek, DIAS_SEMANA[periodo])
         O2 = Y[dias].sum(0).astype(float)
         orden_g, orden_h = vis.disposicion_global(O, rho, tau)[:2]

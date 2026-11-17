@@ -1,0 +1,21 @@
+Reparación de la partición base por AST-CC: datos sin patrones locales (40 réplicas por escenario,
+66 x 12, rejilla verdadera 8 x 4, D = 12 días; nula de bootstrap; delta completo = 0.00025, resumen = 0.005)
+KL en milésimas de nat por viaje; media (y desviación típica) sobre las réplicas
+
+realista
+
+  base              ARI filas ARI cols |       sin cortes        |           delta = 0.00025            |            delta = 0.005            
+                                       |          KL      pureza |       cortes          KL      pureza |       cortes          KL      pureza
+  verdadera              1.00     1.00 | 0.51 (0.08)       1.000 |    0.0 (0.0) 0.51 (0.08)       1.000 |    0.0 (0.0) 0.51 (0.08)       1.000
+  BBAC C5                0.94     0.99 | 0.51 (0.08)       0.971 |    0.0 (0.0) 0.51 (0.08)       0.971 |    0.0 (0.0) 0.51 (0.08)       0.971
+  BBAC C2 (ST-CC)        0.10     0.36 | 21.49 (9.94)       0.457 |  30.5 (13.4) 0.59 (0.08)       0.588 |  22.6 (10.3) 1.06 (0.40)       0.551
+
+fuerte
+
+  base              ARI filas ARI cols |       sin cortes        |           delta = 0.00025            |            delta = 0.005            
+                                       |          KL      pureza |       cortes          KL      pureza |       cortes          KL      pureza
+  verdadera              1.00     1.00 | 2.09 (0.45)       1.000 |    0.1 (0.2) 2.10 (0.45)       1.000 |    0.0 (0.0) 2.09 (0.45)       1.000
+  BBAC C5                0.92     1.00 | 2.10 (0.45)       0.968 |    0.1 (0.2) 2.10 (0.45)       0.968 |    0.0 (0.0) 2.10 (0.45)       0.968
+  BBAC C2 (ST-CC)        0.12     0.38 | 21.92 (12.90)       0.470 |  29.7 (14.4) 2.26 (0.48)       0.597 |  22.6 (10.8) 2.71 (0.80)       0.565
+
+Tiempo: 6.1 min

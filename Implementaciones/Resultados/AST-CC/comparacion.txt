@@ -8,6 +8,14 @@ weekday: 66 x 12, N = 3,602,851, D = 12 días, phi = 2.06, saturado: k = 792
      rejilla); reduc. = 1 - D_I(AST-CC) / D_I(rejilla), negativa si gana la rejilla
 
     delta base hojas     k  D_I AST-CC | rej. k<=     k       D_I  reduc. | rej. k>=     k       D_I  reduc. |  iguala     k
+   0.0001   ST   110   513         941 |     16x6   492     1,954   51.8% |     20x6   516     1,401   32.8% |    12x8   576
+  0.00025   ST   102   496       1,131 |     16x6   492     1,954   42.1% |     20x6   516     1,401   19.3% |    24x6   540
+   0.0005   ST    99   496       1,264 |     16x6   492     1,954   35.3% |     20x6   516     1,401    9.8% |    24x6   540
+    0.001   ST    84   459       2,735 |     24x4   456     2,085  -31.2% |     12x6   468     2,518   -8.6% |    24x4   456
+   0.0025   ST    57   420       5,004 |     24x3   414     3,302  -51.5% |      4x6   420     5,927   15.6% |    24x2   372
+    0.005   ST    45   379       9,047 |     20x3   378     4,227 -114.0% |     16x4   392     3,753 -141.0% |    10x3   288
+     0.01   ST    35   338      18,243 |     20x2   332     6,793 -168.5% |     16x3   342     5,954 -206.4% |     8x2   212
+     0.02   ST    34   334      22,970 |     20x2   332     6,793 -238.1% |     16x3   342     5,954 -285.8% |     6x2   192
    0.0001   C5   117   506         829 |     16x6   492     1,954   57.6% |     20x6   516     1,401   40.9% |    12x8   576
   0.00025   C5   111   492         937 |     16x6   492     1,954   52.1% |     16x6   492     1,954   52.1% |    12x8   576
    0.0005   C5   107   493         990 |     16x6   492     1,954   49.3% |     20x6   516     1,401   29.3% |    12x8   576
@@ -26,16 +34,16 @@ weekday: 66 x 12, N = 3,602,851, D = 12 días, phi = 2.06, saturado: k = 792
      0.02   C6    32   328       7,556 |     12x3   306     7,415   -1.9% |      8x4   328     7,556    0.0% |    12x3   306
 
   Referencia (comparación anterior): D_I de la mejor rejilla con a lo sumo los parámetros de AST-CC
-  (base C5), con la partición de BBAC sin optimizar para C6 y optimizada para C6
+  (base ST-CC), con la partición de BBAC sin optimizar para C6 y optimizada para C6
 
     d= 0.0001: rejilla   16x6 k=492: D_I BBAC     2,921 -> optimizada para C6     1,954
     d=0.00025: rejilla   16x6 k=492: D_I BBAC     2,921 -> optimizada para C6     1,954
     d= 0.0005: rejilla   16x6 k=492: D_I BBAC     2,921 -> optimizada para C6     1,954
     d=  0.001: rejilla   24x4 k=456: D_I BBAC     7,645 -> optimizada para C6     2,085
     d= 0.0025: rejilla   24x3 k=414: D_I BBAC    12,339 -> optimizada para C6     3,302
-    d=  0.005: rejilla   16x3 k=342: D_I BBAC    15,029 -> optimizada para C6     5,954
+    d=  0.005: rejilla   20x3 k=378: D_I BBAC    13,432 -> optimizada para C6     4,227
     d=   0.01: rejilla   20x2 k=332: D_I BBAC    29,274 -> optimizada para C6     6,793
-    d=   0.02: rejilla   12x3 k=306: D_I BBAC    15,834 -> optimizada para C6     7,415
+    d=   0.02: rejilla   20x2 k=332: D_I BBAC    29,274 -> optimizada para C6     6,793
 
   B. Criterio de información (menor es mejor)
 
@@ -45,6 +53,14 @@ weekday: 66 x 12, N = 3,602,851, D = 12 días, phi = 2.06, saturado: k = 792
   ST-CC C6   8x4              328      25,703      28,179      14,955
   Rejilla    32x6             588         574       5,013       4,717  <- mejor rejilla por J
   Rejilla    24x4             456       2,085       5,528       4,455  <- mejor rejilla por J_phi
+  AST-CC     d=0.0001 ST      513         941       4,814       4,329
+  AST-CC     d=0.00025 ST     496       1,131       4,875       4,293
+  AST-CC     d=0.0005 ST      496       1,264       5,008       4,358
+  AST-CC     d=0.001 ST       459       2,735       6,200       4,793
+  AST-CC     d=0.0025 ST      420       5,004       8,174       5,600
+  AST-CC     d=0.005 ST       379       9,047      11,908       7,253
+  AST-CC     d=0.01 ST        338      18,243      20,794      11,408
+  AST-CC     d=0.02 ST        334      22,970      25,491      13,673
   AST-CC     d=0.0001 C5      506         829       4,648       4,222
   AST-CC     d=0.00025 C5     492         937       4,651       4,169
   AST-CC     d=0.0005 C5      493         990       4,712       4,202
@@ -71,6 +87,14 @@ holiday: 66 x 12, N = 2,389,795, D = 9 días, phi = 6.73, saturado: k = 792
      rejilla); reduc. = 1 - D_I(AST-CC) / D_I(rejilla), negativa si gana la rejilla
 
     delta base hojas     k  D_I AST-CC | rej. k<=     k       D_I  reduc. | rej. k>=     k       D_I  reduc. |  iguala     k
+   0.0001   ST    80   430       3,486 |     20x4   424     1,662 -109.8% |      6x6   432     2,305  -51.2% |    20x2   332
+  0.00025   ST    80   430       3,486 |     20x4   424     1,662 -109.8% |      6x6   432     2,305  -51.2% |    20x2   332
+   0.0005   ST    80   430       3,486 |     20x4   424     1,662 -109.8% |      6x6   432     2,305  -51.2% |    20x2   332
+    0.001   ST    75   419       4,156 |     24x3   414     1,868 -122.5% |      4x6   420     3,336  -24.6% |    12x3   306
+   0.0025   ST    69   402       4,952 |     16x4   392     2,161 -129.1% |      2x6   408     4,056  -22.1% |    10x3   288
+    0.005   ST    59   373       8,371 |     24x2   372     2,854 -193.4% |     20x3   378     2,441 -243.0% |    10x2   232
+     0.01   ST    47   364      11,593 |     12x4   360     2,876 -303.2% |     24x2   372     2,854 -306.3% |     6x2   192
+     0.02   ST    39   364      19,772 |     12x4   360     2,876 -587.6% |     24x2   372     2,854 -592.9% |     4x2   172
    0.0001   C5    46   365       3,623 |     12x4   360     2,876  -26.0% |     24x2   372     2,854  -27.0% |    20x2   332
   0.00025   C5    46   365       3,623 |     12x4   360     2,876  -26.0% |     24x2   372     2,854  -27.0% |    20x2   332
    0.0005   C5    46   365       3,623 |     12x4   360     2,876  -26.0% |     24x2   372     2,854  -27.0% |    20x2   332
@@ -89,16 +113,16 @@ holiday: 66 x 12, N = 2,389,795, D = 9 días, phi = 6.73, saturado: k = 792
      0.02   C6    24   312       4,755 |     12x3   306     4,033  -17.9% |      6x4   312     4,755    0.0% |    10x3   288
 
   Referencia (comparación anterior): D_I de la mejor rejilla con a lo sumo los parámetros de AST-CC
-  (base C5), con la partición de BBAC sin optimizar para C6 y optimizada para C6
+  (base ST-CC), con la partición de BBAC sin optimizar para C6 y optimizada para C6
 
-    d= 0.0001: rejilla   12x4 k=360: D_I BBAC     5,172 -> optimizada para C6     2,876
-    d=0.00025: rejilla   12x4 k=360: D_I BBAC     5,172 -> optimizada para C6     2,876
-    d= 0.0005: rejilla   12x4 k=360: D_I BBAC     5,172 -> optimizada para C6     2,876
-    d=  0.001: rejilla   16x3 k=342: D_I BBAC     8,531 -> optimizada para C6     3,042
-    d= 0.0025: rejilla    8x4 k=328: D_I BBAC     6,139 -> optimizada para C6     3,968
-    d=  0.005: rejilla   16x3 k=342: D_I BBAC     8,531 -> optimizada para C6     3,042
-    d=   0.01: rejilla   12x3 k=306: D_I BBAC     9,765 -> optimizada para C6     4,033
-    d=   0.02: rejilla   12x3 k=306: D_I BBAC     9,765 -> optimizada para C6     4,033
+    d= 0.0001: rejilla   20x4 k=424: D_I BBAC     4,379 -> optimizada para C6     1,662
+    d=0.00025: rejilla   20x4 k=424: D_I BBAC     4,379 -> optimizada para C6     1,662
+    d= 0.0005: rejilla   20x4 k=424: D_I BBAC     4,379 -> optimizada para C6     1,662
+    d=  0.001: rejilla   24x3 k=414: D_I BBAC     6,928 -> optimizada para C6     1,868
+    d= 0.0025: rejilla   16x4 k=392: D_I BBAC     4,491 -> optimizada para C6     2,161
+    d=  0.005: rejilla   24x2 k=372: D_I BBAC    12,812 -> optimizada para C6     2,854
+    d=   0.01: rejilla   12x4 k=360: D_I BBAC     5,172 -> optimizada para C6     2,876
+    d=   0.02: rejilla   12x4 k=360: D_I BBAC     5,172 -> optimizada para C6     2,876
 
   B. Criterio de información (menor es mejor)
 
@@ -108,6 +132,14 @@ holiday: 66 x 12, N = 2,389,795, D = 9 días, phi = 6.73, saturado: k = 792
   ST-CC C6   6x4              312      43,011      45,302       8,687
   Rejilla    20x6             516         864       4,653       3,918  <- mejor rejilla por J
   Rejilla    12x2             252       5,943       7,794       2,734  <- mejor rejilla por J_phi
+  AST-CC     d=0.0001 ST      430       3,486       6,644       3,676
+  AST-CC     d=0.00025 ST     430       3,486       6,644       3,676
+  AST-CC     d=0.0005 ST      430       3,486       6,644       3,676
+  AST-CC     d=0.001 ST       419       4,156       7,233       3,695
+  AST-CC     d=0.0025 ST      402       4,952       7,904       3,688
+  AST-CC     d=0.005 ST       373       8,371      11,111       3,984
+  AST-CC     d=0.01 ST        364      11,593      14,266       4,397
+  AST-CC     d=0.02 ST        364      19,772      22,445       5,613
   AST-CC     d=0.0001 C5      365       3,623       6,303       3,219
   AST-CC     d=0.00025 C5     365       3,623       6,303       3,219
   AST-CC     d=0.0005 C5      365       3,623       6,303       3,219
@@ -127,4 +159,4 @@ holiday: 66 x 12, N = 2,389,795, D = 9 días, phi = 6.73, saturado: k = 792
   Mínimo de J: Rejilla 20x6; AST-CC frente a la mejor rejilla: +856
   Mínimo de J_phi: Rejilla 12x2; AST-CC frente a la mejor rejilla: +243
 
-Tiempo total: 5.4 min
+Tiempo total: 14.0 min

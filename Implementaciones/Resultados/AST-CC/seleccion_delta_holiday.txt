@@ -1,0 +1,87 @@
+Elección de delta: holiday, noviembre D = 9 días, N = 2,389,795; resto de 2017: 11 meses, N = 25,642,581
+pérdida = D_I(O_mes || predicción de noviembre) / N_mes, media de los 11 meses, en milésimas de nat por viaje;
+dif. = diferencia pareada con el mejor modelo (ee: error estándar entre meses)
+
+ARI de las particiones base con la de ST-CC (filas / columnas): C5 0.050 / 0.116, C6 0.085 / 0.116
+
+A. Ajuste fuera de muestra
+
+  modelo           base    delta    k hojas cortes   f/c  pérdida    dif.     ee
+  rejilla 6x4                     312    24      0         10.517   1.404  0.068
+  base sin cortes    ST           312    24      0         26.674  17.561  0.458
+  AST-CC             C5     0.02  312    24      0         11.216   2.103  0.088
+  base sin cortes    C5           312    24      0         11.216   2.103  0.088
+  AST-CC             C6     0.01  312    24      0         10.692   1.579  0.036
+  AST-CC             C6     0.02  312    24      0         10.692   1.579  0.036
+  base sin cortes    C6           312    24      0         10.692   1.579  0.036
+  AST-CC             C5     0.01  313    25      1   1/0   11.059   1.946  0.088
+  AST-CC             C6   0.0025  316    26      2   2/0   10.577   1.464  0.036
+  AST-CC             C6    0.005  324    25      1   0/1   10.635   1.522  0.035
+  rejilla 8x4                     328    32      0         10.251   1.138  0.039
+  AST-CC             C5   0.0025  341    32      8   6/2   10.377   1.264  0.093
+  AST-CC             C5    0.005  342    28      4   2/2   10.560   1.447  0.091
+  AST-CC             C6    0.001  348    33      7   5/1   10.283   1.170  0.035
+  rejilla 12x4                    360    48      0          9.927   0.814  0.032
+  AST-CC             ST     0.02  364    39     15  12/3   16.708   7.594  0.185
+  AST-CC             C5   0.0001  365    47     19  16/1    9.828   0.715  0.062
+  AST-CC             C5  0.00025  365    47     19  16/1    9.828   0.715  0.062
+  AST-CC             C5    0.001  369    47     17  13/1    9.893   0.780  0.051
+  AST-CC             C6   0.0005  372    43     15   9/4    9.984   0.870  0.033
+  AST-CC             ST     0.01  378    48     24  21/3   13.141   4.028  0.150
+  AST-CC             C6   0.0001  378    43     17  12/4    9.978   0.865  0.032
+  AST-CC             C6  0.00025  378    43     17  12/4    9.978   0.865  0.032
+  AST-CC             C5   0.0005  381    45     19  15/3    9.780   0.667  0.060
+  AST-CC             ST    0.005  385    58     34  32/2   12.116   3.003  0.137
+  AST-CC             ST   0.0025  409    65     41  38/3   10.856   1.743  0.116
+  AST-CC             ST   0.0001  428    74     50  48/2   10.402   1.289  0.084
+  AST-CC             ST  0.00025  428    74     50  48/2   10.402   1.289  0.084
+  AST-CC             ST   0.0005  428    74     50  48/2   10.402   1.289  0.084
+  AST-CC             ST    0.001  434    76     50  45/4   10.318   1.205  0.079
+  rejilla 8x6                     444    48      0          9.655   0.542  0.035
+  rejilla 12x6                    468    72      0          9.528   0.415  0.020
+  rejilla 16x6                    492    96      0          9.393   0.280  0.018
+  rejilla 24x6                    540   144      0          9.273   0.159  0.010
+  rejilla 24x8                    624   192      0          9.140   0.027  0.009
+  rejilla 32x8                    656   256      0          9.139   0.026  0.003
+  saturado                        792   792      0          9.113   0.000  0.000  <- mejor
+
+B y C. Estabilidad y replicación de los cortes en el resto de 2017
+
+  base ST
+     delta cortes sop. sub  >=0.5 sop. ini  >=0.5  g~ nov g resto replica  meses
+    0.0001     50        —      —        —      —  0.0151  0.0145    100%   100%
+   0.00025     50     0.83    85%        —      —  0.0151  0.0145    100%    99%
+    0.0005     50     0.82    85%        —      —  0.0151  0.0145     98%    98%
+     0.001     50     0.81    85%        —      —  0.0155  0.0149     98%    94%
+    0.0025     41     0.85    87%        —      —  0.0181  0.0173     95%    92%
+     0.005     34     0.84    88%        —      —  0.0213  0.0202     85%    86%
+      0.01     24     0.83    90%        —      —  0.0279  0.0270     96%    87%
+      0.02     15        —      —        —      —  0.0379  0.0363     87%    79%
+
+  base C5
+     delta cortes sop. sub  >=0.5 sop. ini  >=0.5  g~ nov g resto replica  meses
+    0.0001     19        —      —        —      —  0.0025  0.0023     95%    93%
+   0.00025     19     0.62    61%     0.65    75%  0.0025  0.0023     95%    91%
+    0.0005     19     0.71    74%     0.65    80%  0.0026  0.0025     95%    85%
+     0.001     17     0.52    52%     0.55    64%  0.0031  0.0032     71%    75%
+    0.0025      8     0.89    92%     0.66    92%  0.0053  0.0064     88%    86%
+     0.005      4     0.97   100%     0.69   100%  0.0075  0.0073     75%    77%
+      0.01      1     1.00   100%     0.62   100%  0.0142  0.0131    100%    91%
+      0.02      0
+
+  base C6
+     delta cortes sop. sub  >=0.5 sop. ini  >=0.5  g~ nov g resto replica  meses
+    0.0001     17        —      —        —      —  0.0012  0.0012     94%    91%
+   0.00025     17     0.58    62%     0.08     9%  0.0012  0.0012     82%    85%
+    0.0005     15     0.60    65%     0.06    10%  0.0015  0.0013     87%    81%
+     0.001      7     0.72    75%     0.09    12%  0.0021  0.0016     86%    71%
+    0.0025      2     0.71    75%     0.29    50%  0.0037  0.0034     50%    68%
+     0.005      1     0.70    50%     0.00     0%  0.0058  0.0064    100%   100%
+      0.01      0
+      0.02      0
+
+  sop. sub / sop. ini: soporte medio de las hojas producidas por un corte con el 75 % de los días /
+  con la partición base de una sola inicialización; >=0.5: fracción de esas hojas con soporte >= 0.5.
+  replica: fracción de cortes con ganancia >= delta en el resto de 2017; meses: lo mismo, mes a mes.
+
+Tiempo: 25.6 min

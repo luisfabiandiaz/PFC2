@@ -1,78 +1,183 @@
-Cortes de AST-CC (noviembre de 2017, base C5, delta = 0.005) y su repetición en el resto de 2017
+Cortes del árbol resumido de AST-CC (noviembre de 2017, base de ST-CC; delta: weekday 0.005, holiday 0.02) y su repetición en el resto de 2017
 cuota = fracción de las llegadas del grupo que cae en cada intervalo del bloque
 I = información mutua entre grupo e intervalo en la tabla colapsada (nats por observación)
 
-weekday: 9 cortes; noviembre D = 12 días, N = 3,602,851; resto de 2017 D = 134 días, N = 40,024,248
+weekday: 13 cortes; noviembre D = 12 días, N = 3,602,851; resto de 2017 D = 134 días, N = 40,024,248
 
-  R2-T3 (profundidad 0): 12 regiones x [06-08 08-10]; I nov = 0.0063, I resto = 0.0058
-                                   06-08   08-10   | resto de 2017:   06-08   08-10
-     7 regiones,   857/día/reg    41.1%   58.9%   |                  40.3%   59.7%
-       East Harlem South, Inwood Hill Park, Kips Bay, Manhattanville, Murray Hill, TriBeCa/Civic Center, Washington Heights South
-     5 regiones,   591/día/reg    29.6%   70.4%   |                  29.4%   70.6%
-       Battery Park City, Chinatown, Financial District North, Hudson Sq, UN/Turtle Bay South
+  R2-T3 (profundidad 0): 13 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0272, I resto = 0.0266
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     6 regiones,   404/día/reg    14.9%   14.9%   18.2%   22.7%   29.2%   |                  15.1%   14.8%   18.2%   23.0%   28.9%
+       Alphabet City, Bloomingdale, Hamilton Heights, Stuy Town/Peter Cooper Village, Two Bridges/Seward Park, Washington Heights North
+     7 regiones,   680/día/reg    28.2%   22.2%   18.6%   17.2%   13.8%   |                  28.2%   22.0%   18.8%   17.3%   13.6%
+       Chinatown, Financial District South, Hudson Sq, Manhattanville, Seaport, Washington Heights South, World Trade Center
 
-  R2-T3: corte de col (profundidad 1); I nov = 0.0055, I resto = 0.0064
+  R2-T3 (profundidad 1): 7 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0060, I resto = 0.0055
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     1 regiones,   962/día/reg    35.3%   24.8%   17.1%   13.9%    8.9%   |                  36.0%   23.5%   17.1%   14.3%    9.1%
+       Financial District South
+     6 regiones,   632/día/reg    26.4%   21.5%   19.0%   18.1%   15.0%   |                  26.3%   21.6%   19.2%   18.1%   14.7%
+       Chinatown, Hudson Sq, Manhattanville, Seaport, Washington Heights South, World Trade Center
 
-  R2-T1 (profundidad 0): 12 regiones x [00-02 02-04 20-22 22-24]; I nov = 0.0054, I resto = 0.0063
-                                   00-02   02-04   20-22   22-24   | resto de 2017:   00-02   02-04   20-22   22-24
-     6 regiones,  1322/día/reg    11.6%    3.7%   45.0%   39.7%   |                  12.2%    3.6%   45.1%   39.1%
-       Battery Park City, Inwood Hill Park, Kips Bay, Murray Hill, TriBeCa/Civic Center, UN/Turtle Bay South
-     6 regiones,   591/día/reg    16.4%    6.9%   37.5%   39.3%   |                  17.9%    7.1%   37.8%   37.2%
-       Chinatown, East Harlem South, Financial District North, Hudson Sq, Manhattanville, Washington Heights South
-
-  R2-T1: corte de col (profundidad 1); I nov = 0.0052, I resto = 0.0062
-
-  R7-T3 (profundidad 0): 4 regiones x [06-08 08-10]; I nov = 0.0056, I resto = 0.0052
-                                   06-08   08-10   | resto de 2017:   06-08   08-10
-     2 regiones,  4065/día/reg    44.9%   55.1%   |                  44.2%   55.8%
-       Midtown Center, Midtown East
-     2 regiones,   247/día/reg    22.9%   77.1%   |                  23.7%   76.3%
-       Battery Park, Financial District South
-
-  R4-T3 (profundidad 0): 11 regiones x [06-08 08-10]; I nov = 0.0066, I resto = 0.0055
-                                   06-08   08-10   | resto de 2017:   06-08   08-10
-     6 regiones,   599/día/reg    43.0%   57.0%   |                  42.1%   57.9%
-       Clinton West, East Harlem North, Gramercy, Highbridge Park, Marble Hill, Penn Station/Madison Sq West
-     5 regiones,   578/día/reg    31.8%   68.2%   |                  31.9%   68.1%
-       East Chelsea, Flatiron, Seaport, Sutton Place/Turtle Bay North, World Trade Center
-
-  R5-T3 (profundidad 0): 9 regiones x [06-08 08-10]; I nov = 0.0105, I resto = 0.0110
-                                   06-08   08-10   | resto de 2017:   06-08   08-10
-     2 regiones,  2041/día/reg    48.6%   51.4%   |                  48.1%   51.9%
-       Lenox Hill East, Times Sq/Theatre District
-     7 regiones,  1204/día/reg    33.5%   66.5%   |                  32.7%   67.3%
-       Garment District, Midtown North, Midtown South, Morningside Heights, Randalls Island, Union Sq, West Chelsea/Hudson Yards
-
-  R3-T3 (profundidad 0): 12 regiones x [06-08 08-10]; I nov = 0.0068, I resto = 0.0062
-                                   06-08   08-10   | resto de 2017:   06-08   08-10
-     7 regiones,   412/día/reg    37.4%   62.6%   |                  36.9%   63.1%
-       Bloomingdale, Central Harlem, Central Harlem North, Clinton East, Two Bridges/Seward Park, Yorkville East, Yorkville West
-     5 regiones,   339/día/reg    26.2%   73.8%   |                  26.2%   73.8%
-       Greenwich Village South, Little Italy/NoLiTa, Manhattan Valley, Meatpacking/West Village West, West Village
-
-  R3-T1: corte de col (profundidad 0); I nov = 0.0059, I resto = 0.0047
-
-holiday: 4 cortes; noviembre D = 9 días, N = 2,389,795; resto de 2017 D = 92 días, N = 25,642,581
-
-  R4-T1: corte de col (profundidad 0); I nov = 0.0057, I resto = 0.0043
-
-  R3-T1 (profundidad 0): 15 regiones x [06-08 08-10]; I nov = 0.0146, I resto = 0.0131
-                                   06-08   08-10   | resto de 2017:   06-08   08-10
-     5 regiones,   186/día/reg    45.6%   54.4%   |                  45.2%   54.8%
-       Highbridge Park, Kips Bay, Manhattanville, UN/Turtle Bay South, Washington Heights South
-    10 regiones,   234/día/reg    27.6%   72.4%   |                  27.9%   72.1%
-       Central Harlem North, East Chelsea, Flatiron, Gramercy, Greenwich Village South, Hudson Sq, Meatpacking/West Village West, Roosevelt Island, Seaport, West Village
-
-  R3-T2: corte de col (profundidad 0); I nov = 0.0057, I resto = 0.0057
-
-  R1-T2 (profundidad 0): 9 regiones x [00-02 02-04 04-06]; I nov = 0.0054, I resto = 0.0060
+  R3-T1 (profundidad 0): 13 regiones x [00-02 02-04 04-06]; I nov = 0.0063, I resto = 0.0052
                                    00-02   02-04   04-06   | resto de 2017:   00-02   02-04   04-06
-     2 regiones,  2109/día/reg    58.7%   32.8%    8.6%   |                  55.5%   35.1%    9.4%
-       East Village, Lower East Side
-     7 regiones,   411/día/reg    50.6%   34.9%   14.5%   |                  47.0%   37.0%   16.0%
-       Alphabet City, Financial District North, Hamilton Heights, Inwood, Stuy Town/Peter Cooper Village, Two Bridges/Seward Park, Washington Heights North
+     4 regiones,   211/día/reg    56.0%   22.9%   21.2%   |                  57.2%   23.0%   19.8%
+       Battery Park City, Clinton West, East Harlem North, Morningside Heights
+     9 regiones,   216/día/reg    64.2%   23.4%   12.4%   |                  65.3%   22.6%   12.1%
+       Central Harlem, Central Harlem North, Financial District North, Greenwich Village South, Little Italy/NoLiTa, Lower East Side, Manhattan Valley, Meatpacking/West Village West, SoHo
 
-Resumen de los 8 cortes de filas: diferencia de cuota entre grupos en el intervalo de mayor contraste
-  noviembre: de 7.5 a 21.9 puntos; resto de 2017: de 7.3 a 20.5 puntos
-  mayor cambio de una cuota entre noviembre y el resto: 3.6 puntos
-  cociente I resto / I nov: de 0.84 a 1.17
+  R3-T3 (profundidad 0): 13 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0087, I resto = 0.0099
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     4 regiones,  1664/día/reg    27.0%   20.3%   18.0%   18.0%   16.7%   |                  27.7%   20.5%   18.1%   18.0%   15.8%
+       Battery Park City, Clinton West, Financial District North, Morningside Heights
+     9 regiones,  1257/día/reg    17.7%   17.7%   19.5%   21.1%   24.0%   |                  17.8%   17.9%   19.8%   21.0%   23.5%
+       Central Harlem, Central Harlem North, East Harlem North, Greenwich Village South, Little Italy/NoLiTa, Lower East Side, Manhattan Valley, Meatpacking/West Village West, SoHo
+
+  R3-T3 (profundidad 1): 4 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0052, I resto = 0.0048
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     2 regiones,  1794/día/reg    25.0%   19.1%   17.5%   18.4%   20.0%   |                  24.9%   19.5%   18.1%   18.9%   18.5%
+       Clinton West, Morningside Heights
+     2 regiones,  1534/día/reg    29.3%   21.7%   18.6%   17.6%   12.9%   |                  30.8%   21.5%   18.0%   17.0%   12.7%
+       Battery Park City, Financial District North
+
+  R3-T3 (profundidad 1): 9 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0051, I resto = 0.0046
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     4 regiones,  1208/día/reg    18.7%   15.5%   16.7%   21.1%   27.9%   |                  19.0%   15.4%   17.4%   21.1%   27.0%
+       Central Harlem, Central Harlem North, East Harlem North, Manhattan Valley
+     5 regiones,  1297/día/reg    16.9%   19.4%   21.5%   21.1%   21.1%   |                  16.8%   19.8%   21.5%   21.0%   20.9%
+       Greenwich Village South, Little Italy/NoLiTa, Lower East Side, Meatpacking/West Village West, SoHo
+
+  R6-T1: corte de col (profundidad 0); I nov = 0.0056, I resto = 0.0045
+
+  R6-T3 (profundidad 0): 10 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0055, I resto = 0.0053
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     6 regiones,  3253/día/reg    15.8%   16.2%   18.9%   23.3%   25.8%   |                  15.6%   16.5%   19.6%   23.0%   25.4%
+       Clinton East, East Village, Lenox Hill West, Upper West Side North, Upper West Side South, Yorkville West
+     4 regiones,  3315/día/reg    20.9%   19.3%   20.1%   20.9%   18.8%   |                  21.2%   19.3%   20.2%   20.5%   18.8%
+       East Chelsea, Gramercy, Midtown South, Sutton Place/Turtle Bay North
+
+  R7-T3 (profundidad 0): 6 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0060, I resto = 0.0067
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     4 regiones,  5552/día/reg    23.4%   20.1%   20.4%   19.6%   16.5%   |                  24.1%   20.0%   20.1%   19.0%   16.7%
+       Midtown North, Murray Hill, Times Sq/Theatre District, Union Sq
+     2 regiones,  4461/día/reg    16.2%   17.4%   19.8%   23.5%   23.1%   |                  16.2%   17.5%   19.7%   23.2%   23.4%
+       Lincoln Square East, Penn Station/Madison Sq West
+
+  R4-T1 (profundidad 0): 5 regiones x [00-02 02-04 04-06]; I nov = 0.0057, I resto = 0.0041
+                                   00-02   02-04   04-06   | resto de 2017:   00-02   02-04   04-06
+     4 regiones,   250/día/reg    61.1%   20.1%   18.8%   |                  63.2%   19.5%   17.3%
+       Flatiron, Greenwich Village North, Lincoln Square West, Yorkville East
+     1 regiones,   386/día/reg    66.3%   23.3%   10.4%   |                  67.3%   22.4%   10.3%
+       West Village
+
+  R4-T3: corte de col (profundidad 0); I nov = 0.0067, I resto = 0.0062
+
+  R8-T1 (profundidad 0): 4 regiones x [00-02 02-04 04-06]; I nov = 0.0214, I resto = 0.0216
+                                   00-02   02-04   04-06   | resto de 2017:   00-02   02-04   04-06
+     1 regiones,   526/día/reg    35.0%   12.4%   52.6%   |                  36.3%   13.0%   50.7%
+       Midtown Center
+     3 regiones,   333/día/reg    54.4%   13.8%   31.8%   |                  55.9%   14.3%   29.8%
+       Midtown East, Upper East Side North, Upper East Side South
+
+  R8-T3 (profundidad 0): 4 regiones x [08-10 10-12 12-14 14-16 16-18]; I nov = 0.0120, I resto = 0.0128
+                                   08-10   10-12   12-14   14-16   16-18   | resto de 2017:   08-10   10-12   12-14   14-16   16-18
+     2 regiones,  7752/día/reg    28.9%   21.3%   19.0%   17.5%   13.3%   |                  29.9%   20.5%   18.9%   17.3%   13.4%
+       Midtown Center, Midtown East
+     2 regiones,  8706/día/reg    18.3%   18.5%   20.4%   22.3%   20.6%   |                  17.9%   19.1%   21.0%   22.0%   20.0%
+       Upper East Side North, Upper East Side South
+
+holiday: 15 cortes; noviembre D = 9 días, N = 2,389,795; resto de 2017 D = 92 días, N = 25,642,581
+
+  R3-T1: corte de col (profundidad 0); I nov = 0.0264, I resto = 0.0289
+
+  R3-T2 (profundidad 0): 15 regiones x [02-04 08-10]; I nov = 0.0266, I resto = 0.0215
+                                   02-04   08-10   | resto de 2017:   02-04   08-10
+     9 regiones,   362/día/reg    54.8%   45.2%   |                  59.9%   40.1%
+       Central Harlem, Central Harlem North, Clinton West, East Harlem South, Financial District North, Little Italy/NoLiTa, Meatpacking/West Village West, SoHo, Yorkville East
+     6 regiones,   358/día/reg    31.5%   68.5%   |                  38.6%   61.4%
+       Battery Park City, Central Park, East Harlem North, Lincoln Square West, Manhattan Valley, Morningside Heights
+
+  R3-T2: corte de col (profundidad 1); I nov = 0.0224, I resto = 0.0190
+
+  R3-T2 (profundidad 1): 6 regiones x [02-04 08-10]; I nov = 0.0241, I resto = 0.0200
+                                   02-04   08-10   | resto de 2017:   02-04   08-10
+     5 regiones,   349/día/reg    36.1%   63.9%   |                  42.6%   57.4%
+       Battery Park City, East Harlem North, Lincoln Square West, Manhattan Valley, Morningside Heights
+     1 regiones,   400/día/reg    11.7%   88.3%   |                  17.4%   82.6%
+       Central Park
+
+  R4-T1 (profundidad 0): 10 regiones x [04-06 06-08]; I nov = 0.0306, I resto = 0.0260
+                                   04-06   06-08   | resto de 2017:   04-06   06-08
+     5 regiones,   157/día/reg    60.2%   39.8%   |                  63.1%   36.9%
+       Flatiron, Greenwich Village North, Greenwich Village South, Lower East Side, TriBeCa/Civic Center
+     5 regiones,   278/día/reg    34.7%   65.3%   |                  39.9%   60.1%
+       Garment District, Kips Bay, Lenox Hill East, UN/Turtle Bay South, West Chelsea/Hudson Yards
+
+  R4-T2 (profundidad 0): 10 regiones x [02-04 08-10]; I nov = 0.0345, I resto = 0.0346
+                                   02-04   08-10   | resto de 2017:   02-04   08-10
+     7 regiones,   532/día/reg    62.1%   37.9%   |                  66.6%   33.4%
+       Flatiron, Greenwich Village North, Greenwich Village South, Kips Bay, Lower East Side, TriBeCa/Civic Center, UN/Turtle Bay South
+     3 regiones,   588/día/reg    34.2%   65.8%   |                  38.3%   61.7%
+       Garment District, Lenox Hill East, West Chelsea/Hudson Yards
+
+  R2-T1 (profundidad 0): 13 regiones x [04-06 06-08]; I nov = 0.0220, I resto = 0.0075
+                                   04-06   06-08   | resto de 2017:   04-06   06-08
+    10 regiones,    74/día/reg    64.6%   35.4%   |                  68.5%   31.5%
+       Alphabet City, Chinatown, Hamilton Heights, Hudson Sq, Manhattanville, Seaport, Stuy Town/Peter Cooper Village, Two Bridges/Seward Park, Washington Heights North, World Trade Center
+     3 regiones,   135/día/reg    42.9%   57.1%   |                  55.2%   44.8%
+       Bloomingdale, Financial District South, Washington Heights South
+
+  R2-T2: corte de col (profundidad 0); I nov = 0.0249, I resto = 0.0221
+
+  R1-T4 (profundidad 0): 7 regiones x [12-14 14-16 16-18 18-20]; I nov = 0.0469, I resto = 0.0328
+                                   12-14   14-16   16-18   18-20   | resto de 2017:   12-14   14-16   16-18   18-20
+     3 regiones,    37/día/reg    44.0%   28.7%   13.4%   13.9%   |                  36.8%   29.4%   19.8%   13.9%
+       Battery Park, Inwood Hill Park, Randalls Island
+     4 regiones,    52/día/reg    20.1%   22.6%   27.3%   30.0%   |                  19.4%   23.7%   26.9%   30.0%
+       Highbridge Park, Inwood, Marble Hill, Roosevelt Island
+
+  R1-T3 (profundidad 0): 7 regiones x [00-02 10-12 20-22 22-24]; I nov = 0.1434, I resto = 0.1488
+                                   00-02   10-12   20-22   22-24   | resto de 2017:   00-02   10-12   20-22   22-24
+     2 regiones,    40/día/reg    12.9%   70.0%    8.4%    8.7%   |                  11.4%   67.7%   11.5%    9.3%
+       Battery Park, Randalls Island
+     5 regiones,    51/día/reg    33.6%   12.5%   24.9%   29.0%   |                  38.4%   11.3%   22.7%   27.7%
+       Highbridge Park, Inwood, Inwood Hill Park, Marble Hill, Roosevelt Island
+
+  R6-T1 (profundidad 0): 10 regiones x [04-06 06-08]; I nov = 0.0269, I resto = 0.0328
+                                   04-06   06-08   | resto de 2017:   04-06   06-08
+     4 regiones,   422/día/reg    51.9%   48.1%   |                  58.2%   41.8%
+       Clinton East, East Village, Murray Hill, Times Sq/Theatre District
+     6 regiones,   373/día/reg    29.1%   70.9%   |                  32.7%   67.3%
+       Lincoln Square East, Midtown Center, Penn Station/Madison Sq West, Upper East Side North, Upper East Side South, Upper West Side South
+
+  R6-T2 (profundidad 0): 10 regiones x [02-04 08-10]; I nov = 0.0722, I resto = 0.0745
+                                   02-04   08-10   | resto de 2017:   02-04   08-10
+     4 regiones,   977/día/reg    61.0%   39.0%   |                  66.8%   33.2%
+       Clinton East, East Village, Murray Hill, Times Sq/Theatre District
+     6 regiones,   862/día/reg    23.7%   76.3%   |                  28.6%   71.4%
+       Lincoln Square East, Midtown Center, Penn Station/Madison Sq West, Upper East Side North, Upper East Side South, Upper West Side South
+
+  R6-T2 (profundidad 1): 4 regiones x [02-04 08-10]; I nov = 0.0344, I resto = 0.0273
+                                   02-04   08-10   | resto de 2017:   02-04   08-10
+     1 regiones,  1169/día/reg    80.0%   20.0%   |                  82.4%   17.6%
+       East Village
+     3 regiones,   912/día/reg    52.9%   47.1%   |                  59.5%   40.5%
+       Clinton East, Murray Hill, Times Sq/Theatre District
+
+  R6-T3 (profundidad 0): 10 regiones x [00-02 10-12 20-22 22-24]; I nov = 0.0248, I resto = 0.0253
+                                   00-02   10-12   20-22   22-24   | resto de 2017:   00-02   10-12   20-22   22-24
+     5 regiones,  2865/día/reg    14.3%   37.7%   26.9%   21.1%   |                  15.2%   37.9%   26.0%   20.9%
+       Lincoln Square East, Midtown Center, Upper East Side North, Upper East Side South, Upper West Side South
+     5 regiones,  3383/día/reg    28.2%   20.5%   27.1%   24.2%   |                  28.8%   19.9%   26.5%   24.8%
+       Clinton East, East Village, Murray Hill, Penn Station/Madison Sq West, Times Sq/Theatre District
+
+  R5-T2 (profundidad 0): 11 regiones x [02-04 08-10]; I nov = 0.0243, I resto = 0.0229
+                                   02-04   08-10   | resto de 2017:   02-04   08-10
+     5 regiones,   712/día/reg    59.3%   40.7%   |                  65.3%   34.7%
+       East Chelsea, Gramercy, Midtown South, Sutton Place/Turtle Bay North, West Village
+     6 regiones,   685/día/reg    37.3%   62.7%   |                  44.0%   56.0%
+       Lenox Hill West, Midtown East, Midtown North, Union Sq, Upper West Side North, Yorkville West
+
+Resumen de los 23 cortes de filas: diferencia de cuota entre grupos en el intervalo de mayor contraste
+  noviembre: de 6.9 a 57.5 puntos; resto de 2017: de 5.8 a 56.4 puntos
+  mayor cambio de una cuota entre noviembre y el resto: 12.4 puntos
+  cociente I resto / I nov: de 0.34 a 1.22

@@ -1,44 +1,88 @@
-Árbol de AST-CC, periodo feriado (alfa = 0.05, delta = 0.005, nula de bootstrap de días)
+Árbol de AST-CC, periodo feriado (alfa = 0.05, delta = 0.02, nula de bootstrap de días)
 G2_s: estadístico del corte; g~: ganancia corregida por sesgo; p: p-valor min-P del corte;
 p_omn e I~: prueba ómnibus del nodo y su información mutua corregida; l: nivel de actividad
 
-Bloque (0,0): 12 regiones x 4 intervalos, N = 288,058, alfa_B = 0.0060, l = 1.09  -> hoja homogenea (efecto_menor), p_omn = 0.00601, I~ = 0.0018
-Bloque (0,1): 12 regiones x 3 intervalos, N = 189,660, alfa_B = 0.0040, l = 1.02  -> hoja homogenea (no_significativa), p_omn = 0.00791, I~ = 0.0014
-Bloque (0,2): 12 regiones x 2 intervalos, N = 51,511, alfa_B = 0.0011, l = 1.00  -> hoja homogenea (no_significativa), p_omn = 0.00162, I~ = 0.0049
-Bloque (0,3): 12 regiones x 3 intervalos, N = 74,966, alfa_B = 0.0016, l = 0.73  -> hoja homogenea (no_significativa), p_omn = 0.00705, I~ = 0.0035
-Bloque (1,0): 5 regiones x 4 intervalos, N = 191,155, alfa_B = 0.0040, l = 1.26  -> hoja homogenea (efecto_menor), p_omn = 0.00199, I~ = 0.0011
-Bloque (1,1): 5 regiones x 3 intervalos, N = 94,798, alfa_B = 0.0020, l = 0.88  -> hoja homogenea (no_significativa), p_omn = 0.028, I~ = 0.0009
-Bloque (1,2): 5 regiones x 2 intervalos, N = 37,328, alfa_B = 0.0008, l = 1.25  -> hoja homogenea (no_significativa), p_omn = 0.005, I~ = 0.0015
-Bloque (1,3): 5 regiones x 3 intervalos, N = 25,445, alfa_B = 0.0005, l = 0.43  -> hoja homogenea (no_significativa), p_omn = 0.01, I~ = 0.0059
-Bloque (2,0): 14 regiones x 4 intervalos, N = 229,811, alfa_B = 0.0048, l = 0.96  -> hoja homogenea (efecto_menor), p_omn = 0.0024, I~ = 0.0021
-Bloque (2,1): 14 regiones x 3 intervalos, N = 175,466, alfa_B = 0.0037, l = 1.04  -> hoja homogenea (efecto_menor), p_omn = 0.00366, I~ = 0.0008
-Bloque (2,2): 14 regiones x 2 intervalos, N = 41,417, alfa_B = 0.0009, l = 0.88  -> corte de col: G2_s = 472.5, g~ = 0.0052, p = 0.000433, p_omn = 0.000433, I~ = 0.0052
-    hijo 1: 14 regiones x 1 intervalos, N = 11,873, alfa_B = 0.0002, l = 0.84  -> hoja trivial
-        intervalos: 06-08
-    hijo 2: 14 regiones x 1 intervalos, N = 29,544, alfa_B = 0.0006, l = 0.90  -> hoja trivial
-        intervalos: 08-10
-Bloque (2,3): 14 regiones x 3 intervalos, N = 101,343, alfa_B = 0.0021, l = 1.09  -> hoja homogenea (efecto_menor), p_omn = 0.00106, I~ = 0.0027
-Bloque (3,0): 15 regiones x 4 intervalos, N = 158,094, alfa_B = 0.0033, l = 0.86  -> hoja homogenea (efecto_menor), p_omn = 0.0033, I~ = 0.0012
-Bloque (3,1): 15 regiones x 3 intervalos, N = 137,068, alfa_B = 0.0029, l = 1.05  -> hoja homogenea (no_significativa), p_omn = 0.01, I~ = 0.0006
-Bloque (3,2): 15 regiones x 2 intervalos, N = 29,466, alfa_B = 0.0006, l = 0.82  -> corte de fil: G2_s = 862.8, g~ = 0.0142, p = 0.000308, p_omn = 0.000308, I~ = 0.0182
-    hijo 1: 10 regiones x 2 intervalos, N = 21,094, alfa_B = 0.0004, l = 0.75  -> hoja homogenea (efecto_menor), p_omn = 0.000221, I~ = 0.0035
-        regiones: Central Harlem North, East Chelsea, Flatiron, Gramercy, Greenwich Village South, Hudson Sq, Meatpacking/West Village West, Roosevelt Island, Seaport, West Village
-    hijo 2: 5 regiones x 2 intervalos, N = 8,372, alfa_B = 0.0002, l = 1.04  -> hoja homogenea (no_significativa), p_omn = 0.000263, I~ = 0.0042
-        regiones: Highbridge Park, Kips Bay, Manhattanville, UN/Turtle Bay South, Washington Heights South
-Bloque (3,3): 15 regiones x 3 intervalos, N = 97,057, alfa_B = 0.0020, l = 1.36  -> corte de col: G2_s = 1098.0, g~ = 0.0055, p = 0.00101, p_omn = 0.00101, I~ = 0.0073
-    hijo 1: 15 regiones x 2 intervalos, N = 86,277, alfa_B = 0.0018, l = 1.38  -> hoja homogenea (efecto_menor), p_omn = 0.000902, I~ = 0.0020
-        intervalos: 00-02, 02-04
-    hijo 2: 15 regiones x 1 intervalos, N = 10,780, alfa_B = 0.0002, l = 1.23  -> hoja trivial
+Bloque (0,0): 15 regiones x 2 intervalos, N = 19,891, alfa_B = 0.0004, l = 1.02  -> corte de col: G2_s = 1050.5, g~ = 0.0250, p = 0.000208, p_omn = 0.000208, I~ = 0.0250
+    hijo 1: 15 regiones x 1 intervalos, N = 9,415, alfa_B = 0.0002, l = 1.08  -> hoja trivial
         intervalos: 04-06
-Bloque (4,0): 9 regiones x 4 intervalos, N = 63,545, alfa_B = 0.0013, l = 0.70  -> hoja homogenea (efecto_menor), p_omn = 0.000664, I~ = 0.0016
-Bloque (4,1): 9 regiones x 3 intervalos, N = 71,582, alfa_B = 0.0015, l = 1.11  -> hoja homogenea (efecto_menor), p_omn = 0.0015, I~ = 0.0011
-Bloque (4,2): 9 regiones x 2 intervalos, N = 9,307, alfa_B = 0.0002, l = 0.52  -> hoja homogenea (no_significativa), p_omn = 0.000389, I~ = 0.0030
-Bloque (4,3): 9 regiones x 3 intervalos, N = 63,876, alfa_B = 0.0013, l = 1.81  -> corte de fil: G2_s = 687.2, g~ = 0.0053, p = 0.000668, p_omn = 0.000668, I~ = 0.0070
-    hijo 1: 7 regiones x 3 intervalos, N = 25,918, alfa_B = 0.0005, l = 1.77  -> hoja homogenea (efecto_menor), p_omn = 0.000271, I~ = 0.0031
-        regiones: Alphabet City, Financial District North, Hamilton Heights, Inwood, Stuy Town/Peter Cooper Village, Two Bridges/Seward Park, Washington Heights North
-    hijo 2: 2 regiones x 3 intervalos, N = 37,958, alfa_B = 0.0008, l = 1.84  -> hoja homogenea (efecto_menor), p_omn = 0.000397, I~ = 0.0006
-        regiones: East Village, Lower East Side
-Bloque (5,0): 11 regiones x 4 intervalos, N = 111,579, alfa_B = 0.0023, l = 0.99  -> hoja homogenea (efecto_menor), p_omn = 0.00117, I~ = 0.0026
-Bloque (5,1): 11 regiones x 3 intervalos, N = 69,869, alfa_B = 0.0015, l = 0.87  -> hoja homogenea (efecto_menor), p_omn = 0.00073, I~ = 0.0018
-Bloque (5,2): 11 regiones x 2 intervalos, N = 35,617, alfa_B = 0.0007, l = 1.61  -> hoja homogenea (no_significativa), p_omn = 0.011, I~ = 0.0110
-Bloque (5,3): 11 regiones x 3 intervalos, N = 41,777, alfa_B = 0.0009, l = 0.95  -> hoja homogenea (no_significativa), p_omn = 0.022, I~ = 0.0033
+    hijo 2: 15 regiones x 1 intervalos, N = 10,476, alfa_B = 0.0002, l = 0.96  -> hoja trivial
+        intervalos: 06-08
+Bloque (0,1): 15 regiones x 2 intervalos, N = 48,619, alfa_B = 0.0010, l = 1.03  -> corte de fil: G2_s = 2586.5, g~ = 0.0261, p = 0.000508, p_omn = 0.000508, I~ = 0.0494
+    hijo 1: 9 regiones x 2 intervalos, N = 29,302, alfa_B = 0.0006, l = 1.03  -> corte de col: G2_s = 1314.9, g~ = 0.0218, p = 0.000306, p_omn = 0.000306, I~ = 0.0218
+        hijo 1: 9 regiones x 1 intervalos, N = 16,060, alfa_B = 0.0003, l = 1.20  -> hoja trivial
+            intervalos: 02-04
+        hijo 2: 9 regiones x 1 intervalos, N = 13,242, alfa_B = 0.0003, l = 0.88  -> hoja trivial
+            intervalos: 08-10
+        regiones: Central Harlem, Central Harlem North, Clinton West, East Harlem South, Financial District North, Little Italy/NoLiTa, Meatpacking/West Village West, SoHo, Yorkville East
+    hijo 2: 6 regiones x 2 intervalos, N = 19,317, alfa_B = 0.0004, l = 1.02  -> corte de fil: G2_s = 931.9, g~ = 0.0235, p = 0.000202, p_omn = 0.000202, I~ = 0.0245
+        hijo 1: 5 regiones x 2 intervalos, N = 15,713, alfa_B = 0.0003, l = 1.03  -> hoja homogenea (no_significativa), p_omn = 0.048, I~ = 0.0010
+            regiones: Battery Park City, East Harlem North, Lincoln Square West, Manhattan Valley, Morningside Heights
+        hijo 2: 1 regiones x 2 intervalos, N = 3,604, alfa_B = 0.0001, l = 0.98  -> hoja trivial
+            regiones: Central Park
+        regiones: Battery Park City, Central Park, East Harlem North, Lincoln Square West, Manhattan Valley, Morningside Heights
+Bloque (0,2): 15 regiones x 4 intervalos, N = 189,694, alfa_B = 0.0040, l = 0.99  -> hoja homogenea (efecto_menor), p_omn = 0.00198, I~ = 0.0047
+Bloque (0,3): 15 regiones x 4 intervalos, N = 161,922, alfa_B = 0.0034, l = 1.01  -> hoja no_localizada (ganancia_menor: corte de col con g~ = 0.0164), p_omn = 0.00169, I~ = 0.0206
+Bloque (1,0): 10 regiones x 2 intervalos, N = 19,590, alfa_B = 0.0004, l = 1.07  -> corte de fil: G2_s = 1200.2, g~ = 0.0297, p = 0.000205, p_omn = 0.000205, I~ = 0.0401
+    hijo 1: 5 regiones x 2 intervalos, N = 7,079, alfa_B = 0.0001, l = 0.77  -> hoja homogenea (efecto_menor), p_omn = 7.4e-05, I~ = 0.0097
+        regiones: Flatiron, Greenwich Village North, Greenwich Village South, Lower East Side, TriBeCa/Civic Center
+    hijo 2: 5 regiones x 2 intervalos, N = 12,511, alfa_B = 0.0003, l = 1.36  -> hoja homogenea (no_significativa), p_omn = 0.000393, I~ = 0.0096
+        regiones: Garment District, Kips Bay, Lenox Hill East, UN/Turtle Bay South, West Chelsea/Hudson Yards
+Bloque (1,1): 10 regiones x 2 intervalos, N = 49,375, alfa_B = 0.0010, l = 1.11  -> corte de fil: G2_s = 3411.5, g~ = 0.0336, p = 0.000516, p_omn = 0.000516, I~ = 0.0473
+    hijo 1: 7 regiones x 2 intervalos, N = 33,490, alfa_B = 0.0007, l = 1.10  -> hoja homogenea (efecto_menor), p_omn = 0.00035, I~ = 0.0175
+        regiones: Flatiron, Greenwich Village North, Greenwich Village South, Kips Bay, Lower East Side, TriBeCa/Civic Center, UN/Turtle Bay South
+    hijo 2: 3 regiones x 2 intervalos, N = 15,885, alfa_B = 0.0003, l = 1.15  -> hoja homogenea (no_significativa), p_omn = 0.016, I~ = 0.0042
+        regiones: Garment District, Lenox Hill East, West Chelsea/Hudson Yards
+Bloque (1,2): 10 regiones x 4 intervalos, N = 167,099, alfa_B = 0.0035, l = 0.93  -> hoja homogenea (efecto_menor), p_omn = 0.00174, I~ = 0.0028
+Bloque (1,3): 10 regiones x 4 intervalos, N = 156,907, alfa_B = 0.0033, l = 1.04  -> hoja homogenea (efecto_menor), p_omn = 0.00164, I~ = 0.0185
+Bloque (2,0): 13 regiones x 2 intervalos, N = 10,278, alfa_B = 0.0002, l = 1.51  -> corte de fil: G2_s = 451.7, g~ = 0.0202, p = 0.000108, p_omn = 0.000108, I~ = 0.0285
+    hijo 1: 10 regiones x 2 intervalos, N = 6,633, alfa_B = 0.0001, l = 1.27  -> hoja homogenea (efecto_menor), p_omn = 0.000139, I~ = 0.0040
+        regiones: Alphabet City, Chinatown, Hamilton Heights, Hudson Sq, Manhattanville, Seaport, Stuy Town/Peter Cooper Village, Two Bridges/Seward Park, Washington Heights North, World Trade Center
+    hijo 2: 3 regiones x 2 intervalos, N = 3,645, alfa_B = 0.0001, l = 2.33  -> hoja homogenea (no_significativa), p_omn = 0.038, I~ = 0.0119
+        regiones: Bloomingdale, Financial District South, Washington Heights South
+Bloque (2,1): 13 regiones x 2 intervalos, N = 19,408, alfa_B = 0.0004, l = 1.18  -> corte de col: G2_s = 965.6, g~ = 0.0241, p = 0.000203, p_omn = 0.000203, I~ = 0.0241
+    hijo 1: 13 regiones x 1 intervalos, N = 12,374, alfa_B = 0.0003, l = 1.60  -> hoja trivial
+        intervalos: 02-04
+    hijo 2: 13 regiones x 1 intervalos, N = 7,034, alfa_B = 0.0001, l = 0.81  -> hoja trivial
+        intervalos: 08-10
+Bloque (2,2): 13 regiones x 4 intervalos, N = 55,496, alfa_B = 0.0012, l = 0.83  -> hoja homogenea (efecto_menor), p_omn = 0.00058, I~ = 0.0052
+Bloque (2,3): 13 regiones x 4 intervalos, N = 60,403, alfa_B = 0.0013, l = 1.09  -> hoja homogenea (efecto_menor), p_omn = 0.000631, I~ = 0.0157
+Bloque (3,0): 7 regiones x 2 intervalos, N = 974, alfa_B = 0.0000, l = 2.56  -> hoja inalcanzable
+Bloque (3,1): 7 regiones x 2 intervalos, N = 1,322, alfa_B = 0.0000, l = 1.44  -> hoja inalcanzable
+Bloque (3,2): 7 regiones x 4 intervalos, N = 2,847, alfa_B = 0.0001, l = 0.76  -> corte de fil: G2_s = 267.2, g~ = 0.0438, p = 5e-05, p_omn = 5e-05, I~ = 0.0479
+    hijo 1: 3 regiones x 4 intervalos, N = 989, alfa_B = 0.0000, l = 0.73  -> hoja inalcanzable
+        regiones: Battery Park, Inwood Hill Park, Randalls Island
+    hijo 2: 4 regiones x 4 intervalos, N = 1,858, alfa_B = 0.0000, l = 0.78  -> hoja inalcanzable
+        regiones: Highbridge Park, Inwood, Marble Hill, Roosevelt Island
+Bloque (3,3): 7 regiones x 4 intervalos, N = 3,026, alfa_B = 0.0001, l = 0.97  -> corte de fil: G2_s = 867.7, g~ = 0.1405, p = 5e-05, p_omn = 5e-05, I~ = 0.1432
+    hijo 1: 2 regiones x 4 intervalos, N = 723, alfa_B = 0.0000, l = 0.69  -> hoja inalcanzable
+        regiones: Battery Park, Randalls Island
+    hijo 2: 5 regiones x 4 intervalos, N = 2,303, alfa_B = 0.0000, l = 1.11  -> hoja inalcanzable
+        regiones: Highbridge Park, Inwood, Inwood Hill Park, Marble Hill, Roosevelt Island
+Bloque (4,0): 10 regiones x 2 intervalos, N = 35,345, alfa_B = 0.0007, l = 0.97  -> corte de fil: G2_s = 1900.8, g~ = 0.0256, p = 0.00037, p_omn = 0.00037, I~ = 0.0375
+    hijo 1: 4 regiones x 2 intervalos, N = 15,207, alfa_B = 0.0003, l = 1.02  -> hoja homogenea (efecto_menor), p_omn = 0.000159, I~ = 0.0181
+        regiones: Clinton East, East Village, Murray Hill, Times Sq/Theatre District
+    hijo 2: 6 regiones x 2 intervalos, N = 20,138, alfa_B = 0.0004, l = 0.93  -> hoja homogenea (no_significativa), p_omn = 0.005, I~ = 0.0053
+        regiones: Lincoln Square East, Midtown Center, Penn Station/Madison Sq West, Upper East Side North, Upper East Side South, Upper West Side South
+Bloque (4,1): 10 regiones x 2 intervalos, N = 81,685, alfa_B = 0.0017, l = 0.93  -> corte de fil: G2_s = 11792.7, g~ = 0.0717, p = 0.000853, p_omn = 0.000853, I~ = 0.0949
+    hijo 1: 4 regiones x 2 intervalos, N = 35,156, alfa_B = 0.0007, l = 0.98  -> corte de fil: G2_s = 2418.5, g~ = 0.0340, p = 0.000368, p_omn = 0.000368, I~ = 0.0370
+        hijo 1: 3 regiones x 2 intervalos, N = 24,636, alfa_B = 0.0005, l = 0.92  -> hoja homogenea (no_significativa), p_omn = 0.00129, I~ = 0.0038
+            regiones: Clinton East, Murray Hill, Times Sq/Theatre District
+        hijo 2: 1 regiones x 2 intervalos, N = 10,520, alfa_B = 0.0002, l = 1.14  -> hoja trivial
+            regiones: East Village
+        regiones: Clinton East, East Village, Murray Hill, Times Sq/Theatre District
+    hijo 2: 6 regiones x 2 intervalos, N = 46,529, alfa_B = 0.0010, l = 0.89  -> hoja homogenea (efecto_menor), p_omn = 0.000486, I~ = 0.0122
+        regiones: Lincoln Square East, Midtown Center, Penn Station/Madison Sq West, Upper East Side North, Upper East Side South, Upper West Side South
+Bloque (4,2): 10 regiones x 4 intervalos, N = 382,566, alfa_B = 0.0080, l = 1.07  -> hoja homogenea (efecto_menor), p_omn = 0.00398, I~ = 0.0033
+Bloque (4,3): 10 regiones x 4 intervalos, N = 281,152, alfa_B = 0.0059, l = 0.94  -> corte de fil: G2_s = 13968.0, g~ = 0.0246, p = 0.00292, p_omn = 0.00292, I~ = 0.0344
+    hijo 1: 5 regiones x 4 intervalos, N = 152,217, alfa_B = 0.0032, l = 1.01  -> hoja homogenea (efecto_menor), p_omn = 0.00159, I~ = 0.0155
+        regiones: Clinton East, East Village, Murray Hill, Penn Station/Madison Sq West, Times Sq/Theatre District
+    hijo 2: 5 regiones x 4 intervalos, N = 128,935, alfa_B = 0.0027, l = 0.87  -> hoja homogenea (efecto_menor), p_omn = 0.00135, I~ = 0.0027
+        regiones: Lincoln Square East, Midtown Center, Upper East Side North, Upper East Side South, Upper West Side South
+Bloque (5,0): 11 regiones x 2 intervalos, N = 25,366, alfa_B = 0.0005, l = 0.85  -> hoja homogenea (efecto_menor), p_omn = 0.000265, I~ = 0.0147
+Bloque (5,1): 11 regiones x 2 intervalos, N = 69,007, alfa_B = 0.0014, l = 0.95  -> corte de fil: G2_s = 3351.1, g~ = 0.0240, p = 0.000721, p_omn = 0.000721, I~ = 0.0348
+    hijo 1: 5 regiones x 2 intervalos, N = 32,025, alfa_B = 0.0007, l = 1.02  -> hoja homogenea (efecto_menor), p_omn = 0.000335, I~ = 0.0076
+        regiones: East Chelsea, Gramercy, Midtown South, Sutton Place/Turtle Bay North, West Village
+    hijo 2: 6 regiones x 2 intervalos, N = 36,982, alfa_B = 0.0008, l = 0.90  -> hoja homogenea (efecto_menor), p_omn = 0.000387, I~ = 0.0131
+        regiones: Lenox Hill West, Midtown East, Midtown North, Union Sq, Upper West Side North, Yorkville West
+Bloque (5,2): 11 regiones x 4 intervalos, N = 297,397, alfa_B = 0.0062, l = 1.01  -> hoja homogenea (efecto_menor), p_omn = 0.0031, I~ = 0.0014
+Bloque (5,3): 11 regiones x 4 intervalos, N = 250,426, alfa_B = 0.0052, l = 1.02  -> hoja homogenea (efecto_menor), p_omn = 0.00261, I~ = 0.0083
