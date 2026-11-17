@@ -41,6 +41,7 @@ sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.bbac import bbac  # noqa: E402
+from astcc.referencia import DELTA_COMPLETO, DELTA_RESUMEN  # noqa: E402
 from astcc.sinteticos import generar  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -51,7 +52,7 @@ M, N_, KR, KT, D = 66, 12, 8, 4, 12
 REALISTA = dict(var_dia=0.03, k=200, var_dia_fila=0.07, var_dia_col=0.07)
 R = 60
 FACTORES = [1.25, 1.5, 2.0]
-DELTAS = [0.0, 0.001]
+DELTAS = [0.0, DELTA_COMPLETO, DELTA_RESUMEN["weekday"]]   # 0 y los dos niveles de la tesis
 
 
 # ----------------------------------------------------------------------------

@@ -54,7 +54,7 @@ from astcc.bbac import aproximacion, bbac, optimizar_c6  # noqa: E402
 from sklearn.metrics import adjusted_rand_score as ari  # noqa: E402
 
 from astcc.estabilidad import KAPPA, divergencia_fuera_de_muestra, frecuencia_de_soporte  # noqa: E402
-from astcc.referencia import BASES, cargar_base  # noqa: E402
+from astcc.referencia import BASES, SEMILLA_ARBOL, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -146,7 +146,7 @@ def main(periodo):
     arboles = {}
     for nb, (rho, tau) in bases.items():
         for delta in DELTAS + [np.inf]:
-            res = ASTCC(Parametros(delta=delta), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
+            res = ASTCC(Parametros(delta=delta), np.random.default_rng(SEMILLA_ARBOL)).ajustar(X, rho, tau)
             arboles[nb, delta] = res
             cortes = res.internos()
             g_resto = [informacion(tabla_colapsada(c, O_resto)) for c in cortes]

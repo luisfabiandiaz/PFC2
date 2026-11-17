@@ -18,7 +18,7 @@ compara con la verdad:
 
 Métodos, todos con la partición base estimada con BBAC C5 (sin usar la verdad):
   base         partición base con la aproximación C6 (k = K_T m + K_R n - K_R K_T)
-  AST-CC       delta = 0 y delta = 0.001, sobre la base
+  AST-CC       delta = 0 y el delta del árbol completo (astcc.referencia), sobre la base
   rejilla C6   la rejilla (K_R, K_T) de menos parámetros con al menos tantos como AST-CC,
                optimizada para C6 (ventaja para la rejilla)
   rejilla BBAC la misma (K_R, K_T) con la partición de BBAC C5, como en 05 y 06
@@ -45,6 +45,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
+from astcc.referencia import DELTA_COMPLETO, DELTA_RESUMEN  # noqa: E402
 from astcc.bbac import aproximacion, bbac, optimizar_c6  # noqa: E402
 from astcc.estabilidad import divergencia_fuera_de_muestra  # noqa: E402
 from astcc.sinteticos import Patron, generar  # noqa: E402
@@ -57,7 +58,7 @@ SEMILLA = 20261105
 M, N_, KR, KT, D = 66, 12, 8, 4, 12
 REALISTA = dict(var_dia=0.03, k=200, var_dia_fila=0.07, var_dia_col=0.07)
 R = 100
-DELTAS = [0.0, 0.001]
+DELTAS = [0.0, DELTA_COMPLETO]           # 0 y el delta del árbol completo
 REJILLAS = [(kr, kt) for kt in (4, 5, 6) for kr in (8, 10, 12, 14, 16, 20, 24)]
 
 
@@ -212,15 +213,16 @@ def resumen():
             continue
         t = pd.read_csv(f)
         L += [f"{nombre}", f"  {'método':<24} {'k':>6} {'err':>9} {'ARI':>6}"]
-        orden = ["base C6", "AST-CC d=0", "rejilla C6 (d=0)", "rejilla BBAC (d=0)",
-                 "AST-CC d=0.001", "rejilla C6 (d=0.001)", "rejilla BBAC (d=0.001)", "saturado"]
+        ds = [f"{d:g}" for d in DELTAS]
+        orden = ["base C6"] + [m.format(d) for d in ds for m in ("AST-CC d={}", "rejilla C6 (d={})",
+                                                                   "rejilla BBAC (d={})")] + ["saturado"]
         g = t.groupby("metodo")
         for m in orden:
             if m in g.groups:
                 x = g.get_group(m)
                 L.append(f"  {m:<24} {x.k.mean():>6.0f} {x.err.mean():>9,.0f} {x.ari.mean():>6.2f}")
         L.append("  AST-CC frente a la rejilla C6 de igual o mayor k, por réplica:")
-        for d in ("0", "0.001"):
+        for d in ds:
             a = t[t.metodo == f"AST-CC d={d}"].set_index("rep")
             r = t[t.metodo == f"rejilla C6 (d={d})"].set_index("rep")
             b = t[t.metodo == f"rejilla BBAC (d={d})"].set_index("rep")

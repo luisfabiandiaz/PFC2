@@ -45,7 +45,7 @@ sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.estadisticos import esperados  # noqa: E402
-from astcc.referencia import BASE, BASES, DELTA_COMPLETO, DELTA_RESUMEN, NOMBRE_BASE, cargar_base  # noqa: E402
+from astcc.referencia import BASE, BASES, DELTA_COMPLETO, DELTA_RESUMEN, NOMBRE_BASE, SEMILLA_ARBOL, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -53,7 +53,6 @@ DATOS = RAIZ / "DATA/procesados"
 SALIDA = RAIZ / "Resultados/AST-CC"
 SALIDA.mkdir(parents=True, exist_ok=True)
 
-SEMILLA = 20261004
 DELTAS = [0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.02]
 FRANJAS = [f"{h:02d}-{h + 2:02d}" for h in range(0, 24, 2)]
 
@@ -105,7 +104,7 @@ def main():
                      f"{'fil':>3} {'col':>3} {'conj':>4} {'prof.':>5}  {'(iii) expl.':>11} {'err. cor.':>9} "
                      f"{'B máx':>6} {'seg':>5}")
             for delta in DELTAS:
-                rng = np.random.default_rng(SEMILLA)
+                rng = np.random.default_rng(SEMILLA_ARBOL)
                 res = ASTCC(Parametros(delta=delta), rng).ajustar(X, rho, tau)
                 hojas = Counter(h.estado for h in res.hojas())
                 motivos = Counter(h.motivo for h in res.hojas())

@@ -47,7 +47,7 @@ sys.path.insert(0, str(RAIZ))
 
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.estadisticos import esperados  # noqa: E402
-from astcc.referencia import DELTA_RESUMEN, cargar_base  # noqa: E402
+from astcc.referencia import DELTA_RESUMEN, SEMILLA_ARBOL, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -57,7 +57,7 @@ SALIDA = RAIZ / "Resultados/AST-CC"
 FIGURAS = SALIDA / "figuras"
 FIGURAS.mkdir(parents=True, exist_ok=True)
 
-SEMILLA = 20261004                 # la de 02_refinamiento.py
+SEMILLA = SEMILLA_ARBOL            # la misma en todos los scripts
 DELTA = DELTA_RESUMEN                 # por periodo
 FRANJAS = [f"{h:02d}-{h + 2:02d}" for h in range(0, 24, 2)]
 COLOR_PROFUNDIDAD = ["#d9d9d9", "#fdae6b", "#e6550d", "#a63603"]

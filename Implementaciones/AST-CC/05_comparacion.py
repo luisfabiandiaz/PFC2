@@ -63,7 +63,7 @@ sys.path.insert(0, str(RAIZ))
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.bbac import bbac, d_I, divergencia, optimizar_c6  # noqa: E402
 from astcc.nulas import ajuste_sin_interaccion_triple  # noqa: E402
-from astcc.referencia import cargar_base  # noqa: E402
+from astcc.referencia import SEMILLA_ARBOL, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -209,7 +209,7 @@ def main():
         for nombre_base, (rho, tau) in bases.items():
             for delta in DELTAS:
                 t0 = time.time()
-                res = ASTCC(Parametros(delta=delta), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
+                res = ASTCC(Parametros(delta=delta), np.random.default_rng(SEMILLA_ARBOL)).ajustar(X, rho, tau)
                 k = sum(len(h.filas) + len(h.cols) - 1 for h in res.hojas())
                 f = fila("AST-CC", f"d={delta:g} {nombre_base}", k, d_I(O, res.aproximacion(O)), N, phi)
                 f.update(hojas=len(res.hojas()), cortes=len(res.internos()), base_ast=nombre_base)

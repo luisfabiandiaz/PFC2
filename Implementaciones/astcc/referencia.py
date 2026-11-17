@@ -26,6 +26,10 @@ BASES = ("ST", "C5", "C6")
 NOMBRE_BASE = {"ST": "ST-CC", "C2": "BBAC C2", "C5": "BBAC C5", "C6": "rejilla C6"}
 DELTA_COMPLETO = 0.00025
 DELTA_RESUMEN = {"weekday": 0.005, "holiday": 0.02}
+# Semilla de todo ajuste del árbol sobre los datos reales: con ella, el árbol completo y el
+# resumido son los mismos en todos los scripts (las réplicas nulas dependen del azar, y
+# unos pocos cortes cercanos al umbral cambian con otra semilla).
+SEMILLA_ARBOL = 20261004
 
 
 def cargar_base(periodo, nombre=BASE):

@@ -49,7 +49,7 @@ sys.path.insert(0, str(RAIZ))
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.bbac import aproximacion, bbac, d_I, optimizar_c6  # noqa: E402
 from astcc.estabilidad import KAPPA, divergencia_fuera_de_muestra, frecuencia_de_soporte  # noqa: E402
-from astcc.referencia import DELTA_COMPLETO, DELTA_RESUMEN, cargar_base  # noqa: E402
+from astcc.referencia import DELTA_COMPLETO, DELTA_RESUMEN, SEMILLA_ARBOL, cargar_base  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -78,7 +78,7 @@ def soporte(periodo, X, O, L):
     kr, kt = K_BASE[periodo]
     DELTA_REF = DELTA_RESUMEN[periodo]
     rho, tau = cargar_base(periodo)
-    ref = ASTCC(Parametros(delta=DELTA_REF), np.random.default_rng(SEMILLA)).ajustar(X, rho, tau)
+    ref = ASTCC(Parametros(delta=DELTA_REF), np.random.default_rng(SEMILLA_ARBOL)).ajustar(X, rho, tau)
     hojas_ref = ref.hojas()
     rng = np.random.default_rng(SEMILLA + 1)
     ejecuciones, aris, optimo = [], [], []

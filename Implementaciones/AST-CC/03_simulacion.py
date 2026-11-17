@@ -45,6 +45,7 @@ sys.path.insert(0, str(RAIZ))
 from astcc.arbol import ASTCC, Parametros  # noqa: E402
 from astcc.bbac import bbac  # noqa: E402
 from astcc.estadisticos import info_mutua  # noqa: E402
+from astcc.referencia import DELTA_COMPLETO, DELTA_RESUMEN  # noqa: E402
 from astcc.sinteticos import Patron, generar  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -61,7 +62,7 @@ ESCENARIOS = {
 R_CAL = 200
 R_POT = 60
 FACTORES = [1.1, 1.2, 1.35, 1.5, 2.0]
-DELTAS_POT = [0.0, 0.001, 0.005]
+DELTAS_POT = [0.0, DELTA_COMPLETO, DELTA_RESUMEN["weekday"]]   # 0 y los dos niveles de la tesis
 
 
 def particion(datos, estimada, rng):

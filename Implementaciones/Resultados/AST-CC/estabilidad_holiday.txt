@@ -13,15 +13,15 @@ A. Frecuencia de soporte (referencia: delta = 0.02, 39 hojas; 20 ejecuciones con
       1 trivial              13          1    12,374     nan     1.00
       2 homogenea             3          2    24,636  0.0038     1.00
       2 trivial               1          2    10,520     nan     1.00
-      1 homogenea             6          2    46,529  0.0123     1.00
+      1 homogenea             6          2    46,529  0.0122     1.00
       1 homogenea             5          2    32,025  0.0076     1.00
       1 inalcanzable          2          4       723     nan     1.00
       2 trivial               1          2     3,604     nan     0.95
       1 homogenea            10          2     6,633  0.0040     0.95
-      1 homogenea             4          2    15,207  0.0180     0.95
+      1 homogenea             4          2    15,207  0.0181     0.95
       1 homogenea             6          2    20,138  0.0053     0.95
       1 inalcanzable          4          4     1,858     nan     0.95
-      1 homogenea             3          2     3,645  0.0116     0.95
+      1 homogenea             3          2     3,645  0.0119     0.95
       1 inalcanzable          3          4       989     nan     0.95
       1 homogenea             7          2    33,490  0.0175     0.80
       1 homogenea             6          2    36,982  0.0131     0.80
@@ -29,7 +29,7 @@ A. Frecuencia de soporte (referencia: delta = 0.02, 39 hojas; 20 ejecuciones con
       1 homogenea             5          2     7,079  0.0097     0.75
       1 homogenea             5          4   152,217  0.0155     0.75
       1 trivial              15          1    10,476     nan     0.20
-      2 homogenea             5          2    15,713  0.0009     0.20
+      2 homogenea             5          2    15,713  0.0010     0.20
       1 trivial              15          1     9,415     nan     0.20
       2 trivial               9          1    13,242     nan     0.15
       1 homogenea             5          2    12,511  0.0096     0.15
@@ -88,4 +88,4 @@ B. División de días (8 divisiones al azar, ambos sentidos = 16 ajustes; D_I me
   AST-CC d=0.02 base C6    k<=                312    312              +0            0%
   AST-CC d=0.02 base C6    rejilla BBAC       312    312            -276           69%
 
-Tiempo total: 13.8 min
+Tiempo total: 4.2 min
