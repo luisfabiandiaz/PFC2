@@ -39,6 +39,16 @@ from .nulas import replicas_poisson, replicas_semirreales
 
 TIPOS = ("fil", "col", "conj")
 
+# Motivo por el que una hoja probada no se refinó. Los estados "homogenea" y
+# "no_localizada" reúnen cada uno dos casos distintos, y solo el primero de cada par
+# depende de la prueba; el segundo depende únicamente del umbral delta.
+MOTIVOS = {
+    "no_significativa": "homogenea: la prueba ómnibus no rechaza (p_omn > alfa_B)",
+    "efecto_menor": "homogenea: la prueba ómnibus rechaza, pero I~_B < delta",
+    "sin_corte": "no_localizada: ningún corte (fil, col, conj) es significativo",
+    "ganancia_menor": "no_localizada: hay un corte significativo, pero g~_{B,s} < delta",
+}
+
 
 @dataclass
 class Parametros:
@@ -64,6 +74,7 @@ class Nodo:
     alfa: float
     N: float
     estado: str = ""              # trivial | inalcanzable | homogenea | no_localizada | interno
+    motivo: str = ""              # por qué la hoja no se refinó (ver MOTIVOS); vacío en los demás estados
     G2: float = float("nan")
     I_corr: float = float("nan")
     p_omn: float = float("nan")
@@ -71,6 +82,7 @@ class Nodo:
     p_cortes: dict = field(default_factory=dict)
     G2_cortes: dict = field(default_factory=dict)
     corte: str = ""
+    corte_descartado: str = ""    # tipo del corte significativo que no alcanzó delta (motivo ganancia_menor)
     G2_corte: float = float("nan")
     g_corr: float = float("nan")
     hijos: list = field(default_factory=list)
@@ -215,6 +227,7 @@ class ASTCC:
         nodo.I_corr = max(0.0, (nodo.G2 - t_nulos.mean()) / (2 * nodo.N))
         if not _rechaza(nodo.p_omn, nodo.alfa) or nodo.I_corr < p.delta:
             nodo.estado = "homogenea"
+            nodo.motivo = "efecto_menor" if _rechaza(nodo.p_omn, nodo.alfa) else "no_significativa"
             nodo.segundos = time.time() - t0
             return
 
@@ -241,14 +254,15 @@ class ASTCC:
         nodo.p_cortes = {t: r[1] for t, r in resultados.items()}
         nodo.G2_cortes = {t: r[0] for t, r in resultados.items()}
         if not tipo:
-            nodo.estado = "no_localizada"
+            nodo.estado, nodo.motivo = "no_localizada", "sin_corte"
             nodo.segundos = time.time() - t0
             return
 
         g_obs, _, t_medio, etiquetas = resultados[tipo]
         nodo.g_corr = max(0.0, (g_obs - t_medio) / (2 * nodo.N))
         if nodo.g_corr < p.delta:
-            nodo.estado = "no_localizada"
+            nodo.estado, nodo.motivo = "no_localizada", "ganancia_menor"
+            nodo.corte_descartado = tipo
             nodo.segundos = time.time() - t0
             return
 

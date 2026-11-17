@@ -274,7 +274,10 @@ def arbol_anotado(periodo, res, O, rho, tau, zonas, nombres):
                 f"N = {int(nodo.N):,}, alfa_B = {nodo.alfa:.4f}, l = {actividad(nodo, E_global):.2f}")
         omn = "" if np.isnan(nodo.p_omn) else f", p_omn = {nodo.p_omn:.3g}, I~ = {nodo.I_corr:.4f}"
         if nodo.es_hoja:
-            L.append(base + f"  -> hoja {nodo.estado}{omn}")
+            motivo = f" ({nodo.motivo})" if nodo.motivo else ""
+            if nodo.corte_descartado:
+                motivo = f" ({nodo.motivo}: corte de {nodo.corte_descartado} con g~ = {nodo.g_corr:.4f})"
+            L.append(base + f"  -> hoja {nodo.estado}{motivo}{omn}")
             return
         L.append(base + f"  -> corte de {nodo.corte}: G2_s = {nodo.G2_corte:.1f}, g~ = {nodo.g_corr:.4f}, "
                         f"p = {nodo.p_cortes[nodo.corte]:.3g}{omn}")

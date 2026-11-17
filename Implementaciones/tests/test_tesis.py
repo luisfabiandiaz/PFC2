@@ -250,6 +250,32 @@ def test_ganancia_minima_corregida_por_el_nulo_del_corte(monkeypatch):
     assert raiz(delta=1e-4).estado == "no_localizada"
 
 
+def test_motivo_distingue_la_prueba_del_umbral_delta(monkeypatch):
+    """Cada estado de hoja probada reúne dos casos: uno lo decide la prueba y el otro
+    solo el umbral delta. El motivo los separa sin cambiar el estado."""
+    # homogenea: la ómnibus no rechaza, o rechaza con I~ < delta
+    X, rho, tau = cuatro_bloques()
+    assert all(n.estado == "homogenea" and n.motivo == "no_significativa" for n in ajustar(X, rho, tau).raices)
+    nodo = raiz(delta=10.0)                               # heterogéneo, pero ningún efecto llega a 10 nats
+    assert nodo.estado == "homogenea" and nodo.motivo == "efecto_menor"
+    assert nodo.p_omn <= nodo.alfa and not nodo.p_cortes  # no se evalúan las pruebas dirigidas
+
+    # no_localizada: ningún corte significativo, o uno significativo con g~ < delta
+    falsas(monkeypatch, fil=(30.0, 0.5, 0.0), col=(30.0, 0.5, 0.0), conj=(80.0, 0.5, 0.0))
+    nodo = raiz(delta=0.0)
+    assert (nodo.estado, nodo.motivo, nodo.corte_descartado) == ("no_localizada", "sin_corte", "")
+    falsas(monkeypatch, fil=(60.0, 0.001, 59.99), col=(30.0, 0.5, 0.0))
+    nodo = raiz(delta=1e-4)
+    assert (nodo.estado, nodo.motivo, nodo.corte_descartado) == ("no_localizada", "ganancia_menor", "fil")
+    assert nodo.g_corr < 1e-4 and nodo.corte == ""
+
+    # un nodo que sí se corta, y las hojas no probadas, no llevan motivo
+    falsas(monkeypatch, fil=(60.0, 0.001, 0.0), col=(30.0, 0.5, 0.0))
+    nodo = raiz(delta=1e-4)
+    assert nodo.estado == "interno" and nodo.motivo == ""
+    assert all(n.motivo == "" for n in ajustar(X, rho, tau, d_max=0).raices)
+
+
 # ----------------------------------------------------------------------------
 # Corolario sobre un árbol con varios cortes
 # ----------------------------------------------------------------------------

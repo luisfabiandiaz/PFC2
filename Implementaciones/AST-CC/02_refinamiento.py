@@ -13,7 +13,9 @@ rejilla de delta de la Propuesta. Para cada configuración se reporta:
   - réplicas usadas y tiempo
 
 Para delta = 0.005 se guardan los descriptores de hoja (sec:prop-representacion):
-regiones, intervalos, masa, I~_L, tipo y dos niveles de actividad relativa:
+regiones, intervalos, masa, I~_L, tipo, motivo por el que la hoja no se refinó
+(astcc.arbol.MOTIVOS, que separa lo que decide la prueba de lo que decide delta), el
+corte significativo descartado por delta si lo hubo, y dos niveles de actividad relativa:
   actividad_global = N_L / sum_L O_i. O_.j / N   (independencia de toda la matriz)
   actividad_padre  = N_L / sum_L E^P_ij          (eq:prop-lift, independencia del padre)
 La segunda vale exactamente 1 en toda hoja que sale de un corte de filas o de
@@ -64,7 +66,9 @@ def descriptores(res, O, zonas):
         if nodo.es_hoja:
             L = np.ix_(nodo.filas, nodo.cols)
             filas.append({
-                "profundidad": nodo.profundidad, "tipo": nodo.estado,
+                "profundidad": nodo.profundidad, "tipo": nodo.estado, "motivo": nodo.motivo,
+                "p_omn": nodo.p_omn, "alfa_B": nodo.alfa,
+                "corte_descartado": nodo.corte_descartado, "g_corr_descartado": nodo.g_corr,
                 "n_regiones": len(nodo.filas), "n_intervalos": len(nodo.cols),
                 "N": int(nodo.N), "I_corr": nodo.I_corr,
                 "actividad_global": nodo.N / E_global[L].sum(),
@@ -85,7 +89,9 @@ def descriptores(res, O, zonas):
 
 def main():
     zonas = pd.read_csv(DATOS / "ST-CC/zone_order.csv")["LocationID"].to_numpy()
-    L = ["AST-CC sobre los datos reales (nula: bootstrap de días; alfa = 0.05)", ""]
+    L = ["AST-CC sobre los datos reales (nula: bootstrap de días; alfa = 0.05)",
+         "(I~<d): hojas homogéneas cuya prueba ómnibus rechaza y solo quedan bajo delta;",
+         "(g~<d): hojas no localizadas con un corte significativo cuya ganancia queda bajo delta", ""]
     for periodo in ("weekday", "holiday"):
         X = np.load(DATOS / f"Calibracion/conteos_diarios_{periodo}.npy")
         O = X.sum(0)
@@ -93,17 +99,20 @@ def main():
             rho = np.load(DATOS / f"AST-CC/{periodo}_{base}_rho.npy")
             tau = np.load(DATOS / f"AST-CC/{periodo}_{base}_tau.npy")
             L.append(f"{periodo}, partición base {base}")
-            L.append(f"  {'delta':>7} {'hojas':>5} {'homog.':>6} {'no loc.':>7} {'triv.':>5} {'inalc.':>6}  "
+            L.append(f"  {'delta':>7} {'hojas':>5} {'homog.':>6} {'(I~<d)':>6} {'no loc.':>7} {'(g~<d)':>6} "
+                     f"{'triv.':>5} {'inalc.':>6}  "
                      f"{'fil':>3} {'col':>3} {'conj':>4} {'prof.':>5}  {'(iii) expl.':>11} {'err. cor.':>9} "
                      f"{'B máx':>6} {'seg':>5}")
             for delta in DELTAS:
                 rng = np.random.default_rng(SEMILLA)
                 res = ASTCC(Parametros(delta=delta), rng).ajustar(X, rho, tau)
                 hojas = Counter(h.estado for h in res.hojas())
+                motivos = Counter(h.motivo for h in res.hojas())
                 cortes = Counter(n.corte for n in res.internos())
                 d = res.descomposicion(O)
                 iii = d["explicada"] + d["residual"]
-                L.append(f"  {delta:>7g} {len(res.hojas()):>5} {hojas['homogenea']:>6} {hojas['no_localizada']:>7} "
+                L.append(f"  {delta:>7g} {len(res.hojas()):>5} {hojas['homogenea']:>6} {motivos['efecto_menor']:>6} "
+                         f"{hojas['no_localizada']:>7} {motivos['ganancia_menor']:>6} "
                          f"{hojas['trivial']:>5} {hojas['inalcanzable']:>6}  {cortes['fil']:>3} {cortes['col']:>3} "
                          f"{cortes['conj']:>4} {max(n.profundidad for n in res.hojas()):>5}  "
                          f"{d['explicada'] / iii:>11.1%} {d['error'] / d['total']:>9.0e} "
