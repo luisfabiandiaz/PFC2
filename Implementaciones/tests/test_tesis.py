@@ -53,12 +53,6 @@ def test_patron_en_tablero_lo_captura_un_corte_de_filas():
     assert a[0][0] == a[0][2] != a[0][1] == a[0][3]
 
 
-def test_desempate_por_z_del_ejemplo():
-    z = lambda g, nu: (g - nu) / math.sqrt(2 * nu)
-    assert z(60, 5) == pytest.approx(17.4, abs=0.05)
-    assert z(45, 9) == pytest.approx(8.5, abs=0.05)
-
-
 def test_bootstrap_aplica_la_fluctuacion_corregida():
     """eq:prop-fluctuacion: con D = 4 días de conteos (80, 100, 90, 130) por celda, las
     réplicas diarias valen E/D * F~_d, con F~ = 1 + sqrt(D/(D-1)) (F - 1)."""
@@ -210,13 +204,35 @@ def raiz(**kw):
     return ajustar(X, rho, tau, d_max=1, **kw).raices[0]
 
 
-def test_gana_el_menor_p_valor_y_los_empates_se_resuelven_por_z(monkeypatch):
+def test_entre_cortes_admisibles_decide_z_y_los_empates_van_a_filas(monkeypatch):
     falsas(monkeypatch, fil=(60.0, 0.001, 0.0), col=(45.0, 0.001, 0.0))
-    assert raiz(delta=0.0).corte == "fil"                 # z = 17.4 frente a 8.5
+    assert raiz(delta=0.0).corte == "fil"                 # z = 17.4 frente a 8.5 (ejemplo de Cap_3)
     falsas(monkeypatch, fil=(20.0, 0.001, 0.0), col=(60.0, 0.001, 0.0))
     assert raiz(delta=0.0).corte == "col"                 # z = 4.7 frente a 12.0
+    # el p-valor solo decide si el corte es admisible, no cuál se aplica
     falsas(monkeypatch, fil=(60.0, 0.004, 0.0), col=(20.0, 0.001, 0.0))
-    assert raiz(delta=0.0).corte == "col"                 # menor p-valor, aunque menor z
+    nodo = raiz(delta=0.0)
+    assert nodo.corte == "fil"
+    assert nodo.g_cortes["fil"] == pytest.approx(60.0 / (2 * nodo.N)) and nodo.g_corr == nodo.g_cortes["fil"]
+    falsas(monkeypatch, fil=(45.0, 0.001, 0.0), col=(45.0, 0.001, 0.0))
+    assert raiz(delta=0.0, desempate="ganancia").corte == "fil"   # empate exacto -> filas
+
+
+def test_criterios_de_desempate_alternativos(monkeypatch):
+    # fil: G2 = 60, nu = 5; col: G2 = 80, nu = 9; N = 66 000
+    falsas(monkeypatch, fil=(60.0, 0.001, 0.0), col=(80.0, 0.001, 0.0))
+    assert raiz(delta=0.0).corte == "fil"                          # z: 17.4 frente a 16.7
+    assert raiz(delta=0.0, desempate="ganancia").corte == "col"    # g~: 80 > 60
+    # bic: G2 / 2 - (1/2) log(N) nu = 30 - 5.5 * 5 = 2.3 frente a 40 - 5.5 * 9 = -9.4
+    assert raiz(delta=0.0, desempate="bic").corte == "fil"
+
+
+def test_el_corte_elegido_es_el_que_se_compara_con_delta(monkeypatch):
+    """Si un corte significativo no alcanza delta y el otro sí, el bloque se corta por
+    el otro: no puede quedar como no localizado teniendo un corte admisible."""
+    falsas(monkeypatch, fil=(60.0, 0.001, 59.99), col=(45.0, 0.001, 0.0))
+    nodo = raiz(delta=1e-4)                               # g~_fil ~ 1.5e-7, g~_col = 6.8e-4
+    assert nodo.estado == "interno" and nodo.corte == "col"
 
 
 def test_un_solo_corte_unidimensional_significativo(monkeypatch):

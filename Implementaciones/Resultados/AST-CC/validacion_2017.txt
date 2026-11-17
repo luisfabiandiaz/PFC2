@@ -2,7 +2,7 @@ Cortes de AST-CC (noviembre de 2017, base C5, delta = 0.005) y su repetición en
 cuota = fracción de las llegadas del grupo que cae en cada intervalo del bloque
 I = información mutua entre grupo e intervalo en la tabla colapsada (nats por observación)
 
-weekday: 6 cortes; noviembre D = 12 días, N = 3,602,851; resto de 2017 D = 134 días, N = 40,024,248
+weekday: 9 cortes; noviembre D = 12 días, N = 3,602,851; resto de 2017 D = 134 días, N = 40,024,248
 
   R2-T3 (profundidad 0): 12 regiones x [06-08 08-10]; I nov = 0.0063, I resto = 0.0058
                                    06-08   08-10   | resto de 2017:   06-08   08-10
@@ -11,12 +11,16 @@ weekday: 6 cortes; noviembre D = 12 días, N = 3,602,851; resto de 2017 D = 134 
      5 regiones,   591/día/reg    29.6%   70.4%   |                  29.4%   70.6%
        Battery Park City, Chinatown, Financial District North, Hudson Sq, UN/Turtle Bay South
 
+  R2-T3: corte de col (profundidad 1); I nov = 0.0055, I resto = 0.0064
+
   R2-T1 (profundidad 0): 12 regiones x [00-02 02-04 20-22 22-24]; I nov = 0.0054, I resto = 0.0063
                                    00-02   02-04   20-22   22-24   | resto de 2017:   00-02   02-04   20-22   22-24
      6 regiones,  1322/día/reg    11.6%    3.7%   45.0%   39.7%   |                  12.2%    3.6%   45.1%   39.1%
        Battery Park City, Inwood Hill Park, Kips Bay, Murray Hill, TriBeCa/Civic Center, UN/Turtle Bay South
      6 regiones,   591/día/reg    16.4%    6.9%   37.5%   39.3%   |                  17.9%    7.1%   37.8%   37.2%
        Chinatown, East Harlem South, Financial District North, Hudson Sq, Manhattanville, Washington Heights South
+
+  R2-T1: corte de col (profundidad 1); I nov = 0.0052, I resto = 0.0062
 
   R7-T3 (profundidad 0): 4 regiones x [06-08 08-10]; I nov = 0.0056, I resto = 0.0052
                                    06-08   08-10   | resto de 2017:   06-08   08-10
@@ -46,7 +50,11 @@ weekday: 6 cortes; noviembre D = 12 días, N = 3,602,851; resto de 2017 D = 134 
      5 regiones,   339/día/reg    26.2%   73.8%   |                  26.2%   73.8%
        Greenwich Village South, Little Italy/NoLiTa, Manhattan Valley, Meatpacking/West Village West, West Village
 
-holiday: 2 cortes; noviembre D = 9 días, N = 2,389,795; resto de 2017 D = 92 días, N = 25,642,581
+  R3-T1: corte de col (profundidad 0); I nov = 0.0059, I resto = 0.0047
+
+holiday: 4 cortes; noviembre D = 9 días, N = 2,389,795; resto de 2017 D = 92 días, N = 25,642,581
+
+  R4-T1: corte de col (profundidad 0); I nov = 0.0057, I resto = 0.0043
 
   R3-T1 (profundidad 0): 15 regiones x [06-08 08-10]; I nov = 0.0146, I resto = 0.0131
                                    06-08   08-10   | resto de 2017:   06-08   08-10
@@ -54,6 +62,8 @@ holiday: 2 cortes; noviembre D = 9 días, N = 2,389,795; resto de 2017 D = 92 d�
        Highbridge Park, Kips Bay, Manhattanville, UN/Turtle Bay South, Washington Heights South
     10 regiones,   234/día/reg    27.6%   72.4%   |                  27.9%   72.1%
        Central Harlem North, East Chelsea, Flatiron, Gramercy, Greenwich Village South, Hudson Sq, Meatpacking/West Village West, Roosevelt Island, Seaport, West Village
+
+  R3-T2: corte de col (profundidad 0); I nov = 0.0057, I resto = 0.0057
 
   R1-T2 (profundidad 0): 9 regiones x [00-02 02-04 04-06]; I nov = 0.0054, I resto = 0.0060
                                    00-02   02-04   04-06   | resto de 2017:   00-02   02-04   04-06

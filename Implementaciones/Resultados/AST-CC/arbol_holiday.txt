@@ -12,7 +12,11 @@ Bloque (1,2): 5 regiones x 2 intervalos, N = 37,328, alfa_B = 0.0008, l = 1.25  
 Bloque (1,3): 5 regiones x 3 intervalos, N = 25,445, alfa_B = 0.0005, l = 0.43  -> hoja homogenea (no_significativa), p_omn = 0.01, I~ = 0.0059
 Bloque (2,0): 14 regiones x 4 intervalos, N = 229,811, alfa_B = 0.0048, l = 0.96  -> hoja homogenea (efecto_menor), p_omn = 0.0024, I~ = 0.0021
 Bloque (2,1): 14 regiones x 3 intervalos, N = 175,466, alfa_B = 0.0037, l = 1.04  -> hoja homogenea (efecto_menor), p_omn = 0.00366, I~ = 0.0008
-Bloque (2,2): 14 regiones x 2 intervalos, N = 41,417, alfa_B = 0.0009, l = 0.88  -> hoja no_localizada (ganancia_menor: corte de fil con g~ = 0.0038), p_omn = 0.000433, I~ = 0.0052
+Bloque (2,2): 14 regiones x 2 intervalos, N = 41,417, alfa_B = 0.0009, l = 0.88  -> corte de col: G2_s = 472.5, g~ = 0.0052, p = 0.000433, p_omn = 0.000433, I~ = 0.0052
+    hijo 1: 14 regiones x 1 intervalos, N = 11,873, alfa_B = 0.0002, l = 0.84  -> hoja trivial
+        intervalos: 06-08
+    hijo 2: 14 regiones x 1 intervalos, N = 29,544, alfa_B = 0.0006, l = 0.90  -> hoja trivial
+        intervalos: 08-10
 Bloque (2,3): 14 regiones x 3 intervalos, N = 101,343, alfa_B = 0.0021, l = 1.09  -> hoja homogenea (efecto_menor), p_omn = 0.00106, I~ = 0.0027
 Bloque (3,0): 15 regiones x 4 intervalos, N = 158,094, alfa_B = 0.0033, l = 0.86  -> hoja homogenea (efecto_menor), p_omn = 0.0033, I~ = 0.0012
 Bloque (3,1): 15 regiones x 3 intervalos, N = 137,068, alfa_B = 0.0029, l = 1.05  -> hoja homogenea (no_significativa), p_omn = 0.01, I~ = 0.0006
@@ -21,7 +25,11 @@ Bloque (3,2): 15 regiones x 2 intervalos, N = 29,466, alfa_B = 0.0006, l = 0.82 
         regiones: Central Harlem North, East Chelsea, Flatiron, Gramercy, Greenwich Village South, Hudson Sq, Meatpacking/West Village West, Roosevelt Island, Seaport, West Village
     hijo 2: 5 regiones x 2 intervalos, N = 8,372, alfa_B = 0.0002, l = 1.04  -> hoja homogenea (no_significativa), p_omn = 0.000263, I~ = 0.0042
         regiones: Highbridge Park, Kips Bay, Manhattanville, UN/Turtle Bay South, Washington Heights South
-Bloque (3,3): 15 regiones x 3 intervalos, N = 97,057, alfa_B = 0.0020, l = 1.36  -> hoja no_localizada (ganancia_menor: corte de fil con g~ = 0.0039), p_omn = 0.00101, I~ = 0.0073
+Bloque (3,3): 15 regiones x 3 intervalos, N = 97,057, alfa_B = 0.0020, l = 1.36  -> corte de col: G2_s = 1098.0, g~ = 0.0055, p = 0.00101, p_omn = 0.00101, I~ = 0.0073
+    hijo 1: 15 regiones x 2 intervalos, N = 86,277, alfa_B = 0.0018, l = 1.38  -> hoja homogenea (efecto_menor), p_omn = 0.000902, I~ = 0.0020
+        intervalos: 00-02, 02-04
+    hijo 2: 15 regiones x 1 intervalos, N = 10,780, alfa_B = 0.0002, l = 1.23  -> hoja trivial
+        intervalos: 04-06
 Bloque (4,0): 9 regiones x 4 intervalos, N = 63,545, alfa_B = 0.0013, l = 0.70  -> hoja homogenea (efecto_menor), p_omn = 0.000664, I~ = 0.0016
 Bloque (4,1): 9 regiones x 3 intervalos, N = 71,582, alfa_B = 0.0015, l = 1.11  -> hoja homogenea (efecto_menor), p_omn = 0.0015, I~ = 0.0011
 Bloque (4,2): 9 regiones x 2 intervalos, N = 9,307, alfa_B = 0.0002, l = 0.52  -> hoja homogenea (no_significativa), p_omn = 0.000389, I~ = 0.0030
@@ -30,7 +38,7 @@ Bloque (4,3): 9 regiones x 3 intervalos, N = 63,876, alfa_B = 0.0013, l = 1.81  
         regiones: Alphabet City, Financial District North, Hamilton Heights, Inwood, Stuy Town/Peter Cooper Village, Two Bridges/Seward Park, Washington Heights North
     hijo 2: 2 regiones x 3 intervalos, N = 37,958, alfa_B = 0.0008, l = 1.84  -> hoja homogenea (efecto_menor), p_omn = 0.000397, I~ = 0.0006
         regiones: East Village, Lower East Side
-Bloque (5,0): 11 regiones x 4 intervalos, N = 111,579, alfa_B = 0.0023, l = 0.99  -> hoja homogenea (efecto_menor), p_omn = 0.00233, I~ = 0.0026
+Bloque (5,0): 11 regiones x 4 intervalos, N = 111,579, alfa_B = 0.0023, l = 0.99  -> hoja homogenea (efecto_menor), p_omn = 0.00117, I~ = 0.0026
 Bloque (5,1): 11 regiones x 3 intervalos, N = 69,869, alfa_B = 0.0015, l = 0.87  -> hoja homogenea (efecto_menor), p_omn = 0.00073, I~ = 0.0018
-Bloque (5,2): 11 regiones x 2 intervalos, N = 35,617, alfa_B = 0.0007, l = 1.61  -> hoja homogenea (no_significativa), p_omn = 0.01, I~ = 0.0114
-Bloque (5,3): 11 regiones x 3 intervalos, N = 41,777, alfa_B = 0.0009, l = 0.95  -> hoja homogenea (no_significativa), p_omn = 0.023, I~ = 0.0033
+Bloque (5,2): 11 regiones x 2 intervalos, N = 35,617, alfa_B = 0.0007, l = 1.61  -> hoja homogenea (no_significativa), p_omn = 0.011, I~ = 0.0110
+Bloque (5,3): 11 regiones x 3 intervalos, N = 41,777, alfa_B = 0.0009, l = 0.95  -> hoja homogenea (no_significativa), p_omn = 0.022, I~ = 0.0033

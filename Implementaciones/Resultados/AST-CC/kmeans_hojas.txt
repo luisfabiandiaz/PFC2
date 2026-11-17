@@ -1,32 +1,34 @@
-weekday: K-means sobre las 38 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
+weekday: K-means sobre las 41 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
 
   Silhouette y SSE (K = 2 solo de referencia; el artículo lo excluye de la selección):
-    K=2: silhouette = 0.5540, SSE = 1.610
-    K=3: silhouette = 0.4245, SSE = 1.063
-    K=4: silhouette = 0.4411, SSE = 0.715
-    K=5: silhouette = 0.4200, SSE = 0.490
-    K=6: silhouette = 0.4544, SSE = 0.349
-    K=7: silhouette = 0.4068, SSE = 0.276
-    K=8: silhouette = 0.4197, SSE = 0.227
-  Mejor silhouette entre K >= 3: K = 6; se usa K = 4, como ST-CC
+    K=2: silhouette = 0.5502, SSE = 1.786
+    K=3: silhouette = 0.4624, SSE = 1.079
+    K=4: silhouette = 0.4628, SSE = 0.733
+    K=5: silhouette = 0.4345, SSE = 0.504
+    K=6: silhouette = 0.4166, SSE = 0.375
+    K=7: silhouette = 0.4002, SSE = 0.281
+    K=8: silhouette = 0.3851, SSE = 0.265
+  Mejor silhouette entre K >= 3: K = 4; se usa K = 4, como ST-CC
 
-  Con K = 4: silhouette = 0.4411
+  Con K = 4: silhouette = 0.4628
 
-  Very Low (promedio 190.9, 10 hojas de 9 bloques base distintos, 182 celdas)
-  Low (promedio 384.9, 21 hojas de 20 bloques base distintos, 546 celdas)
-  Medium (promedio 713.3, 5 hojas de 5 bloques base distintos, 54 celdas)
-  High (promedio 1682.5, 2 hojas de 2 bloques base distintos, 10 celdas)
+  Very Low (promedio 182.0, 13 hojas de 10 bloques base distintos, 206 celdas)
+  Low (promedio 397.3, 21 hojas de 20 bloques base distintos, 522 celdas)
+  Medium (promedio 786.9, 6 hojas de 6 bloques base distintos, 60 celdas)
+  High (promedio 2032.4, 1 hojas de 1 bloques base distintos, 4 celdas)
 
-  De los 6 bloques base refinados, 4 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
+  De los 7 bloques base refinados, 5 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
 
   Bloques refinados (figura antes_despues): estado del bloque entero -> estados de sus hojas
   (media = drop-offs promedio por celda y día)
     R2-T3 (12 regiones, 06-08 08-10): L (media 373)
-        -> VL (media 296): 5 regiones x 2 intervalos
+        -> VL (media 175): 5 regiones x 1 intervalos
+        -> VL (media 416): 5 regiones x 1 intervalos
         -> L  (media 429): 7 regiones x 2 intervalos
     R2-T1 (12 regiones, 00-02 02-04 20-22 22-24): L (media 239)
         -> L  (media 330): 6 regiones x 4 intervalos
-        -> VL (media 148): 6 regiones x 4 intervalos
+        -> VL (media 69): 6 regiones x 2 intervalos
+        -> VL (media 227): 6 regiones x 2 intervalos
     R7-T3 (4 regiones, 06-08 08-10): M (media 1078)
         -> VL (media 123): 2 regiones x 2 intervalos
         -> H  (media 2032): 2 regiones x 2 intervalos
@@ -39,33 +41,42 @@ weekday: K-means sobre las 38 hojas de AST-CC (media y desviación típica de su
     R3-T3 (12 regiones, 06-08 08-10): VL (media 191)
         -> VL (media 206): 7 regiones x 2 intervalos
         -> VL (media 169): 5 regiones x 2 intervalos
+    R3-T1 (12 regiones, 00-02 02-04 20-22 22-24): L (media 318)
+        -> VL (media 114): 12 regiones x 2 intervalos
+        -> L  (media 522): 12 regiones x 2 intervalos
 
-holiday: K-means sobre las 26 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
+holiday: K-means sobre las 28 hojas de AST-CC (media y desviación típica de sus celdas, normalizadas a [0, 1])
 
   Silhouette y SSE (K = 2 solo de referencia; el artículo lo excluye de la selección):
-    K=2: silhouette = 0.5093, SSE = 1.070
-    K=3: silhouette = 0.4665, SSE = 0.567
-    K=4: silhouette = 0.4596, SSE = 0.386
-    K=5: silhouette = 0.4234, SSE = 0.254
-    K=6: silhouette = 0.3826, SSE = 0.189
-    K=7: silhouette = 0.4278, SSE = 0.098
-    K=8: silhouette = 0.4349, SSE = 0.075
-  Mejor silhouette entre K >= 3: K = 3; se usa K = 4, como ST-CC
+    K=2: silhouette = 0.4546, SSE = 1.244
+    K=3: silhouette = 0.4759, SSE = 0.613
+    K=4: silhouette = 0.4783, SSE = 0.429
+    K=5: silhouette = 0.4825, SSE = 0.277
+    K=6: silhouette = 0.3957, SSE = 0.186
+    K=7: silhouette = 0.4765, SSE = 0.099
+    K=8: silhouette = 0.4189, SSE = 0.084
+  Mejor silhouette entre K >= 3: K = 5; se usa K = 4, como ST-CC
 
-  Con K = 4: silhouette = 0.4596
+  Con K = 4: silhouette = 0.4783
 
-  Very Low (promedio 164.2, 10 hojas de 9 bloques base distintos, 227 celdas)
-  Low (promedio 316.3, 11 hojas de 11 bloques base distintos, 440 celdas)
+  Very Low (promedio 159.0, 12 hojas de 10 bloques base distintos, 242 celdas)
+  Low (promedio 324.7, 11 hojas de 11 bloques base distintos, 425 celdas)
   Medium (promedio 702.9, 1 hojas de 1 bloques base distintos, 6 celdas)
   High (promedio 713.0, 4 hojas de 4 bloques base distintos, 119 celdas)
 
-  De los 2 bloques base refinados, 1 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
+  De los 4 bloques base refinados, 2 contienen hojas de estados distintos (el corte separa niveles de actividad distintos)
 
   Bloques refinados (figura antes_despues): estado del bloque entero -> estados de sus hojas
   (media = drop-offs promedio por celda y día)
+    R4-T1 (14 regiones, 06-08 08-10): VL (media 164)
+        -> VL (media 94): 14 regiones x 1 intervalos
+        -> VL (media 234): 14 regiones x 1 intervalos
     R3-T1 (15 regiones, 06-08 08-10): VL (media 109)
         -> VL (media 117): 10 regiones x 2 intervalos
         -> VL (media 93): 5 regiones x 2 intervalos
+    R3-T2 (15 regiones, 00-02 02-04 04-06): L (media 240)
+        -> L  (media 320): 15 regiones x 2 intervalos
+        -> VL (media 80): 15 regiones x 1 intervalos
     R1-T2 (9 regiones, 00-02 02-04 04-06): L (media 263)
         -> VL (media 137): 7 regiones x 3 intervalos
         -> M  (media 703): 2 regiones x 3 intervalos

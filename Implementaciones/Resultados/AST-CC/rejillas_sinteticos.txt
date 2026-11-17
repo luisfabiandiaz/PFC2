@@ -4,31 +4,31 @@ err = D_I(mu || ajuste), menor es mejor; ARI = acuerdo con el patrón plantado d
 
 simple-1.25
   método                        k       err    ARI
-  base C6                     328     3,240   0.06
-  AST-CC d=0                  331     2,024   0.32
-  rejilla C6 (d=0)            342     2,280   0.09
-  rejilla BBAC (d=0)          342     2,175   0.15
-  AST-CC d=0.001              330     2,091   0.20
-  rejilla C6 (d=0.001)        337     2,271   0.09
-  rejilla BBAC (d=0.001)      337     2,201   0.12
-  saturado                    792     2,585    nan
+  base C6                     328     2,572   0.05
+  AST-CC d=0                  331     2,114   0.31
+  rejilla C6 (d=0)            342     2,366   0.09
+  rejilla BBAC (d=0)          342     2,434   0.13
+  AST-CC d=0.001              330     2,189   0.21
+  rejilla C6 (d=0.001)        338     2,355   0.09
+  rejilla BBAC (d=0.001)      338     2,441   0.12
+  saturado                    792     2,670    nan
   AST-CC frente a la rejilla C6 de igual o mayor k, por réplica:
-    d=0      err: gana el árbol 99% frente a rejilla C6 (dif. media -256), 93% frente a rejilla BBAC (dif. media -150); ARI árbol 0.32 frente a 0.09 (rejilla C6)
-    d=0.001  err: gana el árbol 92% frente a rejilla C6 (dif. media -179), 71% frente a rejilla BBAC (dif. media -109); ARI árbol 0.20 frente a 0.09 (rejilla C6)
+    d=0      err: gana el árbol 100% frente a rejilla C6 (dif. media -252), 87% frente a rejilla BBAC (dif. media -320); ARI árbol 0.31 frente a 0.09 (rejilla C6)
+    d=0.001  err: gana el árbol 87% frente a rejilla C6 (dif. media -167), 64% frente a rejilla BBAC (dif. media -252); ARI árbol 0.21 frente a 0.09 (rejilla C6)
 
 simple-1.5
   método                        k       err    ARI
-  base C6                     328     2,779   0.06
-  AST-CC d=0                  332     1,961   0.43
-  rejilla C6 (d=0)            344     2,228   0.11
-  rejilla BBAC (d=0)          344     2,713   0.21
-  AST-CC d=0.001              332     1,966   0.43
-  rejilla C6 (d=0.001)        344     2,228   0.11
-  rejilla BBAC (d=0.001)      344     2,713   0.21
-  saturado                    792     2,538    nan
+  base C6                     328     2,704   0.08
+  AST-CC d=0                  331     1,986   0.44
+  rejilla C6 (d=0)            344     2,241   0.11
+  rejilla BBAC (d=0)          344     2,425   0.22
+  AST-CC d=0.001              332     1,988   0.43
+  rejilla C6 (d=0.001)        344     2,241   0.11
+  rejilla BBAC (d=0.001)      344     2,425   0.22
+  saturado                    792     2,553    nan
   AST-CC frente a la rejilla C6 de igual o mayor k, por réplica:
-    d=0      err: gana el árbol 100% frente a rejilla C6 (dif. media -267), 97% frente a rejilla BBAC (dif. media -752); ARI árbol 0.43 frente a 0.11 (rejilla C6)
-    d=0.001  err: gana el árbol 98% frente a rejilla C6 (dif. media -261), 97% frente a rejilla BBAC (dif. media -746); ARI árbol 0.43 frente a 0.11 (rejilla C6)
+    d=0      err: gana el árbol 100% frente a rejilla C6 (dif. media -255), 97% frente a rejilla BBAC (dif. media -438); ARI árbol 0.44 frente a 0.11 (rejilla C6)
+    d=0.001  err: gana el árbol 99% frente a rejilla C6 (dif. media -253), 97% frente a rejilla BBAC (dif. media -436); ARI árbol 0.43 frente a 0.11 (rejilla C6)
 
 simple-2.0
   método                        k       err    ARI

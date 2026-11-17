@@ -9,10 +9,14 @@ refina de forma recursiva:
      eq:prop-bootstrap, o Patefield). Si p_omn > alfa_B o I~_B < delta -> hoja
      homogénea (I~_B: información mutua corregida por sesgo, eq:prop-efecto-corregido).
   3. Pruebas dirigidas con ajuste min-P (la búsqueda del mejor corte se repite en
-     cada réplica): si p_fil o p_col <= alfa_B se aplica el de menor p-valor
-     (desempate por z = (G^2 - nu) / sqrt(2 nu)); si ninguno, se prueba el corte
-     conjunto 2 x 2; si tampoco es significativo -> hoja heterogénea no localizada.
-  4. Ganancia mínima: si g~_{B,s} < delta -> hoja heterogénea no localizada.
+     cada réplica): si ni p_fil ni p_col <= alfa_B se prueba el corte conjunto 2 x 2;
+     si tampoco es significativo -> hoja heterogénea no localizada.
+  4. Ganancia mínima: un corte significativo es admisible si su ganancia corregida
+     g~_{B,s} = (G^2_{B,s} - media nula del máximo) / (2 N_B) >= delta; si ninguno lo
+     es -> hoja heterogénea no localizada. Entre dos cortes admisibles se aplica el de
+     mayor z = (G^2 - nu) / sqrt(2 nu) (Parametros.desempate; 'ganancia' y 'bic' quedan
+     para el análisis de sensibilidad). z prefiere el corte que añade menos parámetros
+     (nu); elegir por g~ produce árboles con más parámetros y peor J con delta pequeño.
   5. Cada hijo C recibe alfa_C = alfa_B N_C / N_B y se refina.
 
 Las réplicas nulas se generan por lotes (Parametros.lote) y la regla de Besag y
@@ -54,6 +58,7 @@ MOTIVOS = {
 class Parametros:
     alfa: float = 0.05
     delta: float = 0.005          # nats por observación
+    desempate: str = "z"          # entre dos cortes admisibles: 'z', 'ganancia' (g~) o 'bic'
     N_min: float = 500.0
     d_max: int = 6
     nula: str = "bootstrap"       # 'bootstrap' (referencia) o 'poisson'
@@ -81,6 +86,7 @@ class Nodo:
     B_usadas: int = 0
     p_cortes: dict = field(default_factory=dict)
     G2_cortes: dict = field(default_factory=dict)
+    g_cortes: dict = field(default_factory=dict)   # ganancia corregida de cada corte evaluado
     corte: str = ""
     corte_descartado: str = ""    # tipo del corte significativo que no alcanzó delta (motivo ganancia_menor)
     G2_corte: float = float("nan")
@@ -164,10 +170,6 @@ def _rechaza(p, alfa):
     return p <= alfa * (1 + 1e-12)
 
 
-def _gl(tipo, m, n):
-    return {"fil": n - 1, "col": m - 1, "conj": m + n - 3}[tipo]
-
-
 class ASTCC:
     def __init__(self, params=None, rng=None):
         self.p = params or Parametros()
@@ -237,34 +239,34 @@ class ASTCC:
         for tipo in ("fil", "col"):
             resultados[tipo] = self._prueba_dirigida(T, replicas, tipo)
         significativos = [t for t in ("fil", "col") if _rechaza(resultados[t][1], nodo.alfa)]
-        if significativos:
-            def z(t):
-                nu = _gl(t, m, n)
-                return (resultados[t][0] - nu) / math.sqrt(2 * nu)
-            tipo = significativos[0]
-            if len(significativos) == 2:
-                p_fil, p_col = resultados["fil"][1], resultados["col"][1]
-                # En empate (p. ej. bloque 2 x 2, donde ambos cortes coinciden) se
-                # prefiere el de filas; la tolerancia evita que decida el redondeo
-                if p_col < p_fil or (p_col == p_fil and z("col") > z("fil") + 1e-9 * max(1.0, abs(z("fil")))):
-                    tipo = "col"
-        else:
+        if not significativos:
             resultados["conj"] = self._prueba_dirigida(T, replicas, "conj")
-            tipo = "conj" if _rechaza(resultados["conj"][1], nodo.alfa) else ""
+            significativos = ["conj"] if _rechaza(resultados["conj"][1], nodo.alfa) else []
         nodo.p_cortes = {t: r[1] for t, r in resultados.items()}
         nodo.G2_cortes = {t: r[0] for t, r in resultados.items()}
-        if not tipo:
+        nodo.g_cortes = {t: max(0.0, (r[0] - r[2]) / (2 * nodo.N)) for t, r in resultados.items()}
+        if not significativos:
             nodo.estado, nodo.motivo = "no_localizada", "sin_corte"
             nodo.segundos = time.time() - t0
             return
 
-        g_obs, _, t_medio, etiquetas = resultados[tipo]
-        nodo.g_corr = max(0.0, (g_obs - t_medio) / (2 * nodo.N))
-        if nodo.g_corr < p.delta:
+        # Admisibles: significativos y con g~ >= delta. Entre ellos decide
+        # Parametros.desempate; en empate exacto (p. ej. bloque 2 x 2, donde ambos
+        # cortes coinciden) se prefiere el de filas
+        admisibles = [t for t in significativos if nodo.g_cortes[t] >= p.delta]
+        if not admisibles:
+            tipo = max(significativos, key=lambda t: nodo.g_cortes[t])
             nodo.estado, nodo.motivo = "no_localizada", "ganancia_menor"
-            nodo.corte_descartado = tipo
+            nodo.corte_descartado, nodo.g_corr = tipo, nodo.g_cortes[tipo]
             nodo.segundos = time.time() - t0
             return
+        tipo = admisibles[0]
+        if len(admisibles) == 2:
+            puntaje = {t: self._puntaje(t, resultados[t][0], nodo.g_cortes[t], nodo.N, m, n) for t in admisibles}
+            if puntaje["col"] > puntaje["fil"] + 1e-9 * max(1e-12, abs(puntaje["fil"])):
+                tipo = "col"
+        g_obs, _, t_medio, etiquetas = resultados[tipo]
+        nodo.g_corr = nodo.g_cortes[tipo]
 
         nodo.estado, nodo.corte, nodo.G2_corte = "interno", tipo, g_obs
         nodo.segundos = time.time() - t0
@@ -273,6 +275,16 @@ class ASTCC:
             hijo = Nodo(I, J, nodo.profundidad + 1, nodo.alfa * N_C / nodo.N, N_C)
             self._refinar(hijo)
             nodo.hijos.append(hijo)
+
+    def _puntaje(self, tipo, G2_s, g_corr, N_B, m, n):
+        """Criterio para elegir entre dos cortes admisibles (mayor es mejor). nu = grados de
+        libertad del corte = parámetros que añade al árbol (fil: n - 1, col: m - 1)."""
+        nu = {"fil": n - 1, "col": m - 1, "conj": m + n - 3}[tipo]
+        if self.p.desempate == "z":
+            return (G2_s - nu) / math.sqrt(2 * nu)
+        if self.p.desempate == "bic":                  # reducción de J = D_I + (1/2) log(N) k
+            return N_B * g_corr - 0.5 * math.log(self.N) * nu
+        return g_corr
 
     def _prueba_dirigida(self, T, replicas, tipo):
         """(G^2_{B,s} observado, p-valor min-P, media nula, etiquetas del corte)."""

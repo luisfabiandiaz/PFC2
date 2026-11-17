@@ -228,6 +228,8 @@ def main():
             def fila_r(r):
                 if r is None:
                     return f"{'—':>8} {'':>5} {'':>9} {'':>7}"
+                if r["D_I"] == 0:                           # K_T = n: rejilla saturada
+                    return f"{r['config']:>8} {r['k']:>5} {0:>9,.0f} {'satur.':>7}"
                 return f"{r['config']:>8} {r['k']:>5} {r['D_I']:>9,.0f} {1 - f['D_I'] / r['D_I']:>7.1%}"
             igual = f"{'ninguna':>7}" if q is None else f"{q['config']:>7} {q['k']:>5}"
             L.append(f"  {d:>7} {f['base_ast']:>4} {f['hojas']:>5} {f['k']:>5} {f['D_I']:>11,.0f} | "
