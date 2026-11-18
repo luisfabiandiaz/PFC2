@@ -440,8 +440,10 @@ intervalos con perfiles distintos. El árbol resumido conserva solo los cortes
 cuya ganancia corregida supera $0.005$ nats por viaje en el periodo laborable y
 $0.02$ en el feriado, con 13 y 15 cortes, y aun así explica el 64.8\,\% y el
 54.0\,\% de esa interacción, de modo que unos pocos cortes concentran la mayor
-parte de lo que ST-CC no captura. Casi todos los cortes son de filas, es decir,
-separan regiones dentro de un mismo grupo de intervalos. Las hojas inalcanzables
+parte de lo que ST-CC no captura. La mayoría de los cortes son de filas, es
+decir, separan regiones dentro de un mismo grupo de intervalos, aunque en el árbol
+completo del periodo laborable casi un tercio son de columnas, de modo que a esa
+resolución también la agrupación temporal de ST-CC resulta gruesa. Las hojas inalcanzables
 son los bloques del grupo de regiones de menor volumen, con apenas unos miles de
 viajes en todo el mes, cuyo nivel $\alpha_B$ queda por debajo de lo que pueden
 resolver 20\,000 réplicas, por lo que no pueden probarse. Las hojas triviales son
@@ -483,12 +485,16 @@ el Seaport, Chinatown, Hudson Square, Manhattanville y Washington Heights South
 esa fracción es del 13.8\,\% y el máximo está entre las 8 y las 10, con el
 28.2\,\%. Lo mismo ocurre entre las zonas de mayor volumen. En Midtown Center y
 Midtown East el 28.9\,\% de las llegadas diurnas ocurre entre las 8 y las 10,
-frente al 18.3\,\% en el Upper East Side, y Midtown North, Murray Hill, Times
-Square y Union Square se separan de Lincoln Square East y Penn Station por el
-mismo motivo. Es la huella del desplazamiento al trabajo, en la que las zonas de
-oficinas reciben a los viajeros por la mañana y las residenciales al regreso, y
-ST-CC las había reunido porque tienen volúmenes diarios parecidos, de 7\,752 y
-8\,706 llegadas por región y día en el caso de Midtown y el Upper East Side.
+frente al 18.3\,\% en el Upper East Side. Es la huella del desplazamiento al
+trabajo, en la que las zonas de oficinas reciben a los viajeros por la mañana y
+las residenciales al regreso, y ST-CC las había reunido porque tienen volúmenes
+diarios parecidos, de 7\,752 y 8\,706 llegadas por región y día en el caso de
+Midtown y el Upper East Side. Un corte del mismo tipo separa Midtown North, Murray
+Hill, Times Square y Union Square de Lincoln Square East y Penn Station, y la
+diferencia entre esos dos grupos se mantiene en el resto de 2017, pero el árbol
+casi nunca llega a ese corte cuando la partición de partida cambia, porque sus
+hojas tienen soportes de 0 y 0.35 (Sección~\ref{sec:res-estabilidad}), y por eso
+no se cuenta entre los hallazgos.
 
 \begin{figure}[t]
 \centering
@@ -514,10 +520,16 @@ Los demás cortes del periodo laborable afectan a la madrugada y a la división 
 los intervalos. En el grupo de 00--02 a 04--06, Midtown Center recibe el 52.6\,\%
 de sus llegadas nocturnas entre las 4 y las 6, frente al 31.8\,\% de Midtown
 East y del Upper East Side, lo que corresponde a la llegada temprana de
-trabajadores a una zona de oficinas. Los dos cortes de columnas separan, en un
-bloque, la madrugada profunda de 00--04 del intervalo de 04--06 y, en otro, la
-mañana de 08--14 de la tarde de 14--18, lo que indica que en esos grupos de
-regiones la agrupación temporal de ST-CC era demasiado gruesa. La
+trabajadores a una zona de oficinas. La hoja de Midtown Center reaparece en todas
+las ejecuciones con otra partición de partida, mientras que la de Midtown East y
+el Upper East Side solo en el 30\,\% de ellas, porque esas regiones cambian de
+bloque base entre ejecuciones, de modo que lo estable es que Midtown Center se
+separa de su bloque y no el grupo exacto con que se compara. Los dos cortes de
+columnas separan, en un bloque, la mañana de 08--14 de la tarde de 14--18, lo que
+indica que en ese grupo de regiones la agrupación temporal de ST-CC era demasiado
+gruesa, y, en otro, la madrugada profunda de 00--04 del intervalo de 04--06,
+aunque este último no reaparece con otras particiones de partida, con soportes de
+0 y 0.1, y no se interpreta. La
 Figura~\ref{fig:res-refinados} muestra además que los grupos de regiones de ST-CC
 están dispersos por toda la isla, porque se forman por volumen, mientras que
 varios cortes separan grupos espacialmente compactos, como Midtown frente al Upper
@@ -542,13 +554,24 @@ el 70\,\% de sus llegadas de ese grupo de intervalos entre las 10 y las 12, de
 Inwood, Marble Hill, Roosevelt Island y los parques del norte, que las reciben
 sobre todo de noche, con una ganancia de $0.143$ nats por viaje.
 
-Dos advertencias se aplican a la lectura de todos estos cortes. La primera es la de
-la Sección~\ref{sec:res-reparacion}, ya que cada corte demuestra que ST-CC reunió
-regiones o intervalos con perfiles distintos y dice dónde, pero sus hojas son la
-corrección más sencilla que encontró el árbol y no unidades naturales de la
-ciudad. La segunda es que el árbol resumido es una selección de los cortes más
-fuertes del árbol completo, cuyos demás cortes también son reales, como muestran
-las Secciones~\ref{sec:res-delta} y \ref{sec:res-estabilidad}.
+Tres advertencias se aplican a la lectura de todos estos cortes. La primera es la
+de la Sección~\ref{sec:res-reparacion}, ya que cada corte demuestra que ST-CC
+reunió regiones o intervalos con perfiles distintos y dice dónde, pero sus hojas
+son la corrección más sencilla que encontró el árbol y no unidades naturales de la
+ciudad. La segunda es que el árbol resumido reúne los cortes más fuertes, pero no
+es exactamente una poda del árbol completo. Como el conjunto de cortes admisibles
+depende de $\delta$, en un mismo bloque el desempate por $z$ puede elegir con el
+$\delta$ del resumido un corte distinto del que elige con el del completo, y por
+eso 8 de las 105 hojas del árbol completo del periodo laborable y 9 de las 78 del
+feriado, que reúnen alrededor del 3\,\% de los viajes, atraviesan una hoja del
+resumido. En el resto de la matriz las hojas del árbol completo subdividen las del
+resumido, y los cortes de ambos árboles se sostienen fuera de la muestra, como
+muestran las Secciones~\ref{sec:res-delta} y \ref{sec:res-estabilidad}. La
+tercera es que no todas las hojas del resumido son igual de estables frente a la
+partición de partida, y las que reaparecen en menos de la mitad de las ejecuciones
+de la Sección~\ref{sec:res-estabilidad} no se interpretan aunque la diferencia
+que describen se replique en el resto de 2017. En el periodo feriado, los cortes
+descritos en esta sección tienen todos un soporte de al menos 0.95.
 
 % ---------------------------------------------------------------------
 \section{Elección de $\delta$ y validación fuera de la muestra}\label{sec:res-delta}
@@ -643,7 +666,10 @@ como un parámetro estadístico sino como un umbral de resolución, con dos nive
 que cumplen papeles distintos. El árbol completo usa $\delta = 0.00025$, el valor
 a partir del cual el árbol deja de cambiar, ya que bajar a 0.0001 solo añade un
 corte y no mejora la pérdida, que pasa de 3.955 a 3.983 en el periodo laborable, y
-no cambia el árbol en el feriado. Es el modelo que se compara con ST-CC y con las
+no cambia el árbol en el feriado. Que con 0.0001 el número de parámetros baje en
+uno pese a haber un corte más se debe a que los árboles no están anidados, porque
+con un $\delta$ menor entran más cortes admisibles y el desempate por $z$ puede
+elegir otro en algún bloque. Es el modelo que se compara con ST-CC y con las
 rejillas en la Sección~\ref{sec:res-comparacion}. El árbol resumido usa el
 $\delta$ que deja del orden de 10 a 15 cortes, 0.005 en el periodo laborable y
 0.02 en el feriado, porque un árbol de 70 cortes no puede describirse ni
@@ -651,8 +677,9 @@ dibujarse, y es el que se interpretó en la Sección~\ref{sec:res-arbol}. El seg
 valor es mayor en el feriado porque los bloques de ST-CC son allí mucho más
 heterogéneos, con una ganancia media de los cortes cinco veces mayor que en el
 periodo laborable. Ninguna conclusión estadística depende de esa elección, ya que
-el árbol resumido es una selección de los cortes más fuertes del árbol completo,
-todos los cuales se sostienen fuera de la muestra.
+el árbol resumido reúne los cortes más fuertes y, como los del árbol completo,
+estos se sostienen fuera de la muestra, aunque el resumido no sea exactamente una
+poda del completo (Sección~\ref{sec:res-arbol}).
 
 % ---------------------------------------------------------------------
 \section{Comparación con ST-CC y con rejillas globales}\label{sec:res-comparacion}
@@ -815,7 +842,20 @@ soporte mayor, de 0.78 y 0.92, como es de esperar, porque una hoja producida por
 corte solo reaparece si reaparecen tanto su bloque base como el corte. La
 Figura~\ref{fig:res-teselada} indica el soporte de cada hoja, con borde discontinuo
 en las seis del periodo laborable que no llegan a 0.5, que no deben interpretarse
-como hallazgos aunque superen la prueba y el umbral.
+como hallazgos aunque superen la prueba y el umbral. Son las del corte que separa
+Lincoln Square East y Penn Station de Midtown North, Murray Hill, Times Square y
+Union Square, con 0 y 0.35, las del corte de columnas que separa 00--04 de
+04--06, con 0 y 0.1, la de Midtown East y el Upper East Side en la madrugada, con
+0.3, cuya hermana de Midtown Center tiene soporte 1, y la de Clinton West y
+Morningside Heights en el grupo diurno, con 0.4. En el periodo feriado no llegan a
+0.5 siete hojas, todas en bloques que reúnen los intervalos que ST-CC mezcló,
+04--06 con 06--08 o 02--04 con 08--10, en los grupos de regiones R3 y R4, de
+volumen intermedio, mientras que las de los cortes que se interpretan en la
+Sección~\ref{sec:res-arbol} tienen un soporte de al menos 0.95. Una hoja con soporte
+bajo no indica que la diferencia que describe sea ruido, ya que los 23 cortes de
+filas de la Tabla~\ref{tab:res-replicacion}, incluidos los de hojas con soporte
+bajo, conservan el orden de sus grupos en el resto de 2017, sino que el árbol solo
+llega a ese corte con la partición particular de ST-CC.
 
 \subsection{Replicación en el resto de 2017}
 
@@ -905,7 +945,9 @@ ST-CC no muestra. El primero es el desfase horario del desplazamiento laboral,
 en el que, dentro de grupos de zonas con el mismo volumen diario, unas reciben sus
 viajes entre las 8 y las 10 y otras entre las 16 y las 18. El segundo es la
 llegada temprana a las zonas de oficinas, visible en la madrugada de Midtown
-Center, que recibe la mitad de sus llegadas nocturnas entre las 4 y las 6. El
+Center, que recibe la mitad de sus llegadas nocturnas entre las 4 y las 6 y cuya
+separación reaparece con cualquier partición de partida, aunque el grupo con que
+se compara cambie entre ejecuciones. El
 tercero, en el periodo feriado, es la separación entre las zonas de ocio nocturno
 y las residenciales o de servicios, que ST-CC ocultaba al reunir intervalos de
 madrugada y de mañana en un mismo grupo. Los tres son diferencias de horario
@@ -949,10 +991,16 @@ Sección~\ref{sec:res-reparacion} mostró que, cuando la partición de partida a
 mal, el árbol reconstruye la distribución verdadera, pero con hojas que no
 coinciden con los bloques verdaderos, con una pureza de 0.59. Los cortes indican
 con fundamento dónde ST-CC mezcló perfiles distintos, pero las hojas no deben
-interpretarse como unidades naturales de la ciudad. La sexta es que $\delta$ no
-pudo fijarse con datos. Los dos niveles que se usan responden a papeles distintos y
-ninguna conclusión estadística depende de ellos, pero el tamaño del árbol
-resumido es una elección de presentación. La séptima es que los p-valores se
+interpretarse como unidades naturales de la ciudad. Además, una cuarta parte de
+las hojas producidas por un corte en el árbol resumido reaparece en menos de la
+mitad de las ejecuciones con otra partición de partida, y esas hojas no se
+interpretaron aunque las diferencias que describen se repliquen. La sexta es que
+$\delta$ no pudo fijarse con datos. Los dos niveles que se usan responden a papeles
+distintos y ninguna conclusión estadística depende de ellos, pero el tamaño del
+árbol resumido es una elección de presentación, y como el desempate elige entre
+cortes admisibles cuyo conjunto depende de $\delta$, los árboles de distintos
+$\delta$ no están anidados, de modo que el resumido difiere del completo en cerca
+del 3\,\% de los viajes. La séptima es que los p-valores se
 obtienen por simulación, de modo que unos pocos cortes cercanos al umbral cambian
 con la semilla aleatoria, del orden de dos cortes sobre setenta en el árbol
 completo, y todos los resultados se reportan con una semilla fija para que sean
