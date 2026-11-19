@@ -125,9 +125,13 @@ correlacionadas entre celdas parecidas a las de los datos reales
 variabilidad entre días. El escenario Poisson no tiene efectos de día ni ruido de
 celda. El escenario realista tiene efectos de día de escala 0.03, efectos de día y
 región y de día e intervalo de escala 0.07 y ruido gamma de forma 200, con lo que
-su dispersión estimada es de alrededor de 3.1, como la del periodo laborable. El
-escenario fuerte usa 0.10, 0.15 y forma 100, con una dispersión cercana a 10, más
-parecida a la del periodo feriado. Los patrones se plantan multiplicando por un
+el cociente entre la varianza y la media de los conteos diarios de cada celda es
+de alrededor de 3.1, como la mediana de 3.2 del periodo laborable
+(Tabla~\ref{tab:prop-dispersion}). El escenario fuerte usa 0.10, 0.15 y forma
+100, con un cociente cercano a 10, que se acerca al del periodo feriado sin
+alcanzar su mediana de 17.1. Este cociente no es la dispersión de Pearson de 2.06
+y 6.73 que se usa en la Sección~\ref{sec:res-comparacion}, que se mide después de
+quitar los efectos de día y región y de día e intervalo. Los patrones se plantan multiplicando por un
 factor $f$ la media de la mitad de las filas de un bloque en la mitad de sus
 columnas, y su tamaño se resume con la información mutua poblacional del bloque,
 $I_{\mathrm{pob}}$, que es la cantidad que el árbol intenta detectar y que se
@@ -216,7 +220,7 @@ Factor $f$ & $I_{\mathrm{pob}}$ & $\delta = 0$ & $\delta = 0.00025$ & $\delta = 
 \caption{Potencia de AST-CC en el escenario realista, con la partición base
 verdadera y dos patrones por réplica (60 réplicas). El ARI es el índice de Rand
 ajustado entre el primer corte y las filas activadas, promediado sobre los patrones
-detectados con $\delta = 0.00025$, y la última columna es la proporción de
+detectados con $\delta = 0.00025$, que con factor 1.1 son muy pocos, y la última columna es la proporción de
 réplicas con algún corte en un bloque sin patrón con ese mismo $\delta$.}
 \label{tab:res-potencia}
 \end{table}
@@ -407,9 +411,14 @@ al aumentar un grupo de regiones o de intervalos parte también los bloques
 donde no hay nada que separar. Por eso la rejilla optimizada apenas mejora a la
 base cuando el patrón es débil, con 2\,448 frente a 2\,448 en el escenario simple
 con factor 1.25, mientras que el árbol baja a 2\,181. La rejilla tomada de
-BBAC$_I$ sin optimizar para el modelo de las hojas es todavía peor, lo que muestra
-que la comparación justa exige optimizar la rejilla con el mismo criterio con que
-se evalúa. El modelo saturado queda lejos de la verdad en todos los casos porque
+BBAC$_I$ sin optimizar para el modelo de las hojas es peor que la optimizada en
+cuatro de los cinco escenarios, con diferencias de 275 a 1\,067 nats, lo que
+muestra que la comparación justa exige optimizar la rejilla con el mismo criterio
+con que se evalúa. La excepción es el patrón simple con factor 1.25, en el que la
+rejilla de BBAC$_I$ queda más cerca de la verdad, con 2\,337, porque la
+optimización minimiza la divergencia con los datos y, cuando el patrón es débil,
+gasta sus grupos adicionales en ajustar el ruido. Aun así, el árbol también la
+supera, en el 89\,\% de las réplicas. El modelo saturado queda lejos de la verdad en todos los casos porque
 reproduce también el ruido de los datos, con distancias de 2\,500 a 2\,700 nats,
 peores que las del árbol y en general que las de la rejilla.
 
@@ -520,7 +529,9 @@ Los demás cortes del periodo laborable afectan a la madrugada y a la división 
 los intervalos. En el grupo de 00--02 a 04--06, Midtown Center recibe el 52.6\,\%
 de sus llegadas nocturnas entre las 4 y las 6, frente al 31.8\,\% de Midtown
 East y del Upper East Side, lo que corresponde a la llegada temprana de
-trabajadores a una zona de oficinas. La hoja de Midtown Center reaparece en todas
+trabajadores a una zona de oficinas. Es un patrón claro pero de volumen modesto,
+de unas 277 llegadas diarias entre las 4 y las 6 sobre las 526 que recibe Midtown
+Center entre la medianoche y las 6. La hoja de Midtown Center reaparece en todas
 las ejecuciones con otra partición de partida, mientras que la de Midtown East y
 el Upper East Side solo en el 30\,\% de ellas, porque esas regiones cambian de
 bloque base entre ejecuciones, de modo que lo estable es que Midtown Center se
@@ -552,7 +563,10 @@ quedaba oculta dentro de un mismo bloque. El corte de mayor ganancia separa, en
 el grupo de regiones de menor volumen, Battery Park y Randalls Island, que reciben
 el 70\,\% de sus llegadas de ese grupo de intervalos entre las 10 y las 12, de
 Inwood, Marble Hill, Roosevelt Island y los parques del norte, que las reciben
-sobre todo de noche, con una ganancia de $0.143$ nats por viaje.
+sobre todo de noche, con una ganancia corregida de $0.140$ nats por viaje. Ese
+bloque reúne solo 3\,026 viajes, y el corte resultó significativo con el menor
+p-valor que permiten 20\,000 réplicas, de modo que con un máximo menor no habría
+podido probarse, aunque se replica con claridad en el resto de 2017.
 
 Tres advertencias se aplican a la lectura de todos estos cortes. La primera es la
 de la Sección~\ref{sec:res-reparacion}, ya que cada corte demuestra que ST-CC
@@ -669,7 +683,12 @@ corte y no mejora la pérdida, que pasa de 3.955 a 3.983 en el periodo laborable
 no cambia el árbol en el feriado. Que con 0.0001 el número de parámetros baje en
 uno pese a haber un corte más se debe a que los árboles no están anidados, porque
 con un $\delta$ menor entran más cortes admisibles y el desempate por $z$ puede
-elegir otro en algún bloque. Es el modelo que se compara con ST-CC y con las
+elegir otro en algún bloque. Ese valor tampoco es arbitrario en escala, porque
+coincide en orden de magnitud con el umbral que impone el criterio $J$ de la
+Sección~\ref{sec:res-comparacion}. Un corte que añade $\Delta k$ parámetros
+reduce $J$ solo si su ganancia supera $\log(N)\,\Delta k/(2N_B)$, y en un bloque
+de 100\,000 viajes y cinco intervalos, donde un corte de filas añade
+$\Delta k = 4$, eso equivale a 0.0003 nats por viaje. Es el modelo que se compara con ST-CC y con las
 rejillas en la Sección~\ref{sec:res-comparacion}. El árbol resumido usa el
 $\delta$ que deja del orden de 10 a 15 cortes, 0.005 en el periodo laborable y
 0.02 en el feriado, porque un árbol de 70 cortes no puede describirse ni
@@ -756,20 +775,26 @@ La comparación con las rejillas da resultados distintos en cada periodo. En el
 periodo laborable el árbol completo tiene una divergencia de 1\,045 nats, un
 47\,\% menor que la de la mejor rejilla con menos parámetros, la de
 $16 \times 6$ con 1\,954, y un 25\,\% menor que la de la rejilla con el número
-de parámetros inmediatamente superior, la de $20 \times 6$ con 1\,401. Una rejilla
-necesita unos 540 parámetros, 39 más que el árbol, para quedar a su nivel, como la
-de $24 \times 6$ con 1\,046 nats. El árbol tiene además un $J$ menor que el de
-todas las rejillas evaluadas, con 4\,827 frente a 5\,013 de la mejor, y también un
-$J_\varphi$ menor, con 4\,289 frente a 4\,455. La ventaja se sostiene fuera de la
-muestra, ya que en los once meses restantes el árbol completo tiene una pérdida de
-3.96, frente a 4.18 de la rejilla de $16 \times 6$ y 3.98 de la de $24 \times 6$,
-que tiene 39 parámetros más. En la división de los días de noviembre, en cambio,
+de parámetros inmediatamente superior, la de $20 \times 6$ con 1\,401. Para
+acercarse a su nivel una rejilla necesita al menos 540 parámetros, 39 más que el
+árbol, con los que la de $24 \times 6$ queda a un nat, con 1\,046, y la primera
+que lo iguala o mejora es la de $12 \times 8$, con 576 parámetros, 75 más. El árbol
+tiene además un $J$ menor que el de todas las rejillas evaluadas, con 4\,827
+frente a 5\,013 de la mejor, y también un $J_\varphi$ menor, con 4\,289 frente a
+4\,455. Fuera de la muestra el árbol completo alcanza la misma pérdida que la
+rejilla de $24 \times 6$ con 39 parámetros menos, 3.96 frente a 3.98 en los once
+meses restantes, una diferencia comparable al error estándar de la diferencia
+pareada entre meses, de unas dos centésimas, y supera con claridad a la rejilla de
+$16 \times 6$, con 4.18. En la división de los días de noviembre, en cambio,
 la ventaja se reduce a un empate, ya que el árbol gana en el 81\,\% de los 16
 ajustes a la rejilla con menos parámetros, pero solo en el 50\,\% a la rejilla con
 más, con una diferencia media de 101 nats a favor de esta, dentro de una
 desviación típica de 1\,201. Con solo seis días por mitad, la partición base
 estimada en cada mitad es más inestable, lo que perjudica más al árbol, que
-depende de ella, que a la rejilla.
+depende de ella, que a la rejilla. Los árboles ajustados sobre las particiones de
+partida más estables de la Sección~\ref{sec:res-sensibilidad} lo confirman, ya
+que en la misma división de días ganan a la rejilla con más parámetros en el
+94\,\% de los ajustes sobre la base C5 y en el 100\,\% sobre la rejilla optimizada.
 
 En el periodo feriado la rejilla gana. El árbol completo tiene una divergencia
 de 4\,008 nats con 424 parámetros, 2.4 veces la de la rejilla de $20 \times 4$
@@ -799,7 +824,12 @@ ese periodo los tres árboles completos llegan al mismo lugar, con divergencias 
 1\,045, 989 y 901 nats y entre 470 y 501 parámetros, pérdidas fuera de la muestra
 de 3.96, 3.97 y 3.97, y valores de $J$ de 4\,827, 4\,657 y 4\,449, todos menores
 que el de la mejor rejilla. El resultado del periodo laborable no depende, por
-tanto, de la partición de partida. En el feriado sí depende. Sobre la rejilla
+tanto, de la partición de partida. Sobre esas dos bases el árbol completo sigue
+haciendo 77 y 64 cortes, mientras que sobre una partición correcta de datos
+sintéticos no hace ninguno (Sección~\ref{sec:res-reparacion}), de modo que en los
+días laborables de Manhattan hay interacción local que ninguna rejilla de
+$8 \times 4$ captura, y no solo los defectos de una partición que agrupa por
+volumen. En el feriado sí depende. Sobre la rejilla
 optimizada, el árbol completo tiene una divergencia de 2\,704 nats con 376
 parámetros, un 5\,\% menor que la de la rejilla de $24 \times 2$, con 2\,854 y 372,
 y sobre la partición de la base C5 alcanza una pérdida fuera de la muestra de 9.66
@@ -868,7 +898,7 @@ muestra, para cada corte de filas, el intervalo en que los dos grupos más
 difieren. En los 23 cortes de filas el grupo con mayor cuota en noviembre la tiene
 también en el resto del año, y las diferencias entre grupos, de entre 6.9 y 57.5
 puntos porcentuales en noviembre, quedan entre 5.8 y 56.4 en el resto del año. En
-el periodo laborable ninguna de las cuotas de la tabla cambia más de 2 puntos, y
+el periodo laborable las cuotas de la tabla cambian a lo sumo unos 2 puntos, y
 la información mutua del resto del año está entre el 72 y el 114\,\% de la de
 noviembre, lo que significa que estos cortes describen rasgos estables de la
 movilidad de los días laborables y no particularidades del mes.
@@ -879,8 +909,9 @@ aparece en el corte que separa Bloomingdale, el Financial District South y
 Washington Heights South de las otras diez regiones de su grupo en el intervalo de
 04--08, cuya información mutua cae a un tercio fuera de noviembre, de 0.022 a
 0.0075 nats por viaje, aunque el grupo sigue recibiendo una fracción menor de sus
-llegadas de madrugada que el resto. Es el único corte cuya ganancia se reduce a
-menos del 70\,\%. Estos cambios mayores son esperables, ya que los fines de semana
+llegadas de madrugada que el resto. Solo otro corte queda por debajo del
+70\,\%, el del bloque R1-T4, que conserva el 69.9\,\% de su información mutua.
+Estos cambios mayores son esperables, ya que los fines de semana
 del resto del año abarcan estaciones y temporadas de ocio distintas, y el
 periodo feriado de noviembre incluye además el Día de Acción de Gracias. Los
 cinco cortes de columnas, que no admiten la misma tabla porque separan
@@ -934,7 +965,11 @@ distintas. Cuando el estado cambia, además, no siempre lo hace en la dirección
 sugiere el volumen. Midtown Center y Midtown East quedan en el estado alto con
 1\,550 llegadas por celda y día, y el Upper East Side en el medio con 1\,741,
 porque el K-means pondera también la desviación típica entre intervalos, que es
-mayor en las zonas que se llenan de golpe por la mañana.
+mayor en las zonas que se llenan de golpe por la mañana. Lo mismo ocurre en el
+bloque R6-T3, donde la hoja de Clinton East, East Village, Lenox Hill West,
+Yorkville West y los Upper West Side, con 651 llegadas por celda y día, queda en el
+estado medio, y la de East Chelsea, Gramercy, Midtown South y Sutton Place, con
+663, en el bajo.
 
 El mapa de estados de ST-CC no es, por tanto, la forma adecuada de leer lo que
 encuentra AST-CC, y los patrones deben describirse por el reparto de las llegadas
@@ -978,20 +1013,34 @@ nivel $\alpha_B$, repartido por masa, queda por debajo de lo que pueden resolver
 20\,000 réplicas, y quedan como hojas inalcanzables, cuatro en el árbol completo
 del periodo laborable y siete en el feriado. Aumentar el número máximo de
 réplicas o agrupar esos bloques antes de probarlos lo resolvería a cambio de
-más cómputo o de un reparto de $\alpha$ distinto. La cuarta es que la garantía de
+más cómputo o de un reparto de $\alpha$ distinto. El mismo límite afecta a bloques
+que sí se prueban, ya que el corte de mayor ganancia del periodo feriado resultó
+significativo con el menor p-valor que permiten esas réplicas. La cuarta es que la garantía de
 control de error de la Sección~\ref{sec:prop-multiplicidad} es aproximada, porque
 la jerarquía se construye con los mismos datos que se prueban, y su validez se
 comprobó solo de forma empírica, con datos sintéticos en los que el FWER no superó
 0.03. Esa comprobación usó una partición base que recupera los bloques
 verdaderos, y la calibración en los bloques nocturnos del periodo feriado sigue
-siendo algo liberal, como ya se indicó en el Capítulo~\ref{chap:propuesta}.
+siendo algo liberal, como ya se indicó en el Capítulo~\ref{chap:propuesta},
+lo que coincide con que la variabilidad entre días del feriado, con un cociente
+mediano de 17.1 entre la varianza y la media, queda por encima de la del escenario
+sintético fuerte. Además, los diseños sintéticos favorecen la estructura local,
+porque todos los patrones viven en un solo bloque y ocupan la mitad de sus filas y
+de sus columnas, lo que se presta a un corte de filas, y ninguno tiene como verdad
+una rejilla global más fina, que es el caso en el que la rejilla debería ganar. Si
+la estructura de los datos reales es local o global se juzgó con las comparaciones
+de la Sección~\ref{sec:res-comparacion}.
 
 La quinta limitación se refiere a la lectura de las hojas. La
 Sección~\ref{sec:res-reparacion} mostró que, cuando la partición de partida agrupa
 mal, el árbol reconstruye la distribución verdadera, pero con hojas que no
 coinciden con los bloques verdaderos, con una pureza de 0.59. Los cortes indican
 con fundamento dónde ST-CC mezcló perfiles distintos, pero las hojas no deben
-interpretarse como unidades naturales de la ciudad. Además, una cuarta parte de
+interpretarse como unidades naturales de la ciudad. Por la misma razón, la
+fracción del término (iii) que explica el árbol sobre la partición de ST-CC no
+mide por sí sola la estructura local, porque sobre una partición que agrupa por
+volumen el árbol repara casi todo, y esa evidencia la dan la sensibilidad a la
+partición de partida y las comparaciones con las rejillas. Además, una cuarta parte de
 las hojas producidas por un corte en el árbol resumido reaparece en menos de la
 mitad de las ejecuciones con otra partición de partida, y esas hojas no se
 interpretaron aunque las diferencias que describen se repliquen. La sexta es que
@@ -1002,9 +1051,12 @@ cortes admisibles cuyo conjunto depende de $\delta$, los árboles de distintos
 $\delta$ no están anidados, de modo que el resumido difiere del completo en cerca
 del 3\,\% de los viajes. La séptima es que los p-valores se
 obtienen por simulación, de modo que unos pocos cortes cercanos al umbral cambian
-con la semilla aleatoria, del orden de dos cortes sobre setenta en el árbol
-completo, y todos los resultados se reportan con una semilla fija para que sean
-reproducibles.
+con la semilla aleatoria, del orden de dos o tres cortes sobre setenta en el
+árbol completo. En el periodo feriado esos pocos cortes pesan más, y con otra
+semilla la divergencia del árbol completo pasa de 4\,008 a 3\,486 nats, un 13\,\%
+menos, sin que cambie ninguna de las comparaciones con ST-CC ni con las rejillas.
+Todos los resultados se reportan con una semilla fija para que sean
+reproducibles, y la que se usa no es la más favorable al árbol en el feriado.
 
 Por último, el árbol se ajustó con un solo mes, noviembre de 2017, que es el del
 caso de estudio de ST-CC, y aunque sus cortes se replican en el resto del año, no
@@ -1012,4 +1064,7 @@ se comprobó si un árbol ajustado con otro mes encontraría los mismos. Las
 interpretaciones de las zonas como de oficinas, residenciales o de ocio se basan en
 sus nombres y en las cuotas por intervalo, sin contrastarse con datos externos de
 uso del suelo o de empleo, y la coherencia espacial de los grupos que separan los
-cortes se observó en los mapas, pero no se cuantificó.
+cortes se observó en los mapas, pero no se cuantificó. Los datos, por último, son
+los de \cite{Liu2021} y heredan su alcance, ya que describen solo los viajes en
+taxi, cuyos usuarios no representan a toda la población, solo sus destinos y no
+los pares de origen y destino, solo Manhattan e intervalos fijos de dos horas.

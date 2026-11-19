@@ -50,13 +50,13 @@ describen a continuación.
   suma es $O$, que se usan para calibrar las pruebas. Se usan conteos y no
   promedios diarios, por la razón expuesta en la Sección~\ref{sec:escala}, ya que
   solo sobre conteos la I-divergencia coincide con la devianza de Poisson.
-  \item \textbf{Partición base.} Se ejecuta BBAC$_I$ con $K_R$ grupos de
-  filas y $K_T$ grupos de columnas y la base C5 adoptada en la
-  Sección~\ref{sec:stcc-base}, desde varias inicializaciones y con una
-  búsqueda local que mueve filas y columnas de una en una
-  (Sección~\ref{sec:bbac-algoritmo}). El resultado es un tablero del mismo tipo
-  que el de ST-CC, aunque no necesariamente el mismo, porque la implementación
-  de ST-CC corresponde a la base C2.
+  \item \textbf{Partición base.} Se toma el tablero de ST-CC, con $K_R$ grupos
+  de filas y $K_T$ grupos de columnas, tal como lo produce su implementación de
+  BBAC$_I$, que corresponde a la base C2 (Sección~\ref{sec:stcc-base}). Se
+  parte de él sin modificarlo para que toda mejora sobre ST-CC se deba al
+  refinamiento. Las particiones de BBAC$_I$ en la base C5, obtenidas desde varias
+  inicializaciones y con una búsqueda local que mueve filas y columnas de una en
+  una (Sección~\ref{sec:bbac-algoritmo}), se usan como análisis de sensibilidad.
   \item \textbf{Refinamiento.} Cada uno de los $K_R K_T$ bloques se somete a
   un procedimiento recursivo que decide, mediante pruebas de hipótesis, si se
   divide por filas, por columnas, de forma conjunta, o si se convierte en hoja.
@@ -339,8 +339,8 @@ profundidad, ese término se reparte en las dos sumas indicadas.
 
 El reparto del término (iii) depende solo de la partición en tablero y no del
 algoritmo que la encontró, por lo que el corolario es válido para cualquier
-tablero, sea que se obtenga con la base C2 o con la base C5 adoptada en esta
-tesis. La base solo cambia qué tablero se encuentra y, con él, el valor de cada
+tablero, sea que se obtenga con la base C2, como el de ST-CC que refina esta
+tesis, o con la base C5. La base solo cambia qué tablero se encuentra y, con él, el valor de cada
 término. El corolario sitúa con precisión lo que hace el método. ST-CC deja sin modelar
 el término (iii), la interacción espacio-temporal que queda dentro de los
 bloques. AST-CC descompone ese término de forma voraz, de modo que cada corte aceptado
@@ -560,27 +560,23 @@ p-valores calibrados de los estadísticos \eqref{eq:prop-dirigidos}.
   $\tilde I_B<\delta$, donde $\tilde I_B$ es la información mutua corregida por
   sesgo \eqref{eq:prop-efecto-corregido}, el bloque es una hoja
   homogénea.
-  \item \textbf{Cortes unidimensionales.} En caso contrario, se distinguen los
-  casos siguientes.
-  \begin{enumerate}
-    \item si exactamente uno de $p_{\mathrm{fil}}$, $p_{\mathrm{col}}$ es
-    menor o igual que $\alpha_B$, se aplica el mejor corte de esa dimensión;
-    \item si ambos lo son, se aplica solo el corte de menor p-valor y se deja
-    que la recursión decida sobre la otra dimensión. Los empates, frecuentes
-    cuando ambos p-valores alcanzan el mínimo $1/(B_{\mathrm{perm}}+1)$, se
-    resuelven con el estadístico estandarizado
-    $z = (G^2_{B,s}-\nu)/\sqrt{2\nu}$, donde $\nu$ son los grados de libertad
-    del corte.
-  \end{enumerate}
+  \item \textbf{Cortes unidimensionales.} En caso contrario, se calcula el mejor
+  corte de filas y el mejor de columnas, y es significativo el que tiene un
+  p-valor menor o igual que $\alpha_B$.
   \item \textbf{Corte conjunto.} Si ninguno de los dos es significativo pero
-  la ómnibus sí lo fue, se evalúa el corte conjunto $2\times2$. Si
-  $p_{\mathrm{conj}}\le\alpha_B$, se aplica; si no, el bloque es una hoja
-  heterogénea no localizada.
-  \item \textbf{Ganancia mínima.} Un corte seleccionado solo se acepta si
-  $\tilde g_{B,s}\ge\delta$ \eqref{eq:prop-efecto-corregido}, es decir, si explica al menos $\delta$ nats
-  de información mutua por observación más de lo que explicaría el mejor corte
-  de una tabla nula. En caso contrario, el bloque es una
-  hoja heterogénea no localizada.
+  la ómnibus sí lo fue, se evalúa el corte conjunto $2\times2$, que es
+  significativo si $p_{\mathrm{conj}}\le\alpha_B$. Si tampoco lo es, el bloque es
+  una hoja heterogénea no localizada.
+  \item \textbf{Ganancia mínima y desempate.} Un corte significativo es
+  admisible si $\tilde g_{B,s}\ge\delta$ \eqref{eq:prop-efecto-corregido}, es
+  decir, si explica al menos $\delta$ nats de información mutua por observación
+  más de lo que explicaría el mejor corte de una tabla nula. Si ningún corte es
+  admisible, el bloque es una hoja heterogénea no localizada. Si solo uno lo es, se
+  aplica. Si lo son el de filas y el de columnas, se aplica solo el de mayor
+  estadístico estandarizado $z = (G^2_{B,s}-\nu)/\sqrt{2\nu}$, donde $\nu$ son
+  los grados de libertad del corte, que coinciden con los parámetros que añade, y
+  se deja que la recursión decida sobre la otra dimensión. Un empate exacto se
+  resuelve a favor del corte de filas.
 \end{enumerate}
 
 \begin{figure}[t]
@@ -596,12 +592,12 @@ p-valores calibrados de los estadísticos \eqref{eq:prop-dirigidos}.
   \node[dec, below=of in] (omn) {¿$p_{\mathrm{omn}}\le\alpha_B$\\y $\tilde I_B\ge\delta$?};
   \node[leaf, right=of omn] (h1) {Hoja\\homogénea};
   \node[dec, below=of omn] (uni) {¿$p_{\mathrm{fil}}$ o $p_{\mathrm{col}}$\\$\le\alpha_B$?};
-  \node[cut, right=of uni] (c1) {Corte 1D de\\menor p-valor};
+  \node[cut, right=of uni] (c1) {Cortes 1D\\significativos};
   \node[dec, below=of uni] (conj) {¿$p_{\mathrm{conj}}\le\alpha_B$?};
   \node[cut, right=of conj] (c2) {Corte\\conjunto $2\times2$};
   \node[leaf, below=of conj] (h2) {Hoja heterogénea\\no localizada};
-  \node[dec, right=of c1, xshift=0.2cm, yshift=-0.9cm] (gan) {¿$\tilde g_{B,s}\ge\delta$?};
-  \node[cut, right=of gan] (rec) {Recurrir en\\cada hijo};
+  \node[dec, right=of c1, xshift=0.2cm, yshift=-0.9cm] (gan) {¿Algún corte con\\$\tilde g_{B,s}\ge\delta$?};
+  \node[cut, right=of gan] (rec) {Aplicar el de\\mayor $z$ y\\recurrir};
   \draw[->] (in) -- (omn);
   \draw[->] (omn) -- node[above,font=\tiny]{no} (h1);
   \draw[->] (omn) -- node[left,font=\tiny]{sí} (uni);
@@ -622,13 +618,25 @@ Cuatro trayectorias posibles ilustran la regla, con $\alpha_B = 0.01$ y
 $\delta = 0.005$. Si $p_{\mathrm{omn}} = 0.2$, el ómnibus no rechaza y el bloque es
 una hoja homogénea. Si $p_{\mathrm{omn}} = 0.002$, $\tilde I_B = 0.03$,
 $p_{\mathrm{fil}} = 0.004$ y $p_{\mathrm{col}} = 0.3$, solo el corte de filas es
-significativo, se aplica y, si su ganancia corregida supera $\delta$, se recurre en
-cada hijo. Si ambos p-valores valen $0.001$, el mínimo alcanzable con 999
-réplicas, y el corte de filas tiene $G^2 = 60$ con $\nu=5$ mientras el de columnas
-tiene $G^2=45$ con $\nu=9$, entonces $z_{\mathrm{fil}} = 55/\sqrt{10}\approx 17.4$ y
-$z_{\mathrm{col}} = 36/\sqrt{18}\approx 8.5$, y se elige el corte de filas. Por
+significativo y, si su ganancia corregida supera $\delta$, se aplica y se recurre
+en cada hijo. Si ambos p-valores valen $0.001$, el mínimo alcanzable con 999
+réplicas, los dos cortes superan $\delta$ y el corte de filas tiene $G^2 = 60$ con
+$\nu=5$ mientras el de columnas tiene $G^2=45$ con $\nu=9$, entonces
+$z_{\mathrm{fil}} = 55/\sqrt{10}\approx 17.4$ y
+$z_{\mathrm{col}} = 36/\sqrt{18}\approx 8.5$, y se aplica el corte de filas. Por
 último, si el ómnibus rechaza pero ni los cortes unidimensionales ni el conjunto
 son significativos, el bloque queda como hoja heterogénea no localizada.
+
+El desempate no usa el p-valor, porque con los volúmenes de los datos reales casi
+todos los cortes significativos alcanzan el mínimo $1/(B_{\mathrm{perm}}+1)$ y
+empatan, ni la ganancia corregida por sí sola, porque esta ignora cuántos
+parámetros añade cada corte y, con un $\delta$ pequeño, produce árboles con más
+parámetros y peor criterio $J$ \eqref{eq:prop-bic}. El estadístico $z$ mide
+cuántas desviaciones típicas supera $G^2_{B,s}$ a su media bajo el nulo, que es
+$\nu$, y prefiere así el corte que logra su ganancia con menos parámetros. El
+desempate solo actúa entre cortes admisibles, de modo que nunca elige un corte que
+no supere $\delta$. Las alternativas por ganancia y por reducción de $J$ se
+conservan en la implementación para el análisis de sensibilidad.
 
 Tres decisiones de diseño merecen justificación, porque determinan la forma del
 árbol que produce el método y la lectura que puede hacerse de sus hojas. Son la
@@ -831,7 +839,8 @@ Gamma--Poisson con $\mathrm{var} = a\,\mu^b$ & 0.02 & 0.11 & 0.06 & 0.42 \\
 \end{tabular}
 \caption{Error de tipo~I de la prueba ómnibus al nivel 0.05 sobre datos nulos
 semirreales construidos con los días de noviembre de 2017. Para cada bloque base
-de ST-CC se usaron 300 réplicas; el error de Monte Carlo por bloque es de
+de ST-CC con más de un intervalo, que en el periodo laborable son 24 de los 32,
+porque los 8 del intervalo de 06--08 no admiten interacción, se usaron 300 réplicas; el error de Monte Carlo por bloque es de
 aproximadamente 0.013.}
 \label{tab:prop-calibracion}
 \end{table}
@@ -1035,13 +1044,18 @@ búsqueda, descuenta también el optimismo de elegir el mejor corte.
 \paragraph{Elección de $\delta$.} Su valor no se fija a priori. Como referencia
 de escala, la información mutua $\hat I_B$ de los bloques base de ST-CC va de
 0.0012 a 0.061 nats en el periodo laborable y de 0.0017 a 0.19 en el feriado.
-En el Capítulo~\ref{chap:resultados} se recorre una rejilla que cubre ese rango,
-por ejemplo $\delta\in\{0.001, 0.0025, 0.005, 0.01, 0.02\}$, y para cada valor
-se reportan el número de hojas, la fracción del término de interacción local de
-ST-CC que explica el árbol según el Corolario~\ref{cor:stcc},
-$\sum_{B\in\mathcal{S}}G^2_{B,s_B}\big/\sum_{g,h}G^2_{gh}$, y la estabilidad de
-las hojas. Como medida estandarizada complementaria puede reportarse la $V$ de
-Cramér de cada hoja.
+En el Capítulo~\ref{chap:resultados} se recorre una rejilla de 0.0001 a 0.02 y,
+para cada valor, se reportan el número de cortes, la fracción del término de
+interacción local de ST-CC que explica el árbol según el
+Corolario~\ref{cor:stcc},
+$\sum_{B\in\mathcal{S}}G^2_{B,s_B}\big/\sum_{g,h}G^2_{gh}$, la pérdida fuera de
+la muestra en el resto de 2017, la estabilidad de las hojas y la replicación de
+los cortes. Como ninguno de esos criterios señala un valor a partir del cual los
+cortes dejen de ser reales, $\delta$ se usa como un umbral de resolución con dos
+niveles. El árbol completo usa el valor a partir del cual el árbol deja de cambiar,
+0.00025, y es el que se compara con ST-CC y con las rejillas, y el árbol resumido
+usa el que deja del orden de 10 a 15 cortes, 0.005 en el periodo laborable y 0.02
+en el feriado, y es el que se interpreta y se dibuja.
 
 \section{Algoritmo}\label{sec:prop-algoritmo}
 
@@ -1059,7 +1073,7 @@ calcula su p-valor con el ajuste \emph{min-P}.
 \begin{algorithmic}[1]
 \Require Matriz de conteos $O\in\mathbb{N}^{m\times n}$ y sus días $X_1,\dots,X_D$; $K_R$, $K_T$; nivel $\alpha$; umbral $\delta$; $N_{\min}$, $d_{\max}$; y los demás parámetros de la Tabla~\ref{tab:prop-parametros}
 \Ensure Árbol de refinamiento $\mathcal{T}$
-\State $(\rho,\tau)\gets$ BBAC$_I(O, K_R, K_T)$ con base C5 y búsqueda local \Comment{partición base}
+\State $(\rho,\tau)\gets$ tablero de ST-CC, BBAC$_I(O, K_R, K_T)$ con base C2 \Comment{partición base}
 \ForAll{bloque base $B_{gh}$}
   \State \Call{Refinar}{$B_{gh},\ \alpha N_{B_{gh}}/N,\ 0$}
 \EndFor
@@ -1082,19 +1096,20 @@ calcula su p-valor con el ajuste \emph{min-P}.
   \EndIf
   \State $(s_{\mathrm{fil}},p_{\mathrm{fil}},\bar t_{\mathrm{fil}})\gets$ \Call{MejorCorte}{$B,\ \text{filas},\ \{O^{(b)}\}$}
   \State $(s_{\mathrm{col}},p_{\mathrm{col}},\bar t_{\mathrm{col}})\gets$ \Call{MejorCorte}{$B,\ \text{columnas},\ \{O^{(b)}\}$}
-  \If{$\min(p_{\mathrm{fil}},p_{\mathrm{col}})\le\alpha_B$}
-    \State $s\gets$ corte de menor p-valor (desempate por $z$)
-  \Else
+  \State $\mathcal{S}\gets\{s_t : t\in\{\text{fil},\text{col}\},\ p_t\le\alpha_B\}$ \Comment{cortes significativos}
+  \If{$\mathcal{S}=\emptyset$}
     \State $(s_{\mathrm{conj}},p_{\mathrm{conj}},\bar t_{\mathrm{conj}})\gets$ \Call{MejorCorte}{$B,\ \text{conjunto},\ \{O^{(b)}\}$}
     \If{$p_{\mathrm{conj}}>\alpha_B$}
       \State marcar $B$ como hoja heterogénea no localizada; \Return
     \EndIf
-    \State $s\gets s_{\mathrm{conj}}$
+    \State $\mathcal{S}\gets\{s_{\mathrm{conj}}\}$
   \EndIf
-  \State $\tilde g_{B,s}\gets\max\{0,\ (G^2_{B,s}-\bar t_{0,s})/(2N_B)\}$ \Comment{$\bar t_{0,s}$ es la media nula del tipo de $s$}
-  \If{$\tilde g_{B,s}<\delta$}
+  \State $\tilde g_{B,s}\gets\max\{0,\ (G^2_{B,s}-\bar t_{0,s})/(2N_B)\}$ para cada $s\in\mathcal{S}$ \Comment{$\bar t_{0,s}$ es la media nula del tipo de $s$}
+  \State $\mathcal{A}\gets\{s\in\mathcal{S} : \tilde g_{B,s}\ge\delta\}$ \Comment{cortes admisibles}
+  \If{$\mathcal{A}=\emptyset$}
     \State marcar $B$ como hoja heterogénea no localizada; \Return
   \EndIf
+  \State $s\gets\arg\max_{s\in\mathcal{A}}\,(G^2_{B,s}-\nu_s)/\sqrt{2\nu_s}$ \Comment{desempate por $z$; empate exacto, filas}
   \ForAll{$C\in\mathcal{C}(B,s)$}
     \State \Call{Refinar}{$C,\ \alpha_B N_C/N_B,\ d+1$}
   \EndFor
@@ -1126,10 +1141,11 @@ calcula su p-valor con el ajuste \emph{min-P}.
 \toprule
 Parámetro & Papel & Valor de referencia \\
 \midrule
-$K_R$, $K_T$ & Resolución inicial de la partición base & Los de \cite{Liu2021}; sensibilidad en el Cap.~\ref{chap:resultados} \\
+$K_R$, $K_T$ & Resolución de la partición base, que es la de ST-CC & Los de \cite{Liu2021}, $8\times4$ en el periodo laborable y $6\times4$ en el feriado; sensibilidad a la partición base en el Cap.~\ref{chap:resultados} \\
 Inicializaciones de BBAC$_I$ & Ejecuciones de la partición base, cada una con búsqueda local & $200$, como \cite{Liu2021} \\
 $\alpha$ & Nivel global (FWER sobre el árbol) & $0.05$ \\
-$\delta$ & Información mutua mínima por observación, corregida por sesgo & Rejilla en $[0.001, 0.02]$ nats; sensibilidad \\
+$\delta$ & Información mutua mínima por observación, corregida por sesgo & Dos niveles, $0.00025$ nats en el árbol completo y $0.005$ o $0.02$ en el resumido (laborable o feriado); rejilla de $0.0001$ a $0.02$ en el Cap.~\ref{chap:resultados} \\
+Desempate & Elección entre dos cortes admisibles & Mayor $z=(G^2_{B,s}-\nu)/\sqrt{2\nu}$; por ganancia y por $J$ como sensibilidad \\
 $N_{\min}$, $d_{\max}$ & Reglas triviales de parada & $500$ viajes y profundidad $6$; sensibilidad \\
 $B_{\min}$, $c$, $B_{\max}$ & Réplicas mínimas, resolución respecto de $\alpha_B$ y máximo & $199$, $2$ y $20\,000$ \\
 $h$ & Parada secuencial de Besag y Clifford, evaluada por lotes de 500 réplicas & $10$ \\
@@ -1279,7 +1295,9 @@ continuación junto con la forma en que se piensa evaluar su efecto.
   de soporte (Sección~\ref{sec:prop-representacion}) mide su efecto sobre las
   hojas. La elección de la base también importa, ya que con C5 y con C2 se obtienen
   tableros muy distintos, y C5 deja menos interacción local por refinar, porque
-  agrupa las regiones por la forma de su perfil y no por su volumen.
+  agrupa las regiones por la forma de su perfil y no por su volumen. El
+  Capítulo~\ref{chap:resultados} mide ese efecto refinando, además de la partición
+  de ST-CC, la de C5 y una rejilla optimizada para el modelo de las hojas.
   \item \textbf{Resolución de entrada.} Los cortes agrupan regiones e
   intervalos, pero no los subdividen, de modo que el método no puede bajar de la resolución
   espacial y temporal de la matriz. Los resultados dependen, por tanto, de la

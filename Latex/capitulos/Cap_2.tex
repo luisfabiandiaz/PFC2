@@ -1232,15 +1232,19 @@ equivalentes. Para una misma partición, la Proposición~\ref{prop:descomposicio
 el término (i) y C2 no. Por eso, al optimizar la partición, C2 tiende a agrupar
 regiones e intervalos por su volumen, mientras que C5 tiende a agruparlos por la
 forma de su perfil.
-% DECISIÓN PENDIENTE: confirmar con el asesor la base adoptada. El texto
-% siguiente asume C5.
 A partir de aquí la subsección deja de describir el trabajo de \cite{Liu2021} y
 recoge una decisión de esta tesis, que se retoma en el
-Capítulo~\ref{chap:propuesta}. En esta tesis se adopta la base C5. La razón de fondo es que el término (i)
-refleja diferencias de volumen entre regiones e intervalos, que no constituyen
-interacción espacio-temporal, y C5 lo excluye de la función objetivo; además, es
-la función objetivo que \cite{Liu2021} declaran de forma explícita. La base C2,
-que probablemente corresponde a su implementación, se reporta como variante en los
-experimentos. En ambos casos, el término (iii) de la Proposición~\ref{prop:descomposicion}, sobre el que
-actúa el refinamiento, se define igual para una partición dada.
+Capítulo~\ref{chap:propuesta}. AST-CC refina la partición de ST-CC tal como la
+produce su implementación, es decir, un tablero de la base C2, porque el objetivo
+es extender ST-CC y, partiendo de su misma partición, toda diferencia entre ambos
+métodos se debe al refinamiento y no a un cambio de tablero. La elección tiene un
+costo conocido, ya que C2 agrupa por volumen y reúne en un mismo bloque regiones e
+intervalos con perfiles distintos, que el árbol tiene que separar. La base C5, que
+excluye de la función objetivo el término (i), es decir, las diferencias de volumen
+que no constituyen interacción espacio-temporal, y que es la que \cite{Liu2021}
+declaran de forma explícita, se usa como análisis de sensibilidad en el
+Capítulo~\ref{chap:resultados}, junto con una rejilla optimizada para el modelo de
+las hojas. En todos los casos, el término (iii) de la
+Proposición~\ref{prop:descomposicion}, sobre el que actúa el refinamiento, se
+define igual para una partición dada.
 
