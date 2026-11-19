@@ -22,8 +22,10 @@ Los experimentos con datos reales usan los mismos registros que el caso de estud
 de ST-CC descrito en la Sección~\ref{sec:stcc}, es decir, las bajadas de los taxis
 amarillos y verdes en las 66 zonas de Manhattan durante noviembre de 2017,
 agregadas en 12 intervalos de dos horas y separadas en un periodo laborable de
-$D = 12$ días y un periodo feriado de $D = 9$ días. A diferencia de
-\cite{Liu2021}, que trabajan con el volumen promedio por día, AST-CC trabaja con la
+$D = 12$ días, que son los martes a jueves del mes salvo el Día de Acción de
+Gracias y la víspera, y un periodo feriado de $D = 9$ días, que son los sábados,
+los domingos y el Día de Acción de Gracias. A diferencia de
+\citet{Liu2021}, que trabajan con el volumen promedio por día, AST-CC trabaja con la
 matriz de conteos, que es la suma de los días del periodo, porque las pruebas de
 hipótesis necesitan la escala real de los datos (Sección~\ref{sec:escala}). Esa
 matriz reúne $N = 3\,602\,851$ viajes en el periodo laborable y $N = 2\,389\,795$
@@ -60,8 +62,8 @@ partición base de ST-CC.}
 
 {\emergencystretch=2em
 La partición base que refina AST-CC es la de ST-CC tal como se obtiene al
-reproducir el método con el paquete \texttt{clustering-geodata-cubes}, con los
-valores de \cite{Liu2021}, $K_R \times K_T = 8 \times 4$ en el periodo laborable y
+reproducir el método con el paquete \texttt{clustering-geodata-cubes}
+\citep{Nattino2022}, con los valores de \citet{Liu2021}, $K_R \times K_T = 8 \times 4$ en el periodo laborable y
 $6 \times 4$ en el feriado, es decir, 32 y 24 bloques base. Se parte de esa
 partición y no de una optimizada por esta tesis para que toda diferencia entre
 ST-CC y AST-CC se deba únicamente al árbol, que es la pregunta que plantean los
@@ -79,7 +81,7 @@ Los parámetros de AST-CC son los de la Tabla~\ref{tab:prop-parametros}, con un
 nivel global $\alpha = 0.05$, la nula del \emph{bootstrap} de días con la
 fluctuación corregida, al menos $B_{\min} = 199$ réplicas y a lo sumo
 $B_{\max} = 20\,000$ por bloque, resolución $c = 2$ respecto de $\alpha_B$, parada
-secuencial de Besag y Clifford con $h = 10$, $N_{\min} = 500$ viajes y
+secuencial inspirada en \citet{Besag1991} con $h = 10$, $N_{\min} = 500$ viajes y
 profundidad máxima $d_{\max} = 6$. Entre dos cortes admisibles, es decir,
 significativos y con ganancia corregida de al menos $\delta$, se aplica el de mayor
 $z$. El umbral $\delta$ se usa en dos niveles con papeles distintos. El árbol
@@ -147,9 +149,10 @@ tres escenarios, con 0.000, 0.005 y 0.030, mientras que la nula de Poisson solo 
 válida cuando los datos son realmente de Poisson y fracasa en cuanto hay
 variabilidad entre días, con un FWER de 1 y entre 13 y 26 cortes espurios por
 réplica. Con $\delta = 0.005$ ninguna de las dos nulas produce cortes, pero eso no
-rehabilita a la de Poisson, porque es el umbral el que oculta su falla y el árbol
-completo trabaja con un $\delta$ veinte veces menor, que depende de que la prueba
-sea válida por sí misma. Como un $\delta$ positivo solo puede eliminar cortes, el
+rehabilita a la de Poisson, porque es el umbral el que oculta su falla. El árbol
+completo trabaja con un $\delta$ veinte veces menor, que ya no la oculta, de modo
+que con ese umbral el control de los cortes espurios depende de que la prueba sea
+válida por sí misma. Como un $\delta$ positivo solo puede eliminar cortes, el
 FWER con el $\delta$ del árbol completo queda acotado por el que se obtiene con
 $\delta = 0$. La última fila responde la segunda pregunta. Cuando la partición
 base se estima con BBAC$_I$ en la base C5 a partir de los mismos datos, el FWER es
@@ -189,7 +192,8 @@ aproximadamente 0.015.}
 
 La Tabla~\ref{tab:res-potencia} muestra, en el escenario realista con la
 partición verdadera, la proporción de patrones cuyo bloque se refina, para cinco
-factores y para los dos niveles de $\delta$ de la Sección~\ref{sec:res-datos}. La
+factores, para los dos niveles de $\delta$ de la Sección~\ref{sec:res-datos} y,
+como referencia, para $\delta = 0$. La
 detección crece con el tamaño del efecto, de 0.54 con $I_{\mathrm{pob}} = 0.0007$
 a 0.94 con 0.0019 y a prácticamente 1 desde 0.0035, y cuando el bloque se refina el
 primer corte separa casi exactamente las filas activadas, con un índice de Rand
@@ -263,7 +267,10 @@ escenario realista (60 réplicas). Refina es la proporción de réplicas en que 
 refina algún bloque con el patrón, ARI es el acuerdo entre las hojas y los grupos
 verdaderos, promediado sobre todas las réplicas, y Prof. es la profundidad media
 de las hojas en los bloques con patrón. La proporción de réplicas con algún corte
-espurio no superó 0.03 en ningún caso.}
+espurio no superó 0.03 en ningún caso. A diferencia de la
+Tabla~\ref{tab:res-potencia}, que cuenta patrones detectados y promedia el ARI
+solo sobre ellos, aquí se cuentan réplicas y el ARI se promedia sobre todas, por
+lo que las cifras del patrón simple no coinciden exactamente entre ambas tablas.}
 \label{tab:res-patrones}
 \end{table}
 
@@ -303,11 +310,12 @@ verdaderos.
 \cmidrule(lr){4-5}\cmidrule(lr){6-8}\cmidrule(l){9-10}
 Partición base & \multicolumn{2}{c}{ARI} & KL & Pureza & Cortes & KL & Pureza & Cortes & KL \\
 \midrule
-\multicolumn{10}{@{}l}{\emph{Escenario realista}} \\
+\multicolumn{10}{@{}l}{Escenario realista} \\
 Verdadera         & 1.00 & 1.00 & 0.51  & 1.000 & 0.0  & 0.51 & 1.000 & 0.0  & 0.51 \\
 BBAC$_I$ C5       & 0.94 & 0.99 & 0.51  & 0.971 & 0.0  & 0.51 & 0.971 & 0.0  & 0.51 \\
 BBAC$_I$ C2       & 0.10 & 0.36 & 21.49 & 0.457 & 30.5 & 0.59 & 0.588 & 22.6 & 1.06 \\
-\multicolumn{10}{@{}l}{\emph{Escenario fuerte}} \\
+\midrule
+\multicolumn{10}{@{}l}{Escenario fuerte} \\
 Verdadera         & 1.00 & 1.00 & 2.09  & 1.000 & 0.1  & 2.10 & 1.000 & 0.0  & 2.09 \\
 BBAC$_I$ C5       & 0.92 & 1.00 & 2.10  & 0.968 & 0.1  & 2.10 & 0.968 & 0.0  & 2.10 \\
 BBAC$_I$ C2       & 0.12 & 0.38 & 21.92 & 0.470 & 29.7 & 2.26 & 0.597 & 22.6 & 2.71 \\
@@ -370,6 +378,7 @@ la distancia a la estructura que generó los datos y no a otra realización de s
 ruido. El rival de AST-CC es la rejilla de menos parámetros entre las que tienen al
 menos tantos como el árbol, lo que le da ventaja a la rejilla, y se optimiza
 directamente para el modelo de las hojas, de independencia dentro de cada bloque,
+que es el modelo C6 de la Sección~\ref{sec:bases},
 partiendo de las particiones de BBAC$_I$ en las bases C2 y C5. Como referencia se
 incluyen la rejilla del mismo tamaño tomada de BBAC$_I$ sin esa optimización, la
 partición base sin cortes y el modelo saturado, que reproduce los datos celda a
@@ -408,7 +417,7 @@ parámetros, porque añade solo dos a cuatro a los 328 de la base, mientras que 
 rejilla necesita al menos 342. La razón es que la rejilla tiene que gastar sus
 parámetros en toda la matriz para separar un patrón que vive en un solo bloque, y
 al aumentar un grupo de regiones o de intervalos parte también los bloques
-donde no hay nada que separar. Por eso la rejilla optimizada apenas mejora a la
+donde no hay nada que separar. Por eso la rejilla optimizada no mejora a la
 base cuando el patrón es débil, con 2\,448 frente a 2\,448 en el escenario simple
 con factor 1.25, mientras que el árbol baja a 2\,181. La rejilla tomada de
 BBAC$_I$ sin optimizar para el modelo de las hojas es peor que la optimizada en
@@ -452,11 +461,15 @@ $0.02$ en el feriado, con 13 y 15 cortes, y aun así explica el 64.8\,\% y el
 parte de lo que ST-CC no captura. La mayoría de los cortes son de filas, es
 decir, separan regiones dentro de un mismo grupo de intervalos, aunque en el árbol
 completo del periodo laborable casi un tercio son de columnas, de modo que a esa
-resolución también la agrupación temporal de ST-CC resulta gruesa. Las hojas inalcanzables
-son los bloques del grupo de regiones de menor volumen, con apenas unos miles de
-viajes en todo el mes, cuyo nivel $\alpha_B$ queda por debajo de lo que pueden
-resolver 20\,000 réplicas, por lo que no pueden probarse. Las hojas triviales son
-casi siempre bloques de un solo intervalo, como el de 06--08 en el periodo
+resolución también la agrupación temporal de ST-CC resulta gruesa. Los tipos de
+hoja son los de la Sección~\ref{sec:prop-parada}. Las hojas inalcanzables son
+bloques cuyo nivel $\alpha_B$, que se reparte en proporción a su número de viajes,
+queda por debajo del menor p-valor que permiten 20\,000 réplicas, por lo que no
+pueden probarse, y en estos datos son los bloques del grupo de regiones de menor
+volumen con apenas unos miles de viajes en todo el mes. Un bloque de ese mismo
+grupo con algo más de masa sí puede probarse, como el del corte de mayor ganancia
+del periodo feriado. Las hojas triviales tienen una sola fila o un solo intervalo,
+por lo que no admiten interacción, y son casi siempre bloques de un solo intervalo, como el de 06--08 en el periodo
 laborable, que ST-CC dejó aislado y que no admiten interacción.
 
 \begin{table}[t]
@@ -569,8 +582,8 @@ p-valor que permiten 20\,000 réplicas, de modo que con un máximo menor no habr
 podido probarse, aunque se replica con claridad en el resto de 2017.
 
 Tres advertencias se aplican a la lectura de todos estos cortes. La primera es la
-de la Sección~\ref{sec:res-reparacion}, ya que cada corte demuestra que ST-CC
-reunió regiones o intervalos con perfiles distintos y dice dónde, pero sus hojas
+de la Sección~\ref{sec:res-reparacion}, ya que cada corte indica con fundamento que
+ST-CC reunió regiones o intervalos con perfiles distintos y dice dónde, pero sus hojas
 son la corrección más sencilla que encontró el árbol y no unidades naturales de la
 ciudad. La segunda es que el árbol resumido reúne los cortes más fuertes, pero no
 es exactamente una poda del árbol completo. Como el conjunto de cortes admisibles
@@ -613,7 +626,7 @@ con que se aceptó. La Tabla~\ref{tab:res-delta} reúne los tres criterios.
 \toprule
 $\delta$ & Cortes & $k$ & Pérdida & Soporte & Replicación & $\tilde g$ nov. & $g$ resto \\
 \midrule
-\multicolumn{8}{@{}l}{\emph{Periodo laborable}} \\
+\multicolumn{8}{@{}l}{Periodo laborable} \\
 sin cortes & 0  & 328 & 10.803 & --   & --       & --     & --     \\
 0.02     & 2  & 334 & 10.015 & --   & 100\,\% & 0.0241 & 0.0241 \\
 0.01     & 3  & 338 & 8.671  & 1.00 & 100\,\% & 0.0201 & 0.0203 \\
@@ -624,7 +637,8 @@ sin cortes & 0  & 328 & 10.803 & --   & --       & --     & --     \\
 0.00025  & 71 & 501 & 3.955  & 0.78 & 96\,\%  & 0.0029 & 0.0029 \\
 0.0001   & 72 & 500 & 3.983  & --   & 99\,\%  & 0.0028 & 0.0028 \\
 saturado & -- & 792 & 3.767  & --   & --       & --     & --     \\
-\multicolumn{8}{@{}l}{\emph{Periodo feriado}} \\
+\midrule
+\multicolumn{8}{@{}l}{Periodo feriado} \\
 sin cortes & 0  & 312 & 26.674 & --   & --       & --     & --     \\
 0.02     & 15 & 364 & 16.708 & --   & 87\,\%  & 0.0379 & 0.0363 \\
 0.01     & 24 & 365 & 13.261 & 0.84 & 96\,\%  & 0.0275 & 0.0264 \\
@@ -728,7 +742,7 @@ mitades, en la que cada modelo se ajusta con una mitad y se evalúa con la otra.
 \toprule
 Modelo & $k$ & $D_I$ & $J$ & $J_\varphi$ \\
 \midrule
-\multicolumn{5}{@{}l}{\emph{Periodo laborable} ($N = 3\,602\,851$)} \\
+\multicolumn{5}{@{}l}{Periodo laborable ($N = 3\,602\,851$)} \\
 ST-CC, bloques constantes (C2)            & 32  & 161\,319 & 161\,560 & 78\,563 \\
 ST-CC, independencia por bloque (C6)      & 328 & 25\,703  & 28\,179  & 14\,955 \\
 AST-CC, árbol completo                    & 501 & 1\,045   & 4\,827   & 4\,289 \\
@@ -736,7 +750,8 @@ Rejilla $16 \times 6$ ($k$ menor)         & 492 & 1\,954   & 5\,668   & 4\,663 \
 Rejilla $20 \times 6$ ($k$ mayor)         & 516 & 1\,401   & 5\,296   & 4\,575 \\
 Rejilla $32 \times 6$ (menor $J$)         & 588 & 574      & 5\,013   & 4\,717 \\
 Rejilla $24 \times 4$ (menor $J_\varphi$) & 456 & 2\,085   & 5\,528   & 4\,455 \\
-\multicolumn{5}{@{}l}{\emph{Periodo feriado} ($N = 2\,389\,795$)} \\
+\midrule
+\multicolumn{5}{@{}l}{Periodo feriado ($N = 2\,389\,795$)} \\
 ST-CC, bloques constantes (C2)            & 24  & 89\,315  & 89\,491  & 13\,457 \\
 ST-CC, independencia por bloque (C6)      & 312 & 43\,011  & 45\,302  & 8\,687 \\
 AST-CC, árbol completo                    & 424 & 4\,008   & 7\,122   & 3\,710 \\
@@ -906,8 +921,8 @@ movilidad de los días laborables y no particularidades del mes.
 En el periodo feriado los cambios son mayores, con cuotas que varían hasta 12.4
 puntos, aunque sin invertir nunca el orden de los grupos. La mayor diferencia
 aparece en el corte que separa Bloomingdale, el Financial District South y
-Washington Heights South de las otras diez regiones de su grupo en el intervalo de
-04--08, cuya información mutua cae a un tercio fuera de noviembre, de 0.022 a
+Washington Heights South de las otras diez regiones de su grupo en el bloque de
+04--08, cuyos grupos más difieren en el intervalo de 04--06 y cuya información mutua cae a un tercio fuera de noviembre, de 0.022 a
 0.0075 nats por viaje, aunque el grupo sigue recibiendo una fracción menor de sus
 llegadas de madrugada que el resto. Solo otro corte queda por debajo del
 70\,\%, el del bloque R1-T4, que conserva el 69.9\,\% de su información mutua.
@@ -939,8 +954,8 @@ mediante un K-means sobre la media y la desviación típica de sus celdas, y pre
 el resultado como un mapa de estados que puede reunir bloques no contiguos
 (Sección~\ref{sec:stcc}). Para ver qué cambia ese mapa al refinar, se aplicó el
 mismo procedimiento a las 45 hojas del árbol resumido del periodo laborable y a
-las 39 del feriado, con $K = 4$ como \cite{Liu2021}, aunque el índice de silueta
-favorecería $K = 3$ en ambos periodos, con 0.62 y 0.57 frente a 0.51 y 0.56. La
+las 39 del feriado, con $K = 4$ como \citet{Liu2021}, aunque el índice de silueta
+\citep{Rousseeuw1987} favorecería $K = 3$ en ambos periodos, con 0.62 y 0.57 frente a 0.51 y 0.56. La
 Figura~\ref{fig:res-antes-despues} compara el mapa de estados de la partición de
 ST-CC con el de las hojas, usando los mismos centroides para ambos.
 
@@ -1021,10 +1036,11 @@ la jerarquía se construye con los mismos datos que se prueban, y su validez se
 comprobó solo de forma empírica, con datos sintéticos en los que el FWER no superó
 0.03. Esa comprobación usó una partición base que recupera los bloques
 verdaderos, y la calibración en los bloques nocturnos del periodo feriado sigue
-siendo algo liberal, como ya se indicó en el Capítulo~\ref{chap:propuesta},
-lo que coincide con que la variabilidad entre días del feriado, con un cociente
-mediano de 17.1 entre la varianza y la media, queda por encima de la del escenario
-sintético fuerte. Además, los diseños sintéticos favorecen la estructura local,
+siendo algo liberal, como ya se indicó en el Capítulo~\ref{chap:propuesta}. Esa
+liberalidad coincide con que la variabilidad entre días del feriado, con un
+cociente mediano de 17.1 entre la varianza y la media, queda por encima de la del
+escenario sintético fuerte, de modo que ese régimen no quedó cubierto por la
+simulación. Además, los diseños sintéticos favorecen la estructura local,
 porque todos los patrones viven en un solo bloque y ocupan la mitad de sus filas y
 de sus columnas, lo que se presta a un corte de filas, y ninguno tiene como verdad
 una rejilla global más fina, que es el caso en el que la rejilla debería ganar. Si
@@ -1065,6 +1081,6 @@ interpretaciones de las zonas como de oficinas, residenciales o de ocio se basan
 sus nombres y en las cuotas por intervalo, sin contrastarse con datos externos de
 uso del suelo o de empleo, y la coherencia espacial de los grupos que separan los
 cortes se observó en los mapas, pero no se cuantificó. Los datos, por último, son
-los de \cite{Liu2021} y heredan su alcance, ya que describen solo los viajes en
+los de \citet{Liu2021} y heredan su alcance, ya que describen solo los viajes en
 taxi, cuyos usuarios no representan a toda la población, solo sus destinos y no
 los pares de origen y destino, solo Manhattan e intervalos fijos de dos horas.

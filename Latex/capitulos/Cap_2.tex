@@ -9,7 +9,7 @@
 
 Este capítulo reúne los fundamentos sobre los que se construye la propuesta y la
 revisión de los trabajos relacionados. Tiene dos partes. La primera, el marco
-teórico, reúne dos líneas que la propuesta combina, a saber, el co-agrupamiento
+teórico, presenta dos líneas que la propuesta combina, a saber, el co-agrupamiento
 de matrices espacio-temporales y las pruebas de hipótesis sobre tablas de
 conteo. La segunda revisa los trabajos publicados desde 2020 y señala la brecha que aborda
 esta tesis.
@@ -21,16 +21,16 @@ tipos de estructura de bloques pueden imponerse sobre ella
 divergencias de Bregman, que permiten tratar con una sola formulación funciones de
 pérdida tan distintas como la distancia euclídea y la divergencia de
 Kullback--Leibler (Sección~\ref{sec:bregman}). Sobre ellas se construye el marco
-general de co-agrupamiento de \cite{Banerjee2007}, con sus seis bases de
+general de co-agrupamiento de \citet{Banerjee2007}, con sus seis bases de
 aproximación (Sección~\ref{sec:bbac}). El capítulo se detiene en el caso de la
 I-divergencia, donde el co-agrupamiento admite una lectura exacta como ajuste de
 modelos de Poisson y la divergencia se descompone en términos interpretables
 (Sección~\ref{sec:idiv-poisson}). Esa descomposición es la base del criterio de
 refinamiento que propone esta tesis. A continuación se describe el marco ST-CC de
-\cite{Liu2021} (Sección~\ref{sec:stcc}). La parte estadística presenta las pruebas
+\citet{Liu2021} (Sección~\ref{sec:stcc}). La parte estadística presenta las pruebas
 de independencia y su calibración, el control de comparaciones múltiples, la
 inferencia después de la selección y el tamaño de efecto
-(Sección~\ref{sec:pruebas}), y cierra con SigTree \cite{Hu2025}, el algoritmo de
+(Sección~\ref{sec:pruebas}), y cierra con SigTree \citep{Hu2025}, el algoritmo de
 agrupamiento guiado por pruebas de hipótesis del que la propuesta toma su
 criterio de parada (Sección~\ref{sec:sigtree}). Finalmente, la
 Sección~\ref{sec:estado-arte} presenta el estado del arte.
@@ -42,7 +42,7 @@ Los datos de movilidad urbana se registran como eventos individuales. Cada viaje
 en taxi, por ejemplo, queda descrito por el lugar y el instante en que el pasajero
 sube y baja del vehículo. Para analizarlos de forma agregada, el espacio se divide
 en $m$ regiones fijas, y el día se divide en $n$ intervalos de igual duración. En la
-clasificación de \cite{Wu2020}, el resultado es una serie temporal
+clasificación de \citet{Wu2020}, el resultado es una serie temporal
 georreferenciada, es decir, un conjunto de valores observados en ubicaciones fijas y a
 intervalos regulares, que puede organizarse como una matriz bidimensional.
 
@@ -62,7 +62,7 @@ $O_{ij} = \sum_{d=1}^{D} X_{dij}$. Las $D$ matrices diarias $X_d$ son réplicas
 de un mismo periodo, y permiten medir cuánto varían los conteos de un día a
 otro sin suponer un modelo para esa variación.
 
-\cite{Liu2021} interpretan esta matriz como la distribución de co-ocurrencia de dos
+\citet{Liu2021} interpretan esta matriz como la distribución de co-ocurrencia de dos
 variables aleatorias, la región $R$ y el intervalo $T$. Al dividir entre el total
 se obtiene la distribución conjunta empírica
 \begin{equation}\label{eq:conjunta}
@@ -72,7 +72,7 @@ se obtiene la distribución conjunta empírica
 \end{equation}
 que describe la probabilidad de que un evento elegido al azar ocurra en la región
 $r_i$ y en el intervalo $t_j$. La dependencia entre dónde y cuándo ocurren los
-eventos se mide con la información mutua \cite{Cover2006},
+eventos se mide con la información mutua \citep{Cover2006},
 \begin{equation}\label{eq:im}
   I(R;T) = \sum_{i,j} p(r_i,t_j) \log \frac{p(r_i,t_j)}{p(r_i)\,p(t_j)} ,
 \end{equation}
@@ -104,8 +104,9 @@ multinomial con probabilidades $\pi_{ij} = \mu_{ij}/\sum_{k,l} \mu_{kl}$. Para
 los modelos log-lineales que incluyen un término para el total, como todos los
 que se usan en esta tesis, ambos esquemas de muestreo conducen a las mismas
 estimaciones de máxima verosimilitud para las probabilidades $\pi_{ij}$
-\cite{Agresti2013}. Por eso la distribución empírica~\eqref{eq:conjunta} puede
-leerse como la estimación de $\pi$ bajo cualquiera de los dos modelos.
+\citep{Agresti2013}. Por eso la distribución empírica~\eqref{eq:conjunta} puede
+leerse como la estimación de $\pi$ del modelo saturado bajo cualquiera de los dos
+esquemas de muestreo.
 
 Este modelo tiene dos limitaciones que se retoman más adelante. La primera es que
 los supuestos de la justificación no se cumplen del todo. La probabilidad de
@@ -126,12 +127,12 @@ Sección~\ref{sec:escala}.
 
 El agrupamiento tradicional, llamado también agrupamiento unidireccional, forma
 grupos en una sola dimensión de la matriz, a partir de la similitud de los datos a
-lo largo de la otra \cite{Wu2020}. Aplicado a la matriz $O$, agrupa regiones según
+lo largo de la otra \citep{Wu2020}. Aplicado a la matriz $O$, agrupa regiones según
 sus perfiles temporales completos, o intervalos según sus perfiles espaciales
 completos. El co-agrupamiento forma grupos en las dos dimensiones a la vez,
 de modo que cada grupo de filas se describe por su comportamiento en cada grupo de
-columnas \cite{Wu2020}. La idea se remonta al agrupamiento directo de
-\cite{Hartigan1972}, considerado el origen del \emph{biclustering} \cite{Castanho2024}.
+columnas \citep{Wu2020}. La idea se remonta al agrupamiento directo de
+\citet{Hartigan1972}, considerado el origen del \emph{biclustering} \citep{Castanho2024}.
 Dependiendo de las restricciones que se imponen sobre la forma de los grupos, se
 obtienen estructuras de bloques muy distintas. La
 Figura~\ref{fig:estructuras} y la Tabla~\ref{tab:estructuras} resumen las que son
@@ -183,21 +184,21 @@ cada grupo es un subconjunto cualquiera de filas o de columnas.}
 La estructura más simple particiona las filas en $K_R$ grupos y las columnas en
 $K_T$ grupos, de forma que cada celda pertenece a exactamente un bloque
 (Figura~\ref{fig:estructuras}a). En la taxonomía de \emph{biclustering} que recoge
-\cite{Castanho2024} corresponde a la estructura de filas y columnas exclusivas;
+\citet{Castanho2024} corresponde a la estructura de filas y columnas exclusivas;
 en la literatura de co-agrupamiento se la llama partición en tablero
-(\emph{checkerboard}) \cite{Liu2021}. Es la estructura que producen el
-co-agrupamiento de teoría de la información \cite{Dhillon2003}, el co-agrupamiento
-de Bregman \cite{Banerjee2007} y, por tanto, ST-CC. Su ventaja es la
+(\emph{checkerboard}) \citep{Liu2021}. Es la estructura que producen el
+co-agrupamiento de teoría de la información \citep{Dhillon2003}, el co-agrupamiento
+de Bregman \citep{Banerjee2007} y, por tanto, ST-CC. Su ventaja es la
 interpretabilidad, ya que la matriz se resume en $K_R K_T$ bloques, y cada grupo de filas
 y de columnas tiene una lectura directa. Su desventaja es que cada división es
 global, es decir, que si un grupo de filas se divide, la división se aplica en todos los
 grupos de columnas, aunque la diferencia solo exista en uno de ellos.
 
 Dentro de esta familia, una línea de trabajo se ocupa de elegir el número de
-bloques de forma automática. Cross-Associations \cite{Chakrabarti2004} particiona
+bloques de forma automática. Cross-Associations \citep{Chakrabarti2004} particiona
 matrices binarias y elige el número de grupos de filas y de columnas con el
 principio de longitud de descripción mínima (MDL), sin parámetros del usuario. Los
-modelos de bloques latentes, revisados por \cite{Biernacki2023}, tratan la
+modelos de bloques latentes, revisados por \citet{Biernacki2023}, tratan la
 pertenencia de filas y columnas a sus grupos como variables latentes de un modelo
 probabilístico y eligen el número de grupos con criterios de selección de modelo.
 En ambos casos el resultado sigue siendo un tablero, pues se decide cuántos
@@ -209,12 +210,17 @@ la matriz.
 El \emph{biclustering} relaja la exigencia de cubrir toda la matriz y busca submatrices,
 llamadas \emph{biclusters}, cuyas filas se comportan de forma coherente en sus columnas,
 y admite que un mismo elemento pertenezca a varios \emph{biclusters} o a ninguno
-(Figura~\ref{fig:estructuras}b) \cite{Castanho2024}. Esta flexibilidad permite
+(Figura~\ref{fig:estructuras}b) \citep{Castanho2024}. Esta flexibilidad permite
 describir patrones locales, pero tiene un costo, pues cuando los \emph{biclusters} se solapan
 de forma arbitraria, es más difícil extraer conocimiento del resultado
-\cite{Castanho2024}, y el resultado deja de ser una partición de la matriz, por lo
+\citep{Castanho2024}, y la salida deja de ser una partición de la matriz, por lo
 que no puede compararse directamente con un tablero en términos de error de
-reconstrucción.
+reconstrucción. Además, las celdas que no pertenecen a ningún \emph{bicluster}
+quedan sin representante, de modo que no hay una aproximación de toda la matriz
+cuyo error pueda medirse con una divergencia como las de la
+Sección~\ref{sec:bregman}. Por estas razones el \emph{biclustering} sirve aquí
+como contraste, y la propuesta de esta tesis conserva la exigencia de que cada
+celda pertenezca a exactamente un bloque.
 
 \subsection{Estructuras jerárquicas y teselaciones guillotina}
 
@@ -222,14 +228,14 @@ Una tercera posibilidad es organizar los bloques en una jerarquía. En la versi�
 más común se construye un dendrograma para las filas y otro para las columnas;
 cortar ambos a cierta altura vuelve a producir un tablero, solo que con una
 resolución elegida a posteriori. Una alternativa distinta es la teselación
-guillotina en la cual se parte de la matriz completa, o de un tablero inicial, y se aplican
+guillotina, en la cual se parte de la matriz completa, o de un tablero inicial, y se aplican
 cortes recursivos, cada uno de los cuales divide un único bloque en dos por filas
 o por columnas (Figura~\ref{fig:estructuras}c). El resultado sigue siendo una
 partición de la matriz en rectángulos, en el sentido de subconjuntos de filas por
 subconjuntos de columnas, pero ya no es un tablero, porque dos filas del mismo
 grupo pueden quedar con particiones temporales distintas.
 
-El proceso de Mondrian de \cite{Roy2008} es la referencia clásica de este tipo de
+El proceso de Mondrian de \citet{Roy2008} es la referencia clásica de este tipo de
 estructura. Los autores parten de la misma observación que motiva esta tesis, a
 saber, que en los modelos de bloques con partición regular, capturar un detalle
 fino en una zona de la matriz obliga a dividir toda la fila o columna. Para evitarlo, definen
@@ -251,11 +257,11 @@ muestrear la teselación completa de una distribución a posteriori.
     \midrule
     Tablero & Sí & No & No & ITCC, BBAC, ST-CC, Cross-Associations \\
     \midrule
-    \emph{Biclusters} & No & Sí & -- & \emph{Biclustering} \cite{Castanho2024} \\
+    \emph{Biclusters} & No & Sí & -- & \emph{Biclustering} \citep{Castanho2024} \\
     \midrule
     Jerárquica por dimensión & Sí & No & No & Dendrogramas de filas y columnas \\
     \midrule
-    Guillotina & Sí & No & Sí & Proceso de Mondrian \cite{Roy2008}, esta tesis \\
+    Guillotina & Sí & No & Sí & Proceso de Mondrian \citep{Roy2008}, esta tesis \\
     \bottomrule
   \end{tabular}
   }
@@ -271,9 +277,13 @@ muestrear la teselación completa de una distribución a posteriori.
 Muchas de las medidas de discrepancia que se usan en agrupamiento, como la
 distancia euclídea al cuadrado o la divergencia de Kullback--Leibler, son casos
 particulares de una misma familia. Esta familia fue introducida por
-\cite{Bregman1967} en el contexto de la optimización convexa, y
-\cite{Banerjee2005} mostraron que tratarla de forma unificada permite diseñar un
-único algoritmo de agrupamiento válido para todas sus funciones de pérdida.
+\citet{Bregman1967} en el contexto de la optimización convexa, y
+\citet{Banerjee2005} mostraron que tratarla de forma unificada permite diseñar un
+único algoritmo de agrupamiento válido para todas sus funciones de pérdida. Esta
+sección presenta su definición, la propiedad que hace de la media el mejor
+representante de un grupo y la correspondencia con las familias exponenciales,
+que es la que vincula la I-divergencia con el modelo de Poisson de la
+Sección~\ref{sec:modelo-conteos}.
 
 \subsection{Definición y propiedades}
 
@@ -333,7 +343,8 @@ curva vale 9 en $x$, la tangente vale 5 y la divergencia es 4.
 
 En esta tesis los datos no son números sueltos sino matrices, y la recta
 tangente se convierte en un plano tangente con una pendiente por cada celda. La
-definición general \cite{Bregman1967} considera una función
+definición general se debe a \citet{Bregman1967}; aquí se sigue la formulación de
+\citet{Banerjee2005}, que considera una función
 $\phi : S \subseteq \mathbb{R}^p \to \mathbb{R}$ estrictamente convexa y
 diferenciable en el interior relativo de $S$, y define la divergencia de Bregman
 asociada a $\phi$ como
@@ -359,11 +370,12 @@ discrepancia entre dos matrices sumando la discrepancia celda por celda.
 
 La Tabla~\ref{tab:bregman} reúne los tres casos que aparecen en esta tesis, cada
 uno obtenido con una función $\phi$ distinta. Cada $\phi$ corresponde a un
-supuesto distinto sobre cómo varía el error con la magnitud del dato, de modo que
-es constante en la distancia euclídea y proporcional a la media en la
-I-divergencia. La I-divergencia, término
-introducido por \cite{Csiszar1975} para distribuciones de probabilidad y extendido
-por \cite{Csiszar1991} a vectores no negativos que no suman uno, generaliza la
+supuesto distinto sobre cómo varía la dispersión con la magnitud del dato. En la
+distancia euclídea la varianza es constante y en la I-divergencia es
+proporcional a la media. I-divergencia es el término con el que
+\citet{Csiszar1975} designa la divergencia de Kullback--Leibler entre
+distribuciones de probabilidad, y \citet{Csiszar1991} extiende su uso a vectores
+no negativos que no suman uno, de modo que la I-divergencia generaliza la
 divergencia de Kullback--Leibler a datos como las matrices de conteos. A
 diferencia de la distancia euclídea, pesa cada diferencia según la magnitud de la
 celda. Una diferencia de 10 viajes vale 0.48 en una celda con 100 y 0.005 en una
@@ -398,7 +410,7 @@ I-divergencia es la que se aplica a los datos, porque la matriz de co-ocurrencia
 contiene conteos de viajes y esta divergencia pondera el error según el tamaño
 de la celda y coincide con el modelo de Poisson. La divergencia de
 Kullback--Leibler es la que conecta con la literatura del co-agrupamiento por
-información mutua, ya que la función objetivo declarada por \cite{Liu2021} es la
+información mutua, ya que la función objetivo declarada por \citet{Liu2021} es la
 pérdida de información mutua, que se define con ella
 (Sección~\ref{sec:stcc-base}). La distancia euclídea es el caso clásico y sirve
 de referencia, ya que permite introducir la intuición, explicar K-means y la
@@ -410,6 +422,8 @@ divergencia queda multiplicada por $c$,
 \begin{equation}\label{eq:homogeneidad}
   d_I(cx, cy) = c \, d_I(x, y).
 \end{equation}
+Por ejemplo, con $c = 10$, $d_I(4, 3) \approx 0.151$ y $d_I(40, 30) \approx 1.51$,
+mientras que la distancia euclídea quedaría multiplicada por $c^2 = 100$.
 Esta propiedad implica que multiplicar toda una matriz por una constante
 multiplica su divergencia por esa misma constante, sin alterar cuál es la
 partición óptima, aspecto que se retoma al distinguir entre conteos y promedios
@@ -421,8 +435,7 @@ Cada grupo de datos se resume con un solo representante, y la pregunta es qué
 número conviene elegir para que el error promedio sea el menor posible. La
 propiedad que justifica el uso de las divergencias de Bregman en agrupamiento
 es que, para todas ellas, la respuesta es la media aritmética del grupo
-\cite[Prop.~1]{Banerjee2005}.
-
+\citep[Prop.~1]{Banerjee2005}.
 Sea $X$ un dato del grupo tomado al azar, con media $\mu = \mathrm{E}[X]$, donde
 $\mathrm{E}[\cdot]$ denota el promedio sobre todos los datos del grupo. Sea $s$
 cualquier número que se proponga como representante. Entonces
@@ -445,18 +458,17 @@ representante tiene un error mayor, de modo que la media es el único
 representante óptimo. Por ejemplo, sea un grupo con los datos $1$, $2$ y $6$, de
 media $\mu = 3$, y sea $\phi(x) = x^2$. Con $s = 3$ el error promedio es
 $(4 + 1 + 9)/3 \approx 4.67$. Con $s = 2$ es $(1 + 0 + 16)/3 \approx 5.67$, y la
-diferencia es exactamente $d_\phi(3, 2) = (3 - 2)^2 = 1$. La identidad no depende
-de $\phi$, ya que con la I-divergencia los valores son distintos, $0.750$ con $s = 3$ y
-$0.966$ con $s = 2$, pero la diferencia sigue siendo $d_I(3, 2) \approx 0.216$.
-
-En consecuencia, un algoritmo de tipo K-means que calcula centroides como medias
-es válido para cualquier divergencia de Bregman, no solo para la euclídea, porque
-en el paso en que se recalcula cada representante, la media es siempre la mejor
-elección.
-\cite{Banerjee2005opt} demostraron además el recíproco, a saber, que bajo condiciones de
-regularidad suaves sobre la función de pérdida, las divergencias de Bregman son
-las únicas para las que la media condicional es el predictor óptimo
-\cite[Teoremas~3 y~4]{Banerjee2005opt}.
+diferencia es exactamente $d_\phi(3, 2) = (3 - 2)^2 = 1$. La identidad vale para
+cualquier $\phi$. Con la I-divergencia los valores son distintos, $0.750$ con
+$s = 3$ y $0.966$ con $s = 2$, pero la diferencia sigue siendo
+$d_I(3, 2) \approx 0.216$. En consecuencia, un algoritmo de tipo K-means que
+calcula centroides como medias es válido para cualquier divergencia de Bregman,
+no solo para la euclídea, porque en el paso en que se recalcula cada
+representante, la media es siempre la mejor elección. \citet{Banerjee2005opt}
+demostraron además el recíproco, a saber, que bajo condiciones de regularidad
+suaves sobre la función de pérdida, las divergencias de Bregman son las únicas
+para las que la media condicional es el predictor óptimo
+\citep[Teoremas~3 y~4]{Banerjee2005opt}.
 
 El valor mínimo de~\eqref{eq:media} recibe el nombre de información de
 Bregman de $X$ y se escribe
@@ -475,9 +487,10 @@ de Kullback--Leibler, que compara dos distribuciones de probabilidad y vale cero
 solo cuando coinciden, los datos son distribuciones. Si $X$ toma como valores las
 distribuciones condicionales $p(Y \mid U = u)$ con probabilidad $p(u)$, su media
 es la distribución marginal $p(Y)$ y la información de Bregman es la
-información mutua $I(U;Y)$ \cite{Banerjee2005}. Es decir, mide cuánto se parece
-cada distribución condicional a la marginal, de modo que si todas coinciden con
-ella, saber $U$ no dice nada sobre $Y$ y la información mutua es cero. Esta
+información mutua $I(U;Y)$ \citep{Banerjee2005}. Es decir, mide cuánto se aleja,
+en promedio, cada distribución condicional de la marginal. Si todas coinciden con
+ella, saber $U$ no dice nada sobre $Y$ y la información mutua es cero, y cuanto
+más se alejan, más informa $U$ sobre $Y$. Esta
 doble lectura explica por qué
 un mismo marco puede generalizar tanto el agrupamiento por mínima varianza como el
 co-agrupamiento que minimiza la pérdida de información mutua.
@@ -495,16 +508,16 @@ ruido de los datos.
 
 Una familia exponencial es una colección de distribuciones, como la normal, la
 Poisson o la binomial, que comparten una misma forma matemática y que tienen un
-parámetro de media $\mu$. \cite{Banerjee2005} establecieron una correspondencia
+parámetro de media $\mu$. \citet{Banerjee2005} establecieron una correspondencia
 uno a uno entre las divergencias de Bregman regulares y las familias
-exponenciales regulares \cite[Teoremas~4 y~6]{Banerjee2005}, de modo que la
+exponenciales regulares \citep[Teoremas~4 y~6]{Banerjee2005}, de modo que la
 densidad de cada familia puede escribirse como
 \begin{equation}\label{eq:expfam}
   p(x \mid \mu) = \exp\{-d_\phi(x, \mu)\}\, b_\phi(x),
 \end{equation}
 donde $\mu$ es el parámetro de media y $b_\phi$ depende solo del dato, no de
-$\mu$. La lectura es directa, pues un dato es más probable cuanto más cerca está de la
-media, y la cercanía se mide con la divergencia de Bregman de esa familia. La
+$\mu$. La lectura es directa, pues para un dato fijo, una media es más verosímil
+cuanto más cerca está del dato, y la cercanía se mide con la divergencia de Bregman de esa familia. La
 distancia euclídea corresponde, salvo un factor de escala, a la normal con
 varianza fija $\sigma^2$, cuya divergencia es
 $\lVert x - \mu \rVert^2 / (2\sigma^2)$; la I-divergencia corresponde a la
@@ -532,9 +545,9 @@ Para una matriz de conteos independientes $O_{ij} \sim
 \end{equation}
 donde $\mathrm{Dev}(\mu) = 2 \sum_{i,j} [\, O_{ij} \log (O_{ij}/\mu_{ij}) - (O_{ij} - \mu_{ij}) \,]$
 es la devianza del modelo de Poisson con medias $\mu$
-\cite[Sec.~4.5.2, ec.~4.34]{Agresti2013}, la medida habitual de qué tan mal ajusta
+\citep[Sec.~4.5.2, ec.~4.34]{Agresti2013}, la medida habitual de qué tan mal ajusta
 un modelo a los conteos. Aquí $\mu_{ij}$ es lo que predice el modelo para cada
-celda, que en esta tesis es la media del bloque al que pertenece. Minimizar la
+celda, que en la base C2 (Sección~\ref{sec:bases}) es la media del bloque al que pertenece. Minimizar la
 I-divergencia equivale entonces a maximizar la verosimilitud de Poisson, es decir,
 a elegir el modelo de Poisson por bloques que mejor explica los datos. Esta
 equivalencia es la que permite, en la Sección~\ref{sec:idiv-poisson}, leer el
@@ -547,7 +560,7 @@ Las secciones anteriores presentaron dos piezas por separado, las divergencias d
 Bregman, que miden el error al reemplazar un dato por un representante, y el
 co-agrupamiento, que forma un tablero de bloques. Falta unirlas, es decir, definir
 cómo se reconstruye la matriz a partir de los bloques y cómo se mide qué tan
-buena es esa reconstrucción. \cite{Banerjee2007} formularon el co-agrupamiento
+buena es esa reconstrucción. \citet{Banerjee2007} formularon el co-agrupamiento
 como un problema de aproximación de matrices en el que la función de pérdida
 puede ser cualquier divergencia de Bregman, de modo que se resume la matriz con
 unos pocos promedios, se reconstruye una matriz aproximada a partir de ellos y se
@@ -571,7 +584,7 @@ cuatro regiones por cuatro intervalos con $\rho$ que agrupa las regiones de dos
 en dos y $\tau$ los intervalos de dos en dos, resulta un tablero de
 $2 \times 2$ bloques de cuatro celdas cada uno.
 
-Para expresar los promedios de forma compacta, \cite{Banerjee2007} adoptan una
+Para expresar los promedios de forma compacta, \citet{Banerjee2007} adoptan una
 lectura probabilística de la matriz, en la que se elige una celda al azar, con $U$ uniforme
 sobre las filas y $V$ uniforme sobre las columnas, y se define la variable
 aleatoria $Z = O_{UV}$, el valor de esa celda. Los índices de grupo son
@@ -585,14 +598,14 @@ $\mathrm{E}[Z \mid \hat{U} = g, \hat{V} = h]$ es la media del bloque $B_{gh}$.
 
 Un co-agrupamiento resume la matriz mediante un conjunto de promedios. La pregunta
 es cuáles promedios conservar y cómo reconstruir la matriz a partir de ellos.
-\cite{Banerjee2007} responden con dos elementos. El primero es una base
+\citet{Banerjee2007} responden con dos elementos. El primero es una base
 $\mathcal{C} = \{G_1, \dots, G_s\}$, que indica qué
 promedios debe conservar la aproximación. Formalmente es una colección de
 conjuntos de variables, cada uno tomado de $\{U, V, \hat{U}, \hat{V}\}$, y la
 aproximación conserva las medias condicionales $\mathrm{E}[Z \mid G]$, para
-$G \in \mathcal{C}$. La base más simple, $\{\hat{U}, \hat{V}\}$, conserva la media
-de cada bloque; la base $\{\hat{U}\}, \{\hat{V}\}$ conserva solo la media de cada
-grupo de filas y la de cada grupo de columnas.
+$G \in \mathcal{C}$. La base más intuitiva, $\{\{\hat{U}, \hat{V}\}\}$, conserva la
+media de cada bloque; la base $\{\{\hat{U}\}, \{\hat{V}\}\}$ conserva solo la media
+de cada grupo de filas y la de cada grupo de columnas.
 
 El segundo es el principio de mínima información de Bregman (MBI). Con los
 promedios fijados hay muchas matrices que los respetan, y el principio elige,
@@ -604,10 +617,8 @@ I-divergencia o la divergencia de Kullback--Leibler, este principio coincide con
 de máxima entropía. Los autores demuestran que la solución MBI, denotada
 $\hat{Z}_{\mathcal{C}}$, es también la mejor aproximación, en divergencia esperada,
 entre las que tienen su misma forma funcional, y que satisface una propiedad
-pitagórica \cite[Lema~3 y Teorema~2]{Banerjee2007} que se usará en la
-Sección~\ref{sec:descomposicion}.
-
-Fijadas la divergencia $\phi$ y la base $\mathcal{C}$, el co-agrupamiento de
+pitagórica \citep[Teorema~2 y Lema~3]{Banerjee2007} que se usará en la
+Sección~\ref{sec:descomposicion}. Fijadas la divergencia $\phi$ y la base $\mathcal{C}$, el co-agrupamiento de
 Bregman busca
 \begin{equation}\label{eq:objetivo-bregman}
   (\rho^*, \tau^*) = \operatorname*{arg\,min}_{\rho,\, \tau}\;
@@ -629,12 +640,12 @@ cuatro intervalos
   \end{pmatrix},
 \]
 con las regiones y los intervalos agrupados de dos en dos, de modo que las medias
-de los cuatro bloques son $10$, $2$, $2$ y $8$. Con la base $\{\hat{U}, \hat{V}\}$
+de los cuatro bloques son $10$, $2$, $2$ y $8$. Con la base $\{\{\hat{U}, \hat{V}\}\}$
 la matriz más simple compatible con esas medias rellena cada bloque con la suya, y
 la I-divergencia entre $O$ y esa aproximación suma $2.86$. Con la base
-$\{\hat{U}\}, \{\hat{V}\}$, en cambio, las medias por grupo de filas son $6$ y $5$,
+$\{\{\hat{U}\}, \{\hat{V}\}\}$, en cambio, las medias por grupo de filas son $6$ y $5$,
 las de columnas son $6$ y $5$, la media global es $5.5$ y la aproximación con
-I-divergencia es el producto $\mathrm{E}[Z|\hat{U}]\,\mathrm{E}[Z|\hat{V}] /
+I-divergencia es el producto $\mathrm{E}[Z \mid \hat{U}]\,\mathrm{E}[Z \mid \hat{V}] /
 \mathrm{E}[Z]$, que da $6.55$, $5.45$, $5.45$ y $4.55$ en los cuatro bloques. Esa
 aproximación respeta las medias por grupo, pero no distingue que el primer bloque
 es mucho más alto que el segundo. La base determina así qué estructura puede
@@ -643,7 +654,7 @@ capturar la aproximación.
 \subsection{Las seis bases}\label{sec:bases}
 
 Cada base responde a la pregunta de cuánto detalle se quiere conservar además de
-dividir la matriz en bloques. \cite[Teorema~3]{Banerjee2007} muestran que en dos
+dividir la matriz en bloques. \citet[Teorema~3]{Banerjee2007} muestran que en dos
 dimensiones existen seis bases no triviales y no redundantes, es decir, que
 resumen la matriz y que ninguna produce la misma aproximación que otra. La
 Tabla~\ref{tab:bases} las resume junto con la forma cerrada de la aproximación
@@ -661,27 +672,27 @@ $\{\hat{U}, \hat{V}\}$ conserva la media de cada bloque y $\{U\}$ la de cada fil
     \textbf{Base} & \textbf{Conjuntos} & \textbf{Medias que conserva} & \textbf{Aproximación con $d_I$} \\
     \midrule
     C1 & $\{\hat{U}\}, \{\hat{V}\}$ & de cada grupo de filas y de cada grupo de columnas &
-      $\mathrm{E}[Z|\hat{U}]\,\mathrm{E}[Z|\hat{V}] \,/\, \mathrm{E}[Z]$ \\
+      $\mathrm{E}[Z \mid \hat{U}]\,\mathrm{E}[Z \mid \hat{V}] \,/\, \mathrm{E}[Z]$ \\
     \midrule
     C2 & $\{\hat{U}, \hat{V}\}$ & de cada bloque &
-      $\mathrm{E}[Z|\hat{U},\hat{V}]$ \\
+      $\mathrm{E}[Z \mid \hat{U},\hat{V}]$ \\
     \midrule
     C3 & $\{\hat{U}, \hat{V}\}, \{U\}$ & de cada bloque y de cada fila &
-      $\mathrm{E}[Z|U]\,\mathrm{E}[Z|\hat{U},\hat{V}] \,/\, \mathrm{E}[Z|\hat{U}]$ \\
+      $\mathrm{E}[Z \mid U]\,\mathrm{E}[Z \mid \hat{U},\hat{V}] \,/\, \mathrm{E}[Z \mid \hat{U}]$ \\
     \midrule
     C4 & $\{\hat{U}, \hat{V}\}, \{V\}$ & de cada bloque y de cada columna &
-      $\mathrm{E}[Z|V]\,\mathrm{E}[Z|\hat{U},\hat{V}] \,/\, \mathrm{E}[Z|\hat{V}]$ \\
+      $\mathrm{E}[Z \mid V]\,\mathrm{E}[Z \mid \hat{U},\hat{V}] \,/\, \mathrm{E}[Z \mid \hat{V}]$ \\
     \midrule
     C5 & $\{\hat{U}, \hat{V}\}, \{U\}, \{V\}$ & de cada bloque, fila y columna &
-      $\dfrac{\mathrm{E}[Z|U]\,\mathrm{E}[Z|V]\,\mathrm{E}[Z|\hat{U},\hat{V}]}{\mathrm{E}[Z|\hat{U}]\,\mathrm{E}[Z|\hat{V}]}$ \\
+      $\dfrac{\mathrm{E}[Z \mid U]\,\mathrm{E}[Z \mid V]\,\mathrm{E}[Z \mid \hat{U},\hat{V}]}{\mathrm{E}[Z \mid \hat{U}]\,\mathrm{E}[Z \mid \hat{V}]}$ \\
     \midrule
     C6 & $\{U, \hat{V}\}, \{\hat{U}, V\}$ & de cada fila dentro de cada grupo de columnas, y de cada columna dentro de cada grupo de filas &
-      $\mathrm{E}[Z|U,\hat{V}]\,\mathrm{E}[Z|\hat{U},V] \,/\, \mathrm{E}[Z|\hat{U},\hat{V}]$ \\
+      $\mathrm{E}[Z \mid U,\hat{V}]\,\mathrm{E}[Z \mid \hat{U},V] \,/\, \mathrm{E}[Z \mid \hat{U},\hat{V}]$ \\
     \bottomrule
   \end{tabular}
   }
   \caption{Bases de co-agrupamiento de Bregman en dos dimensiones
-  \cite{Banerjee2007} y forma de la aproximación con I-divergencia, bajo medida
+  \citep{Banerjee2007} y forma de la aproximación con I-divergencia, bajo medida
   uniforme sobre las celdas.}
   \label{tab:bases}
 \end{table}
@@ -689,9 +700,9 @@ $\{\hat{U}, \hat{V}\}$ conserva la media de cada bloque y $\{U\}$ la de cada fil
 La forma de la base C5 es la más fácil de leer. Reagrupada, la aproximación es la
 media del bloque multiplicada por dos factores,
 \[
-  \hat{O}_{ij} = \mathrm{E}[Z|\hat{U},\hat{V}] \cdot
-  \frac{\mathrm{E}[Z|U]}{\mathrm{E}[Z|\hat{U}]} \cdot
-  \frac{\mathrm{E}[Z|V]}{\mathrm{E}[Z|\hat{V}]},
+  \hat{O}_{ij} = \mathrm{E}[Z \mid \hat{U},\hat{V}] \cdot
+  \frac{\mathrm{E}[Z \mid U]}{\mathrm{E}[Z \mid \hat{U}]} \cdot
+  \frac{\mathrm{E}[Z \mid V]}{\mathrm{E}[Z \mid \hat{V}]},
 \]
 donde cada factor compara una fila, o una columna, con su grupo, de modo que si
 una región tiene el doble de viajes que el promedio de su grupo, su factor es 2. Las bases C3
@@ -705,26 +716,26 @@ bloque
 cuya segunda fila tiene el triple de viajes que la primera con el mismo perfil.
 Las medias de fila son $3$ y $9$, las de columna $4$ y $8$, y la global $6$. Con
 la base C2 todas las celdas valen $6$ y la I-divergencia suma $4.50$. Con la base
-C5 la aproximación es $\mathrm{E}[Z|U]\,\mathrm{E}[Z|V]/\mathrm{E}[Z]$, que
+C5 la aproximación es $\mathrm{E}[Z \mid U]\,\mathrm{E}[Z \mid V]/\mathrm{E}[Z]$, que
 reproduce la matriz exacta y da pérdida cero, porque C5 descuenta el volumen de cada fila
-y de cada columna, que es la diferencia que motiva su elección en esta tesis
-(Sección~\ref{sec:stcc-base}).
+y de cada columna, que es la diferencia que la hace relevante como análisis de
+sensibilidad en esta tesis (Sección~\ref{sec:stcc-base}).
 
 Varios métodos conocidos resultan ser casos particulares de este esquema. La base
 C2 con distancia euclídea es el co-agrupamiento clásico de bloques constantes, que
-corresponde al primer residuo de \cite{Cho2004}. La base C6 con distancia euclídea
-es el co-agrupamiento por residuo cuadrático mínimo de \cite{Cho2004}, que usa el
-segundo residuo, $O_{ij} - \mathrm{E}[Z|U,\hat{V}] - \mathrm{E}[Z|\hat{U},V] +
-\mathrm{E}[Z|\hat{U},\hat{V}]$ \cite[Ejemplo~2.F]{Banerjee2007}; sobre él se
-construye el BCC\_MSSR de \cite{Wu2022}. La base C5 con I-divergencia, que sobre
+corresponde al primer residuo de \citet{Cho2004}. La base C6 con distancia euclídea
+es el co-agrupamiento por residuo cuadrático mínimo de \citet{Cho2004}, que usa el
+segundo residuo, $O_{ij} - \mathrm{E}[Z \mid U,\hat{V}] - \mathrm{E}[Z \mid \hat{U},V] +
+\mathrm{E}[Z \mid \hat{U},\hat{V}]$ \citep[Ejemplo~2.F]{Banerjee2007}; sobre él se
+construye el BCC\_MSSR de \citet{Wu2022}. La base C5 con I-divergencia, que sobre
 una distribución conjunta coincide con la divergencia de Kullback--Leibler, es el
-co-agrupamiento de teoría de la información (ITCC) de \cite{Dhillon2003}, que
+co-agrupamiento de teoría de la información (ITCC) de \citet{Dhillon2003}, que
 minimiza la pérdida de información mutua entre filas y columnas
-\cite[Ejemplo~1.F]{Banerjee2007}.
+\citep[Ejemplo~1.F]{Banerjee2007}.
 
 Cabe notar que la base C6 aparece en los dos contextos de este capítulo. Con
 distancia euclídea combina las marginales internas del bloque de forma aditiva,
-como en el residuo de \cite{Cho2004}, y con I-divergencia las combina de forma
+como en el residuo de \citet{Cho2004}, y con I-divergencia las combina de forma
 multiplicativa, como en la prueba de independencia dentro del bloque que se usa
 en la Sección~\ref{sec:idiv-poisson}. Es la misma estructura con dos álgebras, ya que la
 euclídea trabaja con diferencias y la I-divergencia con razones.
@@ -735,11 +746,11 @@ Falta decir cómo se encuentra la partición que hace mínimo el
 problema~\eqref{eq:objetivo-bregman}. Probar todas las particiones es inviable, ya que solo
 asignar 100 filas a 5 grupos admite del orden de $5^{100} \approx 10^{70}$
 posibilidades, sin contar las columnas. El problema es combinatorio y de hecho
-NP-difícil por reducción desde el problema de K-means \cite{Banerjee2007}, es
+NP-difícil por reducción desde el problema de K-means \citep{Banerjee2007}, es
 decir, no se conoce un método eficiente que garantice la mejor partición. Por eso
-\cite{Banerjee2007} proponen un algoritmo de minimización alternante, con la misma
+\citet{Banerjee2007} proponen un algoritmo de minimización alternante, con la misma
 idea que K-means, en el que con los grupos fijos se calculan los mejores promedios y con los
-promedios fijos se mejoran los grupos. Sus pasos son los siguientes.
+promedios fijos se mejoran los grupos. El algoritmo consta de cinco pasos.
 
 \begin{enumerate}
   \item Inicializar $\rho$ y $\tau$, por ejemplo al azar.
@@ -753,8 +764,8 @@ promedios fijos se mejoran los grupos. Sus pasos son los siguientes.
         terminar; si no, volver al paso 3.
 \end{enumerate}
 
-Un ejemplo con la matriz de cuatro regiones por cuatro intervalos de la
-Sección~\ref{sec:bbac}, base C2 e I-divergencia, muestra el paso 3. Si $\tau$ es
+Un ejemplo con la matriz de cuatro regiones por cuatro intervalos del ejemplo
+anterior sobre el efecto de la base, con base C2 e I-divergencia, muestra el paso 3. Si $\tau$ es
 la correcta y $\rho$ empieza mal, con las regiones $r_1, r_2, r_3$ en un grupo y
 $r_4$ en otro, el error total es $15.6$. Para la fila $r_3 = (2, 2, 10, 6)$, el
 error de quedarse con $r_1$ y $r_2$ es $9.07$, porque se la compara con las medias
@@ -763,21 +774,21 @@ compara con $(2, 2, 8, 8)$. La fila cambia de grupo, la partición de filas qued
 correcta y el error baja a $2.86$.
 
 Cada paso no aumenta el valor de la función objetivo, porque al recalcular los
-estadísticos, la media es el mejor representante de cada grupo
-(Sección~\ref{sec:bregman}), y al reasignar, cada fila elige el grupo que menos
+estadísticos, la aproximación MBI es la mejor de su forma (en C2, la media del
+bloque; Sección~\ref{sec:bregman}), y al reasignar, cada fila elige el grupo que menos
 error le produce. Como además el número de particiones es finito, el algoritmo
 converge en un número finito de iteraciones. Sin embargo, converge a un mínimo
 local, es decir, una solución que no mejora cambiando el agrupamiento de filas, el de
-columnas o los estadísticos de la base \cite[Teorema~6]{Banerjee2007}. Es como
+columnas o los estadísticos de la base \citep[Teorema~6]{Banerjee2007}. Es como
 bajar una montaña por el camino más empinado, que lleva a un valle pero no
 necesariamente al más profundo. Esta optimalidad es relativa a las
-actualizaciones por lotes; \cite{Cho2004} muestran que una búsqueda local que
+actualizaciones por lotes; \citet{Cho2004} muestran que una búsqueda local que
 mueve filas o columnas de una en una puede seguir reduciendo el objetivo después
 de la convergencia. Por eso se ejecuta con varias inicializaciones y se conserva
 la mejor solución, y cada ejecución puede completarse con esa búsqueda local;
-\cite{Liu2021}, por ejemplo, usaron 200 inicializaciones. Para una matriz densa,
+\citet{Liu2021}, por ejemplo, usaron 200 inicializaciones. Para una matriz densa,
 cada iteración cuesta $O\!\left(mn(K_R + K_T)\right)$ operaciones
-\cite[Sec.~4.4]{Cho2004}.
+\citep[Sec.~4.4]{Cho2004}.
 
 % ---------------------------------------------------------------------
 \section{El caso de la I-divergencia y su lectura como modelo de Poisson}\label{sec:idiv-poisson}
@@ -788,8 +799,8 @@ corresponde a un modelo de Poisson, que tres de esas bases forman una cadena de
 modelos anidados, y que la divergencia de ST-CC se descompone en términos con
 interpretación propia. Esto permite interpretar los resultados como el ajuste de
 un modelo estadístico y justifica el estadístico de heterogeneidad del método
-propuesto, pues el marco anterior funciona con cualquier divergencia, pero esta tesis
-usa una sola, con conteos de viajes, y es en ese caso donde aparecen estas
+propuesto. El marco anterior funciona con cualquier divergencia, pero esta tesis
+usa solo la I-divergencia sobre conteos, y es en ese caso donde aparecen estas
 propiedades.
 
 \subsection{Tres bases en notación matricial}
@@ -820,13 +831,12 @@ $(i,j) \in B_{gh}$ las tres bases relevantes toman la forma
   \hat{O}^{\mathrm{C5}}_{ij} &= \frac{O_{i\cdot}\; O_{\cdot j}\; N_{gh}}{O_{g\cdot}\; O_{\cdot h}}, \label{eq:c5}\\[4pt]
   \hat{O}^{\mathrm{C6}}_{ij} &= \frac{O_{ih}\; O_{gj}}{N_{gh}}. \label{eq:c6}
 \end{align}
-
 La base C2 asigna a todas las celdas del bloque el mismo valor, que es su media. La base
 C5 reparte el total del bloque en proporción al volumen global de cada región y de
 cada intervalo, de modo que una región con mucha actividad recibe más viajes en
 todos los bloques de su fila; es la media del bloque escalada por los factores de
 fila y de columna de la Sección~\ref{sec:bases}. Esta aproximación coincide, salvo el factor $N$, con
-la distribución $q(r,t)$ de \cite{Dhillon2003}, y su divergencia es la pérdida de información
+la distribución $q(r,t)$ de \citet{Dhillon2003}, y su divergencia es la pérdida de información
 mutua,
 \begin{equation}\label{eq:perdida-im}
   D_I\!\left(O \,\|\, \hat{O}^{\mathrm{C5}}\right) = N \left[ I(R;T) - I(\hat{R};\hat{T}) \right],
@@ -844,7 +854,7 @@ divergencia se descompone por bloques,
   G^2_{gh} = 2 \sum_{(i,j) \in B_{gh}} O_{ij} \log \frac{O_{ij}\, N_{gh}}{O_{ih}\, O_{gj}},
 \end{equation}
 donde $G^2_{gh}$ es el estadístico de razón de verosimilitud de la prueba de
-independencia en la tabla $O|_{B_{gh}}$ \cite[Sec.~3.2.1, ec.~3.11]{Agresti2013}.
+independencia en la tabla $O|_{B_{gh}}$ \citep[Sec.~3.2.1, ec.~3.11]{Agresti2013}.
 Este estadístico también puede escribirse como
 \begin{equation}\label{eq:g2-im}
   G^2_{gh} = 2\, N_{gh}\, \hat{I}_{gh}(R;T),
@@ -880,12 +890,12 @@ Las aproximaciones~\eqref{eq:c2}--\eqref{eq:c6} son los estimadores de máxima
 verosimilitud de estos modelos. En efecto, en un modelo log-lineal de Poisson las
 ecuaciones de verosimilitud exigen que las medias ajustadas reproduzcan los
 totales observados asociados a cada término del modelo
-\cite[Secs.~4.4.9 y~9.6.2]{Agresti2013}, y esos totales son justamente las medias
+\citep[Secs.~4.4.9 y~9.6.2]{Agresti2013}, y esos totales son justamente las medias
 que conserva cada base. Por otro lado, el logaritmo de cada aproximación tiene la
 forma aditiva del modelo correspondiente. El resultado de Birch garantiza que existe un
 único conjunto de valores ajustados que satisface el modelo y reproduce los
 estadísticos suficientes, y ese conjunto es la solución de máxima verosimilitud
-\cite[Sec.~9.6.3]{Agresti2013}; la unicidad se sigue también de que la
+\citep[Sec.~9.6.3]{Agresti2013}; la unicidad se sigue también de que la
 verosimilitud de Poisson es cóncava en $\log \mu$.
 
 Para una partición $(\rho, \tau)$ fija, los tres modelos están anidados, es decir,
@@ -918,9 +928,11 @@ menor, pero crece el riesgo de ajustar el ruido.
   \label{tab:parametros}
 \end{table}
 
-La diferencia entre el modelo saturado y C6 es
+La diferencia en número de parámetros entre el modelo saturado y C6 es
 $\sum_{g,h} (|I_g| - 1)(|J_h| - 1)$, que coincide con la suma de los grados de
-libertad de las pruebas de independencia en cada bloque. Esto significa que lo
+libertad de las pruebas de independencia en cada bloque. En la matriz de cuatro
+regiones por cuatro intervalos, por ejemplo, la diferencia es $16 - 12 = 4$, un
+grado de libertad por cada uno de los cuatro bloques de $2 \times 2$. Esto significa que lo
 que C6 deja sin explicar respecto del modelo saturado es precisamente la
 asociación interna de cada bloque, que es la que miden los estadísticos
 $G^2_{gh}$ y la que el método propuesto busca refinar.
@@ -930,14 +942,17 @@ $G^2_{gh}$ y la que el método propuesto busca refinar.
 Cuando una partición deja un error grande, interesa saber de qué está hecho ese
 error. La cadena de modelos anidados permite descomponer la divergencia que deja
 una partición de tipo C2 en tres partes. La descomposición se apoya en la
-propiedad pitagórica de la I-divergencia \cite{Csiszar1975} y de las soluciones
-MBI \cite[Lema~3]{Banerjee2007}, que dice, en palabras, que el error del modelo
+propiedad pitagórica de la I-divergencia \citep{Csiszar1975} y de las soluciones
+MBI \citep[Lema~3]{Banerjee2007}, que dice, en palabras, que el error del modelo
 simple es el error del modelo complejo más la distancia entre ambos, la misma
 estructura de la identidad~\eqref{eq:media}.
 
 \begin{proposicion}[Descomposición de la divergencia]\label{prop:descomposicion}
-Sea $(\rho,\tau)$ una partición fija y supóngase que todas las aproximaciones son
-positivas en las celdas donde $O_{ij} > 0$. Entonces
+Sea $(\rho,\tau)$ una partición fija en la que ningún bloque tiene filas ni
+columnas nulas, es decir, $O_{ih} > 0$ y $O_{gj} > 0$ para todo bloque $B_{gh}$,
+toda fila $i \in I_g$ y toda columna $j \in J_h$, de modo que las
+aproximaciones~\eqref{eq:c2}--\eqref{eq:c6} son estrictamente positivas en todas
+las celdas. Entonces
 \begin{equation}\label{eq:descomposicion}
   D_I\!\left(O \,\|\, \hat{O}^{\mathrm{C2}}\right)
   = \underbrace{D_I\!\left(\hat{O}^{\mathrm{C5}} \,\|\, \hat{O}^{\mathrm{C2}}\right)}_{\text{(i) efectos marginales}}
@@ -968,9 +983,12 @@ obtiene~\eqref{eq:descomposicion}.
 
 La identidad usada en la demostración es un caso particular de los resultados
 citados, ya que cada par de modelos cumple las hipótesis del Lema~3 de
-\cite{Banerjee2007}, y para aplicar el resultado de \cite{Csiszar1975}, que trabaja
+\citet{Banerjee2007}, y para aplicar el resultado de \citet{Csiszar1975}, que trabaja
 con distribuciones de probabilidad, basta dividir entre $N$ por la
-homogeneidad~\eqref{eq:homogeneidad}. Con esta identidad, cada término de la
+homogeneidad~\eqref{eq:homogeneidad}. La hipótesis de positividad es la que
+garantiza que $\log \mu^s$ y $\log \mu^b$ estén definidos en todas las celdas, y
+el caso general, con filas o columnas nulas dentro de algún bloque, se obtiene
+restringiendo las sumas al soporte de las aproximaciones. Con esta identidad, cada término de la
 descomposición queda asociado a una pregunta distinta sobre los datos, como se
 detalla a continuación.
 
@@ -984,7 +1002,7 @@ detalla a continuación.
         grupo de horarios, o el de un intervalo según el grupo de regiones, más
         allá de sus volúmenes globales. Por ejemplo, una región que pesa más en
         los horarios de oficina que en los nocturnos, aunque su volumen total sea
-        el mismo.
+        igual al de otra región de su grupo.
   \item El término (iii) mide la asociación que queda dentro de cada bloque cuando
         ya se tienen en cuenta sus propias marginales, como ocurre cuando un
         subconjunto de regiones se activa en un subconjunto de horarios del
@@ -1006,16 +1024,16 @@ $G^2 = 0$, de modo que el error es todo del término (i). Parece heterogénea pa
 basado en C2, pero es un único perfil multiplicado por el volumen de cada fila y
 de cada columna. En cambio, la matriz de cuatro regiones por cuatro intervalos de
 la Sección~\ref{sec:bbac} tiene $G^2_{gh}$ de $1.61$, $2.09$, $0$ y $2.02$ en sus
-cuatro bloques, de modo que $\tfrac12 \sum G^2_{gh} = 2.86$, que es todo su error
-con C2, de modo que los términos (i) y (ii) son nulos y la heterogeneidad es
-toda interacción local.
+cuatro bloques, y $\tfrac12 \sum G^2_{gh} = 2.86$, todo su error con C2. Los
+términos (i) y (ii) son, por tanto, nulos y la heterogeneidad es toda
+interacción local.
 
 Conviene adelantar una advertencia que se desarrolla en la
 Sección~\ref{sec:pruebas}. Si la partición se fijara de antemano, los
 conteos siguieran un modelo de Poisson y se cumpliera la hipótesis nula de
 independencia entre filas y columnas dentro del bloque $B_{gh}$, entonces
 $G^2_{gh}$ tendría asintóticamente una distribución $\chi^2$ con
-$(|I_g|-1)(|J_h|-1)$ grados de libertad \cite[Secs.~3.2.1 y~4.5.2]{Agresti2013}.
+$(|I_g|-1)(|J_h|-1)$ grados de libertad \citep[Secs.~3.2.1 y~4.5.2]{Agresti2013}.
 Por ejemplo, el bloque $\begin{pmatrix} 6 & 2 \\ 2 & 6 \end{pmatrix}$ tiene
 $G^2 = 4.19$ con un grado de libertad, lo que daría $p \approx 0.04$. Esa lectura
 no es fiable por tres razones que se enumeran a continuación.
@@ -1042,26 +1060,26 @@ de Poisson~\eqref{eq:devianza} solo vale si las celdas contienen conteos.
 
 Esta distinción tiene consecuencias prácticas. Si la matriz contiene promedios
 diarios, $O = S / D$, donde $S$ son los conteos totales de $D$ días, entonces el
-estadístico $G^2$ calculado sobre $O$ es el calculado sobre $S$ dividido entre
-$D$, y compararlo con una distribución $\chi^2$ subestimaría la evidencia en un
-factor $D$. Por ejemplo, el bloque $\begin{pmatrix} 6 & 2 \\ 2 & 6 \end{pmatrix}$
+estadístico $G^2$ calculado sobre $O$ queda dividido entre $D$ respecto del
+calculado sobre $S$, y al compararlo con una distribución $\chi^2$ la evidencia
+se subestimaría. Por ejemplo, el bloque $\begin{pmatrix} 6 & 2 \\ 2 & 6 \end{pmatrix}$
 con $G^2 = 4.19$ podría venir de promedios sobre $D = 30$ días; sus conteos totales
 serían $\begin{pmatrix} 180 & 60 \\ 60 & 180 \end{pmatrix}$ y su $G^2$, $30 \times
 4.19 \approx 126$. Con el primer valor la evidencia parece débil y con el segundo
-es abrumadora, aunque el patrón sea el mismo. Como \cite{Liu2021} construyen su matriz con volúmenes promedio, en
-esta tesis la matriz se construye con conteos totales, o bien el factor de escala
+es abrumadora, aunque el patrón sea el mismo. A diferencia de \citet{Liu2021},
+que construyen su matriz con volúmenes promedio, en esta tesis la matriz se construye con conteos totales, o bien el factor de escala
 se hace explícito antes de cualquier prueba.
 
 % ---------------------------------------------------------------------
 \section{El marco ST-CC}\label{sec:stcc}
 
-\cite{Liu2021} propusieron un marco analítico, al que esta tesis se refiere como
+\citet{Liu2021} propusieron un marco analítico, al que esta tesis se refiere como
 ST-CC (\emph{Spatio-Temporal Co-Clustering}), para revelar a la vez los patrones
 espaciales y temporales de la movilidad urbana. Los propios autores aclaran que su
 aporte no es un nuevo algoritmo de agrupamiento, sino la forma de combinar métodos
 existentes para obtener conocimiento empírico sobre los datos
-\cite[Sec.~I]{Liu2021}. El marco tiene dos etapas, a saber, un co-agrupamiento en tablero
-con BBAC\_I y un reagrupamiento de los bloques resultantes con K-means.
+\citep[Sec.~I]{Liu2021}. El marco tiene dos etapas, a saber, un co-agrupamiento en tablero
+con BBAC$_I$ y un reagrupamiento de los bloques resultantes con K-means.
 Este marco no es el método propuesto en esta tesis, sino el punto de partida que
 el Capítulo~\ref{chap:propuesta} refina; se describe aquí porque es necesario
 conocerlo para entender qué aporta la propuesta.
@@ -1069,23 +1087,24 @@ conocerlo para entender qué aporta la propuesta.
 \subsection{Datos y matriz de co-ocurrencia}
 
 El caso de estudio usa los registros de viajes de los taxis amarillos y verdes de
-Nueva York publicados por la \emph{Taxi and Limousine Commission}, correspondientes
-a noviembre de 2017, con alrededor de diez millones de viajes. Los autores
-analizan los destinos, es decir, los lugares de bajada de los pasajeros, en las
-66 zonas de taxi de Manhattan, tras excluir tres islas cuyo volumen diario es
-nulo. El día se divide en 12 intervalos de dos horas. Los datos se separan en dos
-periodos, que son los días laborables, formados por los martes a jueves del mes
-salvo el Día de los Veteranos, el Día de Acción de Gracias y el día anterior a
-este, con un total de 12 días, y los feriados, formados por los sábados, los
-domingos y el Día de Acción de Gracias, con un total de 9 días. Para cada periodo
+Nueva York publicados por la Taxi and Limousine Commission \citep{TLC2017},
+correspondientes a noviembre de 2017, con alrededor de diez millones de viajes.
+Los autores analizan los destinos, es decir, los lugares de bajada de los
+pasajeros, en las 66 zonas de taxi de Manhattan, tras excluir tres islas cuyo
+volumen es nulo o prácticamente nulo. El día se divide en 12 intervalos de dos
+horas. Los datos se separan en dos periodos, que son los días laborables,
+formados por los martes a jueves del mes salvo el Día de Acción de Gracias
+(jueves 23) y el día anterior (miércoles 22), con un total de 12 días, y los
+feriados, formados por los sábados, los domingos y el Día de Acción de Gracias,
+con un total de 9 días. Para cada periodo
 se construye una matriz $66 \times 12$ cuyas celdas contienen el volumen promedio de bajadas
-de cada zona en cada intervalo \cite[Sec.~IV.A]{Liu2021}. Como se explicó en la
+de cada zona en cada intervalo \citep[Sec.~IV.A]{Liu2021}. Como se explicó en la
 Sección~\ref{sec:escala}, ese promedio no altera el co-agrupamiento, pero sí la
 interpretación estadística de la divergencia.
 
 \subsection{Primera etapa de co-agrupamiento en tablero}
 
-La matriz se co-agrupa con BBAC\_I (Sección~\ref{sec:bbac}), cuyo objetivo
+La matriz se co-agrupa con BBAC$_I$ (Sección~\ref{sec:bbac}), cuyo objetivo
 declarado es minimizar la pérdida de información mutua entre la matriz original y
 la matriz co-agrupada. El número de grupos de filas y de columnas lo fija el
 usuario. Para el tiempo, los autores probaron entre 4 y 8 grupos y fijaron
@@ -1094,9 +1113,15 @@ grupos de intervalos.
 Para el espacio, probaron entre 4 y 15 grupos, repitieron cada prueba cinco veces,
 examinaron la curva de la función objetivo y eligieron $K_R = 8$ para los días
 laborables y $K_R = 6$ para los feriados, en el punto a partir del cual la curva
-se estabiliza \cite[Sec.~IV.B]{Liu2021}. La Tabla~\ref{tab:liu-decisiones} resume
+se estabiliza \citep[Sec.~IV.B]{Liu2021}. La Tabla~\ref{tab:liu-decisiones} resume
 estas decisiones. Los valores de $K$ se eligen observando una curva, sin un
-criterio estadístico, una de las limitaciones que se discuten más adelante.
+criterio estadístico, una de las limitaciones que se discuten más adelante. El
+resultado son tableros de $8 \times 4$ y $6 \times 4$ bloques. En días
+laborables, los cuatro grupos de intervalos corresponden a la madrugada
+(0:00--6:00), un periodo de baja actividad (6:00--8:00), el horario diurno
+(8:00--18:00) y la noche (18:00--24:00). Aunque el algoritmo no usa la ubicación de
+las zonas, los grupos de regiones resultan espacialmente compactos
+\citep[Sec.~IV.C]{Liu2021}.
 
 \begin{table}[ht]
   \centering
@@ -1120,34 +1145,28 @@ criterio estadístico, una de las limitaciones que se discuten más adelante.
     \bottomrule
   \end{tabular}
   }
-  \caption{Decisiones de \cite{Liu2021} en la aplicación de ST-CC a los taxis de
+  \caption{Decisiones de \citet{Liu2021} en la aplicación de ST-CC a los taxis de
   Manhattan.}
   \label{tab:liu-decisiones}
 \end{table}
-
-El resultado son tableros de $8 \times 4$ y $6 \times 4$ bloques. En días
-laborables, los cuatro grupos de intervalos corresponden a la madrugada
-(0:00--6:00), un periodo de baja actividad (6:00--8:00), el horario diurno
-(8:00--18:00) y la noche (18:00--24:00). Aunque el algoritmo no usa la ubicación de
-las zonas, los grupos de regiones resultan espacialmente compactos
-\cite[Sec.~IV.C]{Liu2021}.
 
 \subsection{Segunda etapa de reagrupamiento de bloques}
 
 Los autores observan que la asignación de filas y columnas completas a los grupos
 hace que bloques distintos tengan valores parecidos; por ejemplo, casi todas las
-regiones tienen poca actividad de madrugada \cite[Sec.~III.B]{Liu2021}. Para
+regiones tienen poca actividad de madrugada \citep[Sec.~III.B]{Liu2021}. Para
 obtener patrones más distintivos, describen cada bloque con dos atributos, la
 media y la desviación estándar de sus celdas, de modo que la media resume el nivel
 de actividad del bloque y la desviación, cuán dispersas están sus celdas, y agrupan
 los 32 bloques de los días laborables y los 24 de los feriados con
 K-means. El número de
-grupos se elige entre 3 y 8 combinando el coeficiente de silueta y el método del
-codo sobre la suma de errores cuadráticos, y en ambos periodos resulta $K = 4$
-\cite[Sec.~IV.D]{Liu2021}. Los cuatro grupos se interpretan como niveles de
-actividad (muy bajo, bajo, medio y alto). Cada uno de esos grupos reúne bloques
-de distintas filas y columnas del tablero, de modo que el resultado deja de ser
-una rejilla regular, y los autores lo llaman co-agrupamiento no en tablero.
+grupos se elige entre 3 y 8 combinando el coeficiente de silueta
+\citep{Rousseeuw1987} y el método del codo sobre la suma de errores cuadráticos,
+y en ambos periodos resulta $K = 4$ \citep[Sec.~IV.D]{Liu2021}. Los cuatro grupos
+se interpretan como niveles de actividad (muy bajo, bajo, medio y alto). Cada uno
+de esos grupos reúne bloques de distintas filas y columnas del tablero, de modo
+que el resultado deja de ser una rejilla regular, y los autores lo llaman
+co-agrupamiento no en tablero (\emph{non-checkerboard co-clustering}).
 La Figura~\ref{fig:stcc-etapas} esquematiza el paso de una etapa a la otra.
 
 \begin{figure}[ht]
@@ -1186,7 +1205,7 @@ obtienen a lo sumo cuatro patrones espaciales por periodo, cuya sucesión a lo
 largo del día describe su dinámica temporal. Un patrón temporal es la
 secuencia de niveles de actividad que sigue un conjunto de regiones a lo largo
 del día; los autores identifican seis patrones temporales en días laborables y
-cinco en feriados \cite[Sec.~IV.D]{Liu2021}. Entre los hallazgos, destacan que la
+cinco en feriados \citep[Sec.~IV.D]{Liu2021}. Entre los hallazgos, destacan que la
 movilidad en días laborables es más dinámica y rítmica, y en feriados más
 estática y aleatoria, y que la zona de Penn Station alcanza el nivel de actividad
 alto solo en feriados.
@@ -1202,7 +1221,7 @@ heurísticos (la forma de la curva de la función objetivo, el coeficiente de
 silueta y el método del codo), sin una interpretación estadística. Tercero, los
 propios autores advierten que comparar bloques mediante su media y su desviación
 estándar supone que sus distribuciones son semejantes, y que esa condición
-debería verificarse antes de aplicar el método \cite[Sec.~IV.E]{Liu2021}. Cada
+debería verificarse antes de aplicar el método \citep[Sec.~IV.E]{Liu2021}. Cada
 limitación se corresponde con un elemento de la propuesta del
 Capítulo~\ref{chap:propuesta}, de modo que la imposibilidad de dividir bloques se
 atiende con el refinamiento jerárquico, los criterios heurísticos con las pruebas
@@ -1211,28 +1230,29 @@ de cada bloque.
 
 \subsection{Base de co-agrupamiento en ST-CC y en esta tesis}\label{sec:stcc-base}
 
-\cite{Liu2021} denominan a su algoritmo \emph{Bregman Block Average
-Co-clustering} con I-divergencia, nombre que en \cite[Sec.~3]{Banerjee2007}
+\citet{Liu2021} denominan a su algoritmo \emph{Bregman Block Average
+Co-clustering} con I-divergencia, nombre que en \citet[Sec.~3]{Banerjee2007}
 corresponde a la base C2. Sin embargo, la función objetivo que declaran es la
-pérdida de información mutua $I(R;T) - I(\hat{R};\hat{T})$\footnote{\cite{Liu2021}
+pérdida de información mutua $I(R;T) - I(\hat{R};\hat{T})$\footnote{\citet{Liu2021}
 escriben $I(R;T) \le I(\hat{R};\hat{T})$. La desigualdad correcta es la inversa,
 $I(\hat{R};\hat{T}) \le I(R;T)$, por la desigualdad de procesamiento de datos
-\cite{Cover2006}, pues agrupar filas o columnas no puede aumentar la información
-mutua.}, que por~\eqref{eq:perdida-im} corresponde a la base C5. La literatura de
-la que parte ST-CC describe BBAC\_I como un método que forma co-agrupamientos de
-valores similares \cite{Wu2022}, es decir, de bloques constantes, lo que sugiere
-que la implementación de \cite{Liu2021} corresponde a C2 aunque la función
-objetivo declarada sea la de C5. La implementación pública de BBAC\_I con la que
-esta tesis reproduce ST-CC, el paquete \texttt{clustering-geodata-cubes},
-corresponde en efecto a C2, ya que aproxima cada bloque por su media y la
-divergencia que reporta coincide con la de esa base.
+\citep{Cover2006}, pues agrupar filas o columnas no puede aumentar la información
+mutua.}, que por~\eqref{eq:perdida-im} corresponde a la base C5. La literatura
+sobre BBAC$_I$ lo describe como un método que forma co-agrupamientos de valores
+similares \citep{Wu2020,Wu2022}, es decir, de bloques constantes, lo que sugiere
+que la implementación de \citet{Liu2021} corresponde a C2 aunque la función
+objetivo declarada sea la de C5. La implementación pública de BBAC$_I$ con la que
+esta tesis reproduce ST-CC, el paquete \texttt{clustering-geodata-cubes}
+\citep{Nattino2022}, corresponde en efecto a C2, ya que aproxima cada bloque por
+su media y la divergencia que reporta coincide, salvo una constante que no
+depende de la partición, con la de esa base.
 
 Las dos bases producen un tablero de $K_R \times K_T$ bloques, pero no son
 equivalentes. Para una misma partición, la Proposición~\ref{prop:descomposicion} muestra que C5 descuenta
 el término (i) y C2 no. Por eso, al optimizar la partición, C2 tiende a agrupar
 regiones e intervalos por su volumen, mientras que C5 tiende a agruparlos por la
 forma de su perfil.
-A partir de aquí la subsección deja de describir el trabajo de \cite{Liu2021} y
+A partir de aquí la subsección deja de describir el trabajo de \citet{Liu2021} y
 recoge una decisión de esta tesis, que se retoma en el
 Capítulo~\ref{chap:propuesta}. AST-CC refina la partición de ST-CC tal como la
 produce su implementación, es decir, un tablero de la base C2, porque el objetivo
@@ -1241,7 +1261,7 @@ métodos se debe al refinamiento y no a un cambio de tablero. La elección tiene
 costo conocido, ya que C2 agrupa por volumen y reúne en un mismo bloque regiones e
 intervalos con perfiles distintos, que el árbol tiene que separar. La base C5, que
 excluye de la función objetivo el término (i), es decir, las diferencias de volumen
-que no constituyen interacción espacio-temporal, y que es la que \cite{Liu2021}
+que no constituyen interacción espacio-temporal, y que es la que \citet{Liu2021}
 declaran de forma explícita, se usa como análisis de sensibilidad en el
 Capítulo~\ref{chap:resultados}, junto con una rejilla optimizada para el modelo de
 las hojas. En todos los casos, el término (iii) de la

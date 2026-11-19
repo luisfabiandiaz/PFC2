@@ -151,7 +151,7 @@ def main():
                                   "I_nov": informacion(T1), "I_resto": informacion(T2),
                                   "regiones_a": "; ".join(nombres[zonas[i]] for i in n.hijos[a].filas),
                                   "regiones_b": "; ".join(nombres[zonas[i]] for i in n.hijos[b].filas)})
-                filas_tex.append(f"{'Laborable' if periodo == 'weekday' else 'Feriado'} & {bloque} & {franjas[j]} & "
+                filas_tex.append(f"{'Laborable' if periodo == 'weekday' else 'Feriado'} & {bloque} & {franjas[j].replace('-', '--')} & "
                                  f"{len(n.hijos[a].filas)} / {len(n.hijos[b].filas)} & "
                                  f"{100 * c1[a, j]:.1f} / {100 * c1[b, j]:.1f} & {100 * c2[a, j]:.1f} / {100 * c2[b, j]:.1f} & "
                                  f"{1000 * informacion(T1):.1f} & {1000 * informacion(T2):.1f} \\\\")
@@ -171,7 +171,7 @@ def main():
     t.to_csv(SALIDA / "validacion_2017.csv", index=False)
     (SALIDA / "validacion_2017.tex").write_text("\n".join([
         r"\begin{tabular}{@{}llccccrr@{}}", r"\toprule",
-        r" & & & & \multicolumn{2}{c}{Cuota en el intervalo (\%)} & \multicolumn{2}{c}{$I$ ($10^{-3}$ nats)} \\",
+        r" & & & & \multicolumn{2}{c}{Cuota en el intervalo (\%)} & \multicolumn{2}{c}{$I$ ($10^{-3}$ nats por viaje)} \\",
         r"\cmidrule(lr){5-6}\cmidrule(l){7-8}",
         r"Periodo & Bloque & Intervalo & Regiones & Noviembre & Resto de 2017 & Nov. & Resto \\", r"\midrule",
         *filas_tex, r"\bottomrule", r"\end{tabular}"]) + "\n", encoding="utf-8")

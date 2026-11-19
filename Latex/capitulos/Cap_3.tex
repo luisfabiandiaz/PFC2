@@ -20,10 +20,8 @@ tablero que produce ST-CC y la toma como punto de partida de un árbol de
 refinamientos locales, en el que cada bloque se examina por separado y, si contiene
 interacción residual entre regiones y horarios que sea estadísticamente
 detectable y de tamaño relevante, se subdivide; en caso contrario, se conserva
-como hoja.
-
-El capítulo sigue el mismo orden lógico que el anterior, de lo general a lo
-específico. Primero se da una visión general del método. Luego se formaliza el
+como hoja. El capítulo sigue el mismo orden lógico que el anterior, de lo
+general a lo específico. Primero se da una visión general del método. Luego se formaliza el
 refinamiento como un árbol de bloques y se demuestra que la función objetivo se
 descompone de forma exacta por hojas, lo que convierte la ganancia de cada corte
 en un estadístico de razón de verosimilitud. Sobre esa base se definen los
@@ -38,7 +36,7 @@ La idea central de AST-CC puede resumirse en que se debe refinar mientras haya
 heterogeneidad local estadísticamente detectable y de tamaño relevante, y
 detenerse cuando todas las hojas sean indistinguibles de su modelo nulo local.
 Esta idea es la traducción al objeto bidimensional del principio de SigTree
-\cite{Hu2025}, que detiene el crecimiento de su árbol cuando ninguna división
+\citep{Hu2025}, que detiene el crecimiento de su árbol cuando ninguna división
 candidata es significativa. Para llevarla a la práctica, el método se organiza en
 cuatro etapas, que se ilustran en la Figura~\ref{fig:prop-teselacion} y se
 describen a continuación.
@@ -49,10 +47,12 @@ describen a continuación.
   intervalo de tiempo, y se conservan además las $D$ matrices diarias cuya
   suma es $O$, que se usan para calibrar las pruebas. Se usan conteos y no
   promedios diarios, por la razón expuesta en la Sección~\ref{sec:escala}, ya que
-  solo sobre conteos la I-divergencia coincide con la devianza de Poisson.
+  solo sobre conteos la I-divergencia equivale a la mitad de la devianza de
+  Poisson.
   \item \textbf{Partición base.} Se toma el tablero de ST-CC, con $K_R$ grupos
   de filas y $K_T$ grupos de columnas, tal como lo produce su implementación de
-  BBAC$_I$, que corresponde a la base C2 (Sección~\ref{sec:stcc-base}). Se
+  BBAC$_I$ en el paquete \texttt{cgc}, con 200 ejecuciones y sin búsqueda
+  local, que corresponde a la base C2 (Sección~\ref{sec:stcc-base}). Se
   parte de él sin modificarlo para que toda mejora sobre ST-CC se deba al
   refinamiento. Las particiones de BBAC$_I$ en la base C5, obtenidas desde varias
   inicializaciones y con una búsqueda local que mueve filas y columnas de una en
@@ -161,10 +161,10 @@ Un corte $s$ de un bloque $B = I\times J$ es una partición de $B$ en
 bloques hijos de uno de tres tipos, que se enumeran a continuación.
 \begin{enumerate}
   \item Corte de filas, que produce los hijos $\{I_1\times J,\ I_2\times J\}$, con
-  $\{I_1,I_2\}$ partición de $I$;
-  \item corte de columnas, que produce los hijos $\{I\times J_1,\ I\times J_2\}$, con
-  $\{J_1,J_2\}$ partición de $J$;
-  \item corte conjunto, que produce los hijos $\{I_a\times J_b\}_{a,b\in\{1,2\}}$, con
+  $\{I_1,I_2\}$ partición de $I$.
+  \item Corte de columnas, que produce los hijos $\{I\times J_1,\ I\times J_2\}$, con
+  $\{J_1,J_2\}$ partición de $J$.
+  \item Corte conjunto, que produce los hijos $\{I_a\times J_b\}_{a,b\in\{1,2\}}$, con
   $\{I_1,I_2\}$ y $\{J_1,J_2\}$ particiones de $I$ y de $J$.
 \end{enumerate}
 Se denota $\mathcal{C}(B,s)$ al conjunto de hijos.
@@ -211,10 +211,14 @@ La aproximación asociada a $\mathcal{T}$ es
 \end{definicion}
 
 Cuando las hojas son los bloques base, $\hat O^{\mathcal{T}}$ es la
-aproximación de la base C6 \cite{Banerjee2007} para la partición $(\rho,\tau)$.
+aproximación de la base C6 \citep{Banerjee2007} para la partición $(\rho,\tau)$.
 En general, $\hat O^{\mathcal{T}}$ es el estimador de máxima verosimilitud de un
 modelo log-lineal de Poisson en el que cada hoja tiene sus propios efectos de
-fila y de columna, con $\sum_{L}(|I_L|+|J_L|-1)$ parámetros libres.
+fila y de columna, con $\sum_{L}(|I_L|+|J_L|-1)$ parámetros libres. Esta lectura
+como modelo log-lineal es la que permite comparar dos árboles que difieren en
+un corte como un par de modelos anidados, de modo que la reducción de
+divergencia que produce el corte puede tratarse con las herramientas de la razón
+de verosimilitud, que es lo que establece la proposición siguiente.
 
 \subsection{Descomposición por hojas y ganancia de un corte}\label{sec:prop-descomp}
 
@@ -223,7 +227,11 @@ divergencia del árbol se reparte exactamente entre sus hojas, y la reducción q
 produce un corte es un estadístico de razón de verosimilitud que puede evaluarse
 localmente. Dado que el árbol se construye de forma voraz, de arriba abajo, esta
 propiedad es la que garantiza que decidir cada corte con la información de su
-propio bloque es coherente con la función objetivo global.
+propio bloque es coherente con la función objetivo global. La proposición tiene
+tres partes, de las cuales la primera reparte la divergencia del árbol entre sus
+hojas, la segunda expresa la heterogeneidad de un bloque como la suma de la que
+explica un corte y la que queda dentro de sus hijos, y la tercera traduce ese
+reparto en la reducción de divergencia que produce el corte.
 
 \begin{proposicion}[Descomposición por hojas y ganancia de un corte]\label{prop:ganancia}
 Sea $\mathcal{T}$ un árbol de refinamiento y supóngase que $E^{B}_{ij}>0$
@@ -303,9 +311,14 @@ $33.59 + 0.25 + 0.25$ reproduce $G^2_B$ salvo redondeo, y el corte explica cerca
 del 98.5\,\% de la heterogeneidad del bloque a cambio de un único parámetro
 adicional, ya que la independencia en $B$ usa $4+2-1=5$ parámetros y los dos
 hijos usan $3+3=6$. Un corte de columnas separaría las dos columnas y explicaría
-todo el estadístico, pero con tres grados de libertad, lo que ilustra por qué
-la comparación entre tipos de corte se hace con p-valores calibrados y no con
-valores crudos de $G^2_{B,s}$.
+todo el estadístico, $G^2_{B,s} = G^2_B\approx 34.10$, pero con tres grados de
+libertad, lo que ilustra por qué la comparación entre tipos de corte no se hace
+con valores crudos de $G^2_{B,s}$, sino con el estadístico estandarizado
+$z = (G^2_{B,s}-\nu)/\sqrt{2\nu}$ de la Sección~\ref{sec:prop-decision}, que
+descuenta los grados de libertad $\nu$ de cada corte. En este bloque,
+$z_{\mathrm{fil}} = (33.59-1)/\sqrt{2}\approx 23.0$ frente a
+$z_{\mathrm{col}} = (34.10-3)/\sqrt{6}\approx 12.7$, de modo que se prefiere el
+corte de filas aunque su $G^2$ sea algo menor.
 
 La proposición admite una lectura informacional directa. Dividiendo
 \eqref{eq:prop-cadena} entre $2N_B$, para un corte de filas se obtiene
@@ -377,11 +390,14 @@ penalizada
   + \lambda \sum_{L\in\mathcal{L}(\mathcal{T})}\bigl(|I_L|+|J_L|-1\bigr),
   \qquad \lambda = \tfrac12\log N,
 \end{equation}
-que corresponde al criterio BIC por la equivalencia \eqref{eq:devianza} entre
-I-divergencia y devianza. Esta versión no se usa para construir el árbol, sino
-para comparar, con una misma escala, árboles de AST-CC con rejillas globales de
-distinto tamaño, que es la comparación que exige la
-Sección~\ref{sec:prop-limitaciones}.
+que corresponde al criterio \ac{BIC} \citep{Schwarz1978} por la equivalencia
+\eqref{eq:devianza} entre I-divergencia y devianza. Como un corte reduce la
+divergencia en $\tfrac12 G^2_{B,s}$ y añade tantos parámetros como grados de
+libertad $\nu$ tiene, solo disminuye $J_\lambda$ si $G^2_{B,s} > \nu\log N$, un
+umbral que crece con el número de viajes de toda la matriz y no con el del
+bloque. Esta versión no se usa para construir el árbol, sino para comparar, con
+una misma escala, árboles de AST-CC con rejillas globales de distinto tamaño,
+que es la comparación que exige la Sección~\ref{sec:prop-limitaciones}.
 
 \section{Estadísticos de heterogeneidad}\label{sec:prop-estadisticos}
 
@@ -455,10 +471,13 @@ de columnas y conjuntos (Sección~\ref{sec:prop-candidatos}).
 Dentro de un mismo tipo, todos los candidatos tienen los mismos grados de
 libertad, por lo que maximizar $G^2_{B,s}$ equivale a minimizar su p-valor
 asintótico. Este es el análogo directo de la elección de la división de menor
-p-valor en SigTree \cite{Hu2025}; la diferencia es que la tabla que se prueba
+p-valor en SigTree \citep{Hu2025}; la diferencia es que la tabla que se prueba
 no enfrenta la división con otros atributos, sino con la otra dimensión del
-propio bloque. Entre tipos distintos, los grados de libertad difieren y la
-comparación se hace mediante p-valores calibrados.
+propio bloque. Entre tipos distintos, los grados de libertad difieren, por lo
+que los p-valores obtenidos por simulación solo deciden si cada corte es
+significativo, y la elección entre cortes admisibles de distinto tipo se hace
+con el estadístico estandarizado $z = (G^2_{B,s}-\nu)/\sqrt{2\nu}$
+(Sección~\ref{sec:prop-decision}).
 
 \begin{observacion}[Las tres pruebas comparten la hipótesis nula]\label{obs:nulo-comun}
 El bloque satisface el nulo de independencia si y solo si todas sus filas tienen
@@ -510,20 +529,23 @@ continuación.
   a minimizar
   $\sum_{i\in I} O^B_{i\cdot}\,\mathrm{KL}\bigl(p(\cdot\mid i)\,\|\,p(\cdot\mid r(i))\bigr)$,
   donde $p(\cdot\mid i)$ es el perfil de la fila $i$ sobre $J$. Es el paso de
-  filas del co-agrupamiento de teoría de la información \cite{Dhillon2003}
+  filas del co-agrupamiento de teoría de la información \citep{Dhillon2003}
   con dos grupos, es decir, un 2-medias con divergencia de Kullback--Leibler
   ponderada, que agrupa las filas por la forma de su perfil horario y no por su
   volumen, y que se ejecuta con $R_{\mathrm{ini}}$ inicializaciones. El límite
-  se fijó por dos razones. La primera es que, en una comprobación preliminar sobre
-  tablas de ocho filas en las que el óptimo puede calcularse por enumeración, el
-  2-medias con diez inicializaciones no lo alcanzó en alrededor del 8\,\% de los
-  casos, por lo que conviene enumerar siempre que se pueda. La segunda es el
+  se fijó por dos razones. La primera es que, en una comprobación preliminar incluida
+  en las pruebas de la implementación, sobre 40 tablas simuladas de ocho filas
+  en las que el óptimo puede calcularse por enumeración, el 2-medias con diez
+  inicializaciones no lo alcanzó en alrededor del 8\,\% de los casos, por lo que
+  conviene enumerar siempre que se pueda. La segunda es el
   costo, ya que cada réplica nula repite la búsqueda y el número de candidatos se
   duplica con cada fila, de modo que catorce filas es el tamaño hasta el cual la
   enumeración sigue siendo manejable con el número de réplicas de la
-  Tabla~\ref{tab:prop-parametros}. Con este límite, todos los bloques base de los
-  datos de esta tesis, que tienen a lo sumo quince filas, se resuelven de forma
-  casi siempre exacta.
+  Tabla~\ref{tab:prop-parametros}. Con este límite, en todos los bloques base de los
+  datos de esta tesis el mejor corte de filas se obtiene por enumeración exacta,
+  salvo en los cuatro del
+  grupo de quince filas del periodo feriado, que superan el límite de catorce y
+  usan el 2-medias.
   \item \textbf{Conjunto.} Por la identidad \eqref{eq:prop-cadena},
   $G^2_{B,s} = G^2_B - \sum_{C} G^2_C$, de modo que maximizar la ganancia de
   un corte conjunto equivale a minimizar la suma de los $G^2$ de sus cuatro
@@ -544,7 +566,12 @@ que el mismo procedimiento se repita en cada réplica nula
 (Sección~\ref{sec:prop-minP}), pues el p-valor resultante es válido para el
 estadístico que efectivamente se calcula, aunque este no sea el máximo exacto.
 Lo que se pierde es potencia, y por eso se prefiere la enumeración siempre que
-es posible.
+es posible. En los datos de esta tesis esa pérdida queda confinada a los cortes
+de filas de los bloques con más de catorce filas, que son los cuatro bloques base
+de quince filas del periodo feriado y los hijos que conserven todas sus filas
+tras un corte de columnas, y a los cortes conjuntos de los bloques con más de
+seis columnas o más de catorce filas, que son los únicos casos en que la búsqueda no recorre todos los
+candidatos.
 
 \section{Regla de decisión}\label{sec:prop-decision}
 
@@ -553,7 +580,12 @@ de efecto en un procedimiento híbrido, que se resume en la
 Figura~\ref{fig:prop-decision}. Sean $\alpha_B$ el nivel asignado al bloque
 (Sección~\ref{sec:prop-multiplicidad}), $p_{\mathrm{omn}}$ el p-valor de la
 prueba ómnibus y $p_{\mathrm{fil}}$, $p_{\mathrm{col}}$, $p_{\mathrm{conj}}$ los
-p-valores calibrados de los estadísticos \eqref{eq:prop-dirigidos}.
+p-valores de los estadísticos \eqref{eq:prop-dirigidos}, obtenidos por
+simulación con el ajuste de la Sección~\ref{sec:prop-minP}. Los cuatro pasos
+siguientes se aplican en orden, cada uno solo se alcanza si el anterior no
+convirtió el bloque en hoja, y en ellos los p-valores deciden qué cortes son
+significativos, el umbral $\delta$ decide cuáles son admisibles y el estadístico
+estandarizado $z$ decide entre los admisibles.
 
 \begin{enumerate}
   \item \textbf{Puerta ómnibus.} Si $p_{\mathrm{omn}}>\alpha_B$ o
@@ -615,12 +647,16 @@ p-valores calibrados de los estadísticos \eqref{eq:prop-dirigidos}.
 \end{figure}
 
 Cuatro trayectorias posibles ilustran la regla, con $\alpha_B = 0.01$ y
-$\delta = 0.005$. Si $p_{\mathrm{omn}} = 0.2$, el ómnibus no rechaza y el bloque es
-una hoja homogénea. Si $p_{\mathrm{omn}} = 0.002$, $\tilde I_B = 0.03$,
-$p_{\mathrm{fil}} = 0.004$ y $p_{\mathrm{col}} = 0.3$, solo el corte de filas es
-significativo y, si su ganancia corregida supera $\delta$, se aplica y se recurre
-en cada hijo. Si ambos p-valores valen $0.001$, el mínimo alcanzable con 999
-réplicas, los dos cortes superan $\delta$ y el corte de filas tiene $G^2 = 60$ con
+$\delta = 0.005$. Con ese nivel, el bloque usa
+$\max\{199,\lceil 2/0.01\rceil\} = 200$ réplicas, de modo que los p-valores son
+múltiplos de $1/201$ y el mínimo alcanzable es $1/201\approx 0.005$. Si
+$p_{\mathrm{omn}} = 41/201\approx 0.2$, el ómnibus no rechaza y el bloque es
+una hoja homogénea. Si $p_{\mathrm{omn}} = 1/201\approx 0.005$,
+$\tilde I_B = 0.03$, $p_{\mathrm{fil}} = 2/201\approx 0.00995$ y
+$p_{\mathrm{col}} = 61/201\approx 0.3$, solo el corte de filas es significativo
+y, si su ganancia corregida alcanza o supera $\delta$, se aplica y se recurre en
+cada hijo. Si ambos p-valores valen $1/201$, el mínimo alcanzable con 200
+réplicas, los dos cortes alcanzan o superan $\delta$ y el corte de filas tiene $G^2 = 60$ con
 $\nu=5$ mientras el de columnas tiene $G^2=45$ con $\nu=9$, entonces
 $z_{\mathrm{fil}} = 55/\sqrt{10}\approx 17.4$ y
 $z_{\mathrm{col}} = 36/\sqrt{18}\approx 8.5$, y se aplica el corte de filas. Por
@@ -635,7 +671,7 @@ parámetros y peor criterio $J$ \eqref{eq:prop-bic}. El estadístico $z$ mide
 cuántas desviaciones típicas supera $G^2_{B,s}$ a su media bajo el nulo, que es
 $\nu$, y prefiere así el corte que logra su ganancia con menos parámetros. El
 desempate solo actúa entre cortes admisibles, de modo que nunca elige un corte que
-no supere $\delta$. Las alternativas por ganancia y por reducción de $J$ se
+no alcance $\delta$. Las alternativas por ganancia y por reducción de $J$ se
 conservan en la implementación para el análisis de sensibilidad.
 
 Tres decisiones de diseño merecen justificación, porque determinan la forma del
@@ -658,22 +694,37 @@ evidencia de heterogeneidad pero ningún corte unidimensional la localiza con
 suficiente fuerza tras el ajuste por la búsqueda. Como el modelo del corte
 conjunto contiene a los de filas y de columnas, su estadístico es al menos tan
 grande como cualquiera de ellos, y puede alcanzar significancia cuando la
-estructura está repartida entre ambas dimensiones.
+estructura está repartida entre ambas dimensiones. Reservarlo para ese caso
+evita que el método prefiera de forma sistemática cortes de cuatro hijos, que
+añaden $|I|+|J|-3$ parámetros, cuando un corte de dos hijos con $|J|-1$ o
+$|I|-1$ parámetros ya explica la estructura, y conserva la lectura direccional
+del árbol siempre que la estructura lo permite.
 
-\paragraph{Hojas heterogéneas no localizadas.} El método distingue dos tipos
-de hojas. Las homogéneas no muestran interacción residual; las heterogéneas no
-localizadas sí la muestran, pero de una forma que ningún corte simple captura
-con la evidencia o el tamaño exigidos, lo que sugiere una interacción difusa
-entre muchas filas y columnas. Reportar ambas por separado evita presentar como
-homogéneo un bloque que no lo es.
+\paragraph{Hojas heterogéneas no localizadas.} El método distingue cuatro tipos
+de hojas, que son las triviales, detenidas por las reglas de tamaño, masa o
+profundidad, las inalcanzables, cuyo nivel no puede alcanzarse con el máximo de
+réplicas (Sección~\ref{sec:prop-multiplicidad}), las homogéneas y las
+heterogéneas no localizadas. Entre las que llegan a las pruebas se distinguen
+las dos últimas. Las homogéneas no muestran interacción residual detectable o
+relevante, lo que incluye el caso en que la ómnibus rechaza pero
+$\tilde I_B<\delta$; las heterogéneas no localizadas sí la muestran, pero de una
+forma que ningún corte simple captura con la evidencia o el tamaño exigidos, lo
+que sugiere una interacción difusa entre muchas filas y columnas. Reportar ambas
+por separado evita presentar como homogéneo un bloque que no lo es.
 
 \section{Calibración de las pruebas}\label{sec:prop-calibracion}
 
 Esta sección define cómo se obtienen las distribuciones nulas de todas las
-pruebas. Primero se describe la variabilidad entre días que presentan los datos,
-que es lo que impide usar el modelo de Poisson; después, el \emph{bootstrap} de días
-con el que AST-CC genera las réplicas nulas, y por último la corrección por la
-búsqueda del mejor corte y su alcance.
+pruebas, que es la pieza de la que depende que los p-valores de la regla de
+decisión signifiquen lo que dicen. Primero se describe la variabilidad entre
+días que presentan los datos, que es lo que impide usar el modelo de Poisson;
+después, el \emph{bootstrap} de días con el que AST-CC genera las réplicas
+nulas, junto con la evidencia preliminar que llevó a elegirlo frente a otras
+nulas, y por último la corrección por la búsqueda del mejor corte y su alcance.
+La idea común a las tres partes es que la distribución nula de cada estadístico
+se obtiene repitiendo, sobre réplicas que cumplen el nulo y conservan la
+variabilidad de los datos, exactamente el mismo cálculo que se hace sobre la
+tabla observada.
 
 \subsection{Variabilidad entre días}\label{sec:prop-sobredispersion}
 
@@ -694,7 +745,7 @@ media diaria es de al menos cinco viajes (740 de 792 en el periodo laborable y
  & Laborable ($D=12$) & Feriado ($D=9$) \\
 \midrule
 \multicolumn{3}{@{}l}{\textbf{Varianza entre días de cada celda}} \\
-\quad Mediana de var/media, todas las celdas & 3.2 & 17.1 \\
+\quad Mediana de var/media, todas las celdas activas & 3.2 & 17.1 \\
 \quad \ldots\ con media diaria en $[5, 50)$ & 2.0 & 2.8 \\
 \quad \ldots\ con media diaria en $[50, 500)$ & 2.7 & 12.8 \\
 \quad \ldots\ con media diaria $\ge 500$ & 4.3 & 49.1 \\
@@ -760,7 +811,12 @@ por separado, aunque use una función de varianza que crezca con la media
 correlacionadas. La nula de AST-CC se construye, por eso, con los días
 completos, de modo que cada réplica conserva la correlación que existe entre las
 celdas de un mismo día, y esa es la propiedad que justifica el procedimiento que
-se describe a continuación.
+se describe a continuación. Por la misma razón se descartan las nulas
+paramétricas por celda, como la cuasi-Poisson con $\hat\varphi$ constante o la
+Gamma--Poisson con varianza $a\,\mu^b$, que sí reproducen la sobredispersión
+media de cada celda pero no la dependencia entre ellas, y que se comparan con el
+procedimiento elegido en la evidencia preliminar de la
+Sección~\ref{sec:prop-bootstrap}.
 
 \subsection{Distribución nula mediante \emph{bootstrap} de días}\label{sec:prop-bootstrap}
 
@@ -771,10 +827,9 @@ estadístico observado $t_{\mathrm{obs}}$, el p-valor es
   p = \frac{1 + \#\{b : t_b \ge t_{\mathrm{obs}}\}}{1 + B_{\mathrm{perm}}},
 \end{equation}
 que incluye la tabla observada entre las réplicas y nunca vale cero
-\cite{Phipson2010}. Con $B_{\mathrm{perm}}=199$ y cuatro réplicas por encima del
+\citep{Phipson2010}. Con $B_{\mathrm{perm}}=199$ y cuatro réplicas por encima del
 valor observado, el p-valor es $5/200 = 0.025$, y si ninguna lo supera es
 $1/200 = 0.005$, que es el mínimo que esa cantidad de réplicas permite alcanzar.
-
 Las réplicas se generan con los propios días observados, aplicando el principio
 del \emph{bootstrap} bajo la hipótesis nula (Sección~\ref{sec:est-bootstrap}), de modo
 que se remuestrean los días, pero alrededor de la media de independencia del bloque y
@@ -788,7 +843,7 @@ corregida por muestra pequeña
 que compensa que la varianza empírica de $D$ días subestima la poblacional. Si
 el recorte en cero actúa, las $\tilde F_{dij}$ de la celda se reescalan para que
 su media vuelva a ser uno. En las celdas con menos actividad el cociente no es
-fiable: se toma $\tilde F_{dij}=1$ y la réplica de la celda se sortea como
+fiable, por lo que se toma $\tilde F_{dij}=1$ y la réplica de la celda se sortea como
 Poisson con la media que le corresponde, de modo que conserve al menos esa
 variabilidad. Para una celda con
 cuatro días de conteos $(80,100,90,130)$ y media 100, las fluctuaciones son
@@ -815,8 +870,9 @@ del tamaño de efecto (Sección~\ref{sec:prop-parada}) sin costo adicional.
 
 \paragraph{Evidencia preliminar de calibración.} Para elegir esta nula se
 compararon varias alternativas sobre datos nulos semirreales, que consisten, para cada bloque
-base de ST-CC, en 300 réplicas generadas con \eqref{eq:prop-bootstrap} a partir de
-los días reales, las cuales cumplen la independencia por construcción pero tienen la
+base de ST-CC, en 300 réplicas generadas con el remuestreo de días
+\eqref{eq:prop-bootstrap} a partir de los días reales, pero con las fluctuaciones
+sin la corrección \eqref{eq:prop-fluctuacion}, las cuales cumplen la independencia por construcción pero tienen la
 variabilidad de los datos. Cada prueba se aplicó solo con los $D$ días de cada
 réplica y con 199 réplicas propias. La Tabla~\ref{tab:prop-calibracion} resume
 el error de tipo~I resultante al nivel 0.05.
@@ -830,11 +886,11 @@ el error de tipo~I resultante al nivel 0.05.
 \cmidrule(lr){2-3}\cmidrule(l){4-5}
 Nula & Media & Máximo & Media & Máximo \\
 \midrule
-Poisson (Patefield) & 0.40 & 0.84 & 0.76 & 1.00 \\
-Cuasi-Poisson, $\hat\varphi$ constante & 0.03 & 0.19 & 0.01 & 0.06 \\
-Gamma--Poisson con $\mathrm{var} = a\,\mu^b$ & 0.02 & 0.11 & 0.06 & 0.42 \\
-\emph{Bootstrap} de días, sin corrección & 0.06 & 0.14 & 0.11 & 0.39 \\
-\emph{Bootstrap} de días \eqref{eq:prop-bootstrap} & 0.04 & 0.13 & 0.09 & 0.33 \\
+Poisson (Patefield) \citep{Patefield1981} & 0.40 & 0.84 & 0.76 & 0.99 \\
+Cuasi-Poisson, $\hat\varphi$ constante & 0.03 & 0.20 & 0.01 & 0.07 \\
+Gamma--Poisson con $\mathrm{var} = a\,\mu^b$ & 0.02 & 0.12 & 0.06 & 0.47 \\
+\emph{Bootstrap} de días, sin corrección & 0.06 & 0.10 & 0.11 & 0.36 \\
+\emph{Bootstrap} de días \eqref{eq:prop-bootstrap} & 0.04 & 0.06 & 0.09 & 0.34 \\
 \bottomrule
 \end{tabular}
 \caption{Error de tipo~I de la prueba ómnibus al nivel 0.05 sobre datos nulos
@@ -848,17 +904,20 @@ aproximadamente 0.013.}
 La nula de Poisson rechaza la independencia verdadera en el 40\,\% de los casos
 en el periodo laborable y en el 76\,\% en el feriado. Las nulas que tratan las
 celdas por separado son conservadoras en la mayoría de los bloques, lo que cuesta
-potencia, y liberales en los de más volumen. El \emph{bootstrap} de días con la
-corrección \eqref{eq:prop-fluctuacion} es el único cuyo error se centra en el
-nominal en el periodo laborable, con media 0.044 y mediana 0.042.
+potencia, y liberales en algunos, que son los de más volumen con $\hat\varphi$
+constante y los pequeños del periodo feriado con la Gamma--Poisson. El
+\emph{bootstrap} de días con la corrección \eqref{eq:prop-fluctuacion} es el único
+cuyo error se centra en el nominal en el periodo laborable, con media y mediana
+de 0.042, y con la corrección ningún bloque laborable supera 0.06, de modo que
+ninguno de los 24 queda por encima de 0.05 más dos errores de Monte Carlo.
 
 En el periodo feriado, el generador de la tabla mezcla al azar sábados, domingos
 y el Día de Acción de Gracias, mientras que la matriz real tiene siempre la
 misma composición. Con un generador que la respeta, el error medio del \emph{bootstrap}
-baja a 0.045, aunque 5 de los 24 bloques, casi todos nocturnos y de dos
-intervalos, siguen por encima del nominal, con un máximo de 0.30. Remuestrear los
-días dentro de cada tipo de día no lo mejora, ya que con solo cuatro sábados y cuatro
-domingos, el error medio sube a 0.11. AST-CC usa, por tanto, el \emph{bootstrap} sin
+baja a 0.045, aunque 5 de los 24 bloques, todos de dos intervalos y casi todos
+de madrugada, siguen por encima del nominal, con un máximo de 0.29. Remuestrear
+los días dentro de cada tipo de día no lo mejora, ya que, con solo cuatro sábados
+y cuatro domingos, el error medio sube a 0.11. AST-CC usa, por tanto, el \emph{bootstrap} sin
 estratos en ambos periodos, y la liberalidad residual en los bloques nocturnos
 del periodo feriado se trata como una limitación conocida
 (Sección~\ref{sec:prop-limitaciones}). Como estos datos nulos semirreales
@@ -875,10 +934,10 @@ independientes de un grado de libertad, por ejemplo, la probabilidad de que al
 menos uno supere el umbral del 5\,\% es $1-0.95^7\approx 0.30$, y no 0.05; los
 candidatos reales están correlacionados, por lo que el sesgo es menor, pero con
 las 2047 biparticiones de columnas sigue siendo grande. Este es el
-problema de doble uso de los datos que \cite{Gao2024} documentan para el
+problema de doble uso de los datos que documentan \citet{Gao2024} para el
 agrupamiento jerárquico.
 
-AST-CC lo corrige con un ajuste de tipo \emph{min-P} \cite{Westfall1993}, que
+AST-CC lo corrige con un ajuste de tipo \emph{min-P} \citep{Westfall1993}, que
 consiste en que en cada réplica nula se repite la búsqueda completa del mejor corte y se
 registra su estadístico máximo. El p-valor \eqref{eq:prop-pval} compara así el
 máximo observado con la distribución del máximo bajo el nulo, lo que ajusta a
@@ -888,9 +947,11 @@ repetición de la búsqueda invalida el p-valor, como lo muestra una comprobaci�
 preliminar con bloques nulos de los tamaños de los bloques base, en la que comparar
 el mejor corte de
 filas con la $\chi^2$ de un corte fijo produjo errores de tipo~I de hasta 0.98
-al nivel 0.05, mientras que con el ajuste \emph{min-P} el error medio fue 0.053.
-Las pruebas dirigidas reutilizan las réplicas que ya generó la prueba ómnibus, y
-sobre cada una se repiten las tres búsquedas. Cada prueba sigue siendo válida
+al nivel 0.05, mientras que con el ajuste \emph{min-P} el error medio, sobre
+cortes de filas y de columnas, fue 0.053. Las pruebas dirigidas reutilizan las
+réplicas que ya generó la prueba ómnibus, y sobre cada una se repiten las
+búsquedas de filas y de columnas y, solo si ninguna es significativa, la del
+corte conjunto. Cada prueba sigue siendo válida
 por separado, y el costo de generar réplicas se paga una sola vez por bloque.
 
 \subsection{Alcance de la corrección}
@@ -912,16 +973,20 @@ nivel nominal, con la partición base estimada a partir de los mismos datos.
 
 Un árbol de refinamiento implica muchas pruebas, a saber, una por cada bloque base
 y, en cascada, una por cada hijo. Aplicar el mismo nivel $\alpha$ a todas ellas
-produciría muchos falsos refinamientos, y dividir $\alpha$ entre el número total
-de pruebas, como hace SigTree con la corrección de Bonferroni \cite{Hu2025},
-ignora la estructura jerárquica y resulta demasiado conservador. Con veinte
-pruebas independientes al 5\,\%, la probabilidad de al menos un falso rechazo es
-$1-0.95^{20}\approx 64$\,\%, y Bonferroni la evita dando a todas el mismo nivel
-$0.05/20 = 0.0025$ aunque unos bloques tengan muchos más datos que otros.
+produciría muchos falsos refinamientos. SigTree \citep{Hu2025} no corrige por
+el número de nodos, sino que en cada nodo divide $\alpha$ entre el número de
+categorías $|Q|$, para compensar la selección de la mejor división, que
+es el papel que aquí cumple el ajuste \emph{min-P}. Una corrección de Bonferroni
+global, que dividiera $\alpha$ entre el número total de pruebas del árbol,
+ignoraría la estructura jerárquica y resultaría demasiado conservadora. Con
+veinte pruebas independientes al 5\,\%, la probabilidad de al menos un falso
+rechazo es $1-0.95^{20}\approx 64$\,\%, y esa corrección la evitaría dando a
+todas el mismo nivel $0.05/20 = 0.0025$ aunque unos bloques tengan muchos más
+datos que otros.
 
 AST-CC reparte el nivel global $\alpha$ de arriba abajo, en proporción a la masa
 de cada bloque, siguiendo la lógica de las pruebas jerárquicas de
-\cite{Meinshausen2008} y de \cite{Kimes2017},
+\citet{Meinshausen2008} y de \citet{Kimes2017},
 \begin{equation}\label{eq:prop-alpha}
   \alpha_{B_{gh}} = \alpha\,\frac{N_{B_{gh}}}{N}\quad\text{(bloques base)},
   \qquad
@@ -933,17 +998,17 @@ que nunca se visitan no se gastan. Con $N=10\,000$ viajes, $\alpha=0.05$ y cuatr
 bloques base de 4000, 3000, 2000 y 1000 viajes, los niveles son 0.020, 0.015, 0.010
 y 0.005, que suman 0.05. Si el bloque de 4000 se corta en hijos de 3000 y 1000
 viajes, estos reciben 0.015 y 0.005, que suman lo que tenía el padre. El bloque
-grande trabaja entonces con 0.02, ocho veces el nivel de 0.0025 de Bonferroni, lo
+grande trabaja entonces con 0.02, ocho veces el nivel de 0.0025 de esa corrección global, lo
 que es razonable porque tiene más datos y más potencia.
 
 El argumento de control es el siguiente. Si el nulo de independencia se cumple
-en un bloque, se cumple en todos sus sub-bloques, así que los nulos verdaderos
+en un bloque, se cumple en todos sus subbloques, así que los nulos verdaderos
 forman subárboles completos. Un falso rechazo ocurre por primera vez en la raíz
 de alguno de esos subárboles, y esas raíces son bloques disjuntos cuyos niveles
 suman como máximo $\alpha$. En el ejemplo anterior, si los bloques de 2000 y 1000
 viajes fueran verdaderamente nulos, la probabilidad de refinarlos por error sería a
 lo sumo $0.010+0.005=0.015\le 0.05$. Si cada prueba fuera válida a su nivel y la
-jerarquía estuviera fijada de antemano, la tasa de error por familia (FWER), que es
+jerarquía estuviera fijada de antemano, la \ac{FWER}, que es
 la probabilidad de al menos un falso refinamiento en todo el árbol, sería, por lo
 tanto, a lo sumo $\alpha$. Como la jerarquía se construye con los
 datos, la garantía es aproximada, y su comportamiento real es parte del
@@ -958,22 +1023,27 @@ referencia, un bloque con $\alpha_B=0.02$ usa 199 réplicas, uno con $\alpha_B=0
 usa 400 y uno con $\alpha_B=0.0001$ llega al máximo de 20\,000. Si incluso con $B_{\max}$
 réplicas el p-valor mínimo $1/(B_{\max}+1)$ supera $\alpha_B$, el bloque no
 puede rechazarse y se marca como hoja inalcanzable, para distinguirla de
-una hoja homogénea. Además se aplica la parada secuencial de \cite{Besag1991},
-en la que la simulación se detiene en cuanto se acumulan $h$ réplicas con estadístico
-mayor o igual que el observado. Las réplicas se generan por lotes de 500 y la regla se
-evalúa al cierre de cada lote, de modo que el p-valor es la proporción de réplicas que
-igualan o superan al observado en las generadas hasta ese momento. Con
+una hoja homogénea. Además se aplica una parada secuencial inspirada en la de
+\citet{Besag1991}, cuya regla detiene la simulación exactamente en la réplica en
+que se acumulan $h$ estadísticos mayores o iguales que el observado y toma como
+p-valor $h/l$, con $l$ el número de réplicas generadas hasta ese momento. En
+AST-CC las réplicas se generan por lotes de 500 y la condición se evalúa solo al
+cierre de cada lote, de modo que, si se cumple, el p-valor es la proporción de
+réplicas que igualan o superan al observado entre todas las generadas hasta el
+cierre del lote, que puede incluir más de $h$ superaciones. Con
 $B_{\mathrm{perm}}\le 500$ la regla no se activa y se usan todas las réplicas, lo que
 es barato porque la prueba ómnibus solo requiere calcular $G^2$ sobre cada tabla;
 el ahorro está en los bloques con $\alpha_B$ muy pequeño, que exigen miles de
 réplicas, donde un bloque claramente no significativo se abandona tras el primer
-lote. Si el bloque supera la prueba ómnibus, la simulación se completó
-y sus réplicas sirven para las pruebas dirigidas.
+lote. Si el bloque supera la prueba ómnibus, la simulación se completó,
+porque un bloque significativo admite a lo sumo $c=2$ réplicas que igualen o
+superen al observado y la parada exige $h=10$, y sus réplicas sirven para las
+pruebas dirigidas.
 
 \section{Criterios de parada}\label{sec:prop-parada}
 
 Con matrices de millones de viajes, casi cualquier desviación de la
-independencia resulta significativa. Los propios \cite{Hu2025} señalan que el
+independencia resulta significativa. \citet{Hu2025} señalan que el
 estadístico $\chi^2$ crece con el tamaño de la muestra y dificulta el control de
 los falsos descubrimientos. Por eso AST-CC exige la significancia y un
 tamaño de efecto mínimo, nunca solo una de las dos. Un bloque con un millón de
@@ -1000,7 +1070,7 @@ Ganancia del corte & $\tilde g_{B,s}<\delta$ & El corte explica demasiado poca i
 \bottomrule
 \end{tabular}
 \caption{Criterios de parada de AST-CC. Los cuatro primeros son reglas que no
-dependen de la estructura interna del bloque, análogas a las de SigTree \cite{Hu2025}; los
+dependen de la estructura interna del bloque, análogas a las de SigTree \citep{Hu2025}; los
 tres últimos son estadísticos.}
 \label{tab:prop-parada}
 \end{table}
@@ -1052,8 +1122,8 @@ $\sum_{B\in\mathcal{S}}G^2_{B,s_B}\big/\sum_{g,h}G^2_{gh}$, la pérdida fuera de
 la muestra en el resto de 2017, la estabilidad de las hojas y la replicación de
 los cortes. Como ninguno de esos criterios señala un valor a partir del cual los
 cortes dejen de ser reales, $\delta$ se usa como un umbral de resolución con dos
-niveles. El árbol completo usa el valor a partir del cual el árbol deja de cambiar,
-0.00025, y es el que se compara con ST-CC y con las rejillas, y el árbol resumido
+niveles. El árbol completo usa el valor a partir del cual el árbol prácticamente
+deja de cambiar, 0.00025, y es el que se compara con ST-CC y con las rejillas, y el árbol resumido
 usa el que deja del orden de 10 a 15 cortes, 0.005 en el periodo laborable y 0.02
 en el feriado, y es el que se interpreta y se dibuja.
 
@@ -1088,7 +1158,7 @@ calcula su p-valor con el ajuste \emph{min-P}.
     \State marcar $B$ como hoja inalcanzable; \Return
   \EndIf
   \State calcular $G^2_B$ con \eqref{eq:prop-G2}
-  \State generar réplicas $O^{(b)}$ con \eqref{eq:prop-bootstrap}, por lotes, hasta $B_{\mathrm{perm}}$ o hasta que al cierre de un lote $h$ superen $G^2_B$ \Comment{la parada solo se activa si el bloque no es significativo}
+  \State generar réplicas $O^{(b)}$ con \eqref{eq:prop-bootstrap}, por lotes, hasta $B_{\mathrm{perm}}$ o hasta que al cierre de un lote $h$ igualen o superen $G^2_B$ \Comment{la parada solo se activa si el bloque no es significativo}
   \State $(p_{\mathrm{omn}}, \bar t_0)\gets$ p-valor y media nula de $G^2_B$ sobre las réplicas
   \State $\tilde I_B\gets\max\{0,\ (G^2_B-\bar t_0)/(2N_B)\}$
   \If{$p_{\mathrm{omn}}>\alpha_B$ \textbf{o} $\tilde I_B<\delta$}
@@ -1141,9 +1211,9 @@ calcula su p-valor con el ajuste \emph{min-P}.
 \toprule
 Parámetro & Papel & Valor de referencia \\
 \midrule
-$K_R$, $K_T$ & Resolución de la partición base, que es la de ST-CC & Los de \cite{Liu2021}, $8\times4$ en el periodo laborable y $6\times4$ en el feriado; sensibilidad a la partición base en el Cap.~\ref{chap:resultados} \\
-Inicializaciones de BBAC$_I$ & Ejecuciones de la partición base, cada una con búsqueda local & $200$, como \cite{Liu2021} \\
-$\alpha$ & Nivel global (FWER sobre el árbol) & $0.05$ \\
+$K_R$, $K_T$ & Resolución de la partición base, que es la de ST-CC & Los de \citet{Liu2021}, $8\times4$ en el periodo laborable y $6\times4$ en el feriado; sensibilidad a la partición base en el Cap.~\ref{chap:resultados} \\
+Inicializaciones de BBAC$_I$ & Ejecuciones de la partición base en el paquete \texttt{cgc}, sin búsqueda local, que solo se usa en las bases C5 y C6 de sensibilidad & $200$, como \citet{Liu2021} \\
+$\alpha$ & Nivel global (\ac{FWER} sobre el árbol) & $0.05$ \\
 $\delta$ & Información mutua mínima por observación, corregida por sesgo & Dos niveles, $0.00025$ nats en el árbol completo y $0.005$ o $0.02$ en el resumido (laborable o feriado); rejilla de $0.0001$ a $0.02$ en el Cap.~\ref{chap:resultados} \\
 Desempate & Elección entre dos cortes admisibles & Mayor $z=(G^2_{B,s}-\nu)/\sqrt{2\nu}$; por ganancia y por $J$ como sensibilidad \\
 $N_{\min}$, $d_{\max}$ & Reglas triviales de parada & $500$ viajes y profundidad $6$; sensibilidad \\
@@ -1160,17 +1230,17 @@ $\kappa$ & Índice de Jaccard mínimo para la frecuencia de soporte & $0.5$ como
 
 Los parámetros de la tabla son de dos tipos. Los que condicionan el resultado y
 por eso se someten a análisis de sensibilidad son $K_R$, $K_T$, $\alpha$, $\delta$,
-$N_{\min}$ y $d_{\max}$, que son decisiones del investigador. Los demás
+el desempate, $N_{\min}$ y $d_{\max}$, que son decisiones del investigador. Los demás
 (inicializaciones, número de réplicas, parada secuencial y límites de enumeración)
 son técnicos y buscan dar fiabilidad a las pruebas sin ser el foco de la
 interpretación. Un recorrido del Algoritmo~\ref{alg:astcc} con números ayuda a
-verlo. Sea $N=10\,000$, $\alpha=0.05$ y un bloque base de 4000 viajes, con nivel
+verlo. Sean $N=10\,000$, $\alpha=0.05$ y un bloque base de 4000 viajes, con nivel
 $\alpha_B=0.02$. El bloque supera las reglas triviales y su número de réplicas es
 $\min\{20\,000,\max\{199,\lceil 2/0.02\rceil\}\}=199$, con un p-valor mínimo de
 $1/200=0.005\le 0.02$, de modo que la prueba es alcanzable. Si la prueba ómnibus da
 $p_{\mathrm{omn}}=0.005$ y $\tilde I_B=0.03\ge\delta=0.005$, el bloque pasa la
 puerta. Si además $p_{\mathrm{fil}}=0.005$ y $p_{\mathrm{col}}=0.4$, solo el corte de
-filas es significativo y se acepta cuando su ganancia corregida supera $\delta$. Si
+filas es significativo y se acepta cuando su ganancia corregida alcanza o supera $\delta$. Si
 deja hijos de 3000 y 1000 viajes, estos reciben niveles de 0.015 y 0.005, y el segundo
 usa $\max\{199,400\}=400$ réplicas antes de repetir el mismo procedimiento. El
 criterio de nivel inalcanzable de la Tabla~\ref{tab:prop-parada} usa $B_{\max}$ y el
@@ -1181,9 +1251,11 @@ $B_{\mathrm{perm}}$ llega a $B_{\max}$.
 \subsection{Costo computacional}
 
 La partición base cuesta lo mismo que ST-CC, $O(mn(K_R+K_T))$ por iteración de
-BBAC$_I$ y por inicialización, más la búsqueda local; esta última puede evaluar
-cada movimiento de una fila o columna en $O(K_R K_T)$, porque con las bases C2 y
-C5 la divergencia depende solo de los totales de bloque. El costo adicional se
+BBAC$_I$ y por inicialización, ya que se toma del paquete \texttt{cgc} sin
+búsqueda local. Solo las bases C5 y C6 del análisis de sensibilidad añaden la
+búsqueda local, que con la base C5 puede evaluar cada movimiento de una fila o
+columna en $O(K_R K_T)$, porque la divergencia depende solo de los totales de
+bloque. El costo adicional se
 concentra en las pruebas por simulación. En un bloque $B=I\times J$, cada
 réplica requiere generar una tabla de $|I|\times|J|$ y repetir las búsquedas. La
 de columnas evalúa $2^{|J|-1}-1$ tablas colapsadas de $|I|\times2$, y la de
@@ -1203,8 +1275,8 @@ no tiempos medidos, que se reportarán junto con los resultados del
 Capítulo~\ref{chap:resultados}.
 Tres propiedades mantienen el costo total manejable. La primera es que la parada
 secuencial abandona pronto los bloques no significativos; la segunda, que los
-bloques de un mismo nivel son independientes dado el árbol, por lo que se
-procesan en paralelo; y la tercera, que el tamaño de los bloques decrece con la
+bloques de un mismo nivel son independientes dado el árbol, por lo que pueden
+procesarse en paralelo; y la tercera, que el tamaño de los bloques decrece con la
 profundidad.
 
 \section{Representación e interpretación de los resultados}\label{sec:prop-representacion}
@@ -1252,7 +1324,11 @@ dentro de cada bloque, según sus cortes, y se dibuja con los contornos de las
 hojas y un color proporcional a $\ell_L$, como en la
 Figura~\ref{fig:prop-teselacion}. De este modo se obtiene una vista global en la
 que los patrones locales aparecen como rectángulos de color distinto dentro de
-bloques que, en el tablero de ST-CC, se mostraban uniformes.
+bloques que, en el tablero de ST-CC, se mostraban uniformes. Como el orden de
+las filas y de las columnas dentro de cada bloque sigue los cortes, las hojas
+quedan contiguas en la figura, aunque las regiones que agrupan no lo sean en el
+mapa ni los horarios que agrupan lo sean en el día, por lo que esta vista se
+complementa con los mapas de profundidad que se describen a continuación.
 
 \paragraph{Mapas de profundidad.} Para cada región se representa en el mapa la
 profundidad máxima que alcanza el refinamiento en sus filas, y análogamente para
@@ -1279,8 +1355,12 @@ mitad de las ejecuciones, no debe interpretarse como hallazgo.
 Varias limitaciones se derivan directamente de las decisiones de diseño y
 conviene explicitarlas antes de los experimentos, porque condicionan tanto la
 interpretación de los resultados como el diseño de las comparaciones que se
-presentarán en el Capítulo~\ref{chap:resultados}. Cada una se describe a
-continuación junto con la forma en que se piensa evaluar su efecto.
+presentarán en el Capítulo~\ref{chap:resultados}. Algunas son propias del
+refinamiento local, como la restricción guillotina o la dependencia de la
+partición base, y otras provienen de las pruebas, como la validez aproximada
+cuando la jerarquía se construye con los datos o la resolución limitada por el
+número de réplicas. Cada una se describe a continuación junto con la forma en
+que se piensa evaluar su efecto.
 
 \begin{itemize}
   \item \textbf{Restricción guillotina.} El refinamiento solo mira hacia
@@ -1290,8 +1370,8 @@ continuación junto con la forma en que se piensa evaluar su efecto.
   mismas horas, con las regiones 3 y 4 en un bloque base y las 5 y 6 en otro, se
   recupera como dos hojas pequeñas y no como un rectángulo de cuatro regiones.
   \item \textbf{Dependencia de la partición base.} El refinamiento parte de un
-  óptimo local de BBAC$_I$, cuyo paisaje tiene muchos mínimos locales; la
-  búsqueda local y las múltiples inicializaciones lo atenúan, y la frecuencia
+  óptimo local de BBAC$_I$, cuyo paisaje tiene muchos mínimos locales; las 200
+  inicializaciones de la partición de ST-CC lo atenúan, y la frecuencia
   de soporte (Sección~\ref{sec:prop-representacion}) mide su efecto sobre las
   hojas. La elección de la base también importa, ya que con C5 y con C2 se obtienen
   tableros muy distintos, y C5 deja menos interacción local por refinar, porque
@@ -1311,7 +1391,7 @@ continuación junto con la forma en que se piensa evaluar su efecto.
   empíricamente.
   \item \textbf{Comparación con rejillas más finas.} Cabe preguntar por qué
   no basta con aumentar $K_R$ y $K_T$ o elegirlos con Cross-Associations
-  \cite{Chakrabarti2004}. La respuesta debe ser empírica, y consiste en comprobar que una rejilla global con
+  \citep{Chakrabarti2004}. La respuesta debe ser empírica, y consiste en comprobar que una rejilla global con
   el mismo número de parámetros, o con el mismo valor de \eqref{eq:prop-bic},
   no recupera los patrones locales que encuentra AST-CC. La diferencia en el
   número de parámetros ilustra el argumento. Con $n=12$ intervalos repartidos en
@@ -1336,21 +1416,21 @@ continuación junto con la forma en que se piensa evaluar su efecto.
   heterogeneidad detectable y ser irrelevante en el dominio. Por eso se reporta
   siempre el tamaño de efecto junto al p-valor, y los patrones principales se
   contrastan con conocimiento del dominio, como el foco alrededor de Penn
-  Station que identifican \cite{Liu2021}.
+  Station identificado por \citet{Liu2021}.
 \end{itemize}
 
 \paragraph{Extensiones que quedan como trabajo futuro.} Varias alternativas se
 consideraron durante el diseño y quedan fuera del alcance de esta tesis.
 Entre ellas se encuentra el control jerárquico de la tasa de falsos descubrimientos de
-\cite{Yekutieli2008}, más permisivo que la FWER cuando se esperan muchos
-refinamientos, que se dejó fuera porque la FWER es la garantía más simple de
+\citet{Yekutieli2008}, más permisivo que la \ac{FWER} cuando se esperan muchos
+refinamientos, que se dejó fuera porque la \ac{FWER} es la garantía más simple de
 interpretar en una primera versión del método. Otra es una variante que elija la
 partición y los cortes con la mitad de los días y los pruebe con la otra mitad, lo
 que elimina el doble uso de los datos a costa de potencia, en la línea del
-\emph{count splitting} de \cite{Neufeld2024cs}, y que exige antes comprobar que la
+\emph{count splitting} de \citet{Neufeld2024cs}, y que exige antes comprobar que la
 mitad de los días basta para estimar la partición. También se consideraron nulas
 paramétricas con una función de varianza por celda, como la ley de potencia de
-\cite{Taylor1961}, que no se adoptaron porque, como muestra la
+\citet{Taylor1961}, que no se adoptaron porque, como muestra la
 Sección~\ref{sec:prop-calibracion}, no reproducen las desviaciones correlacionadas
 entre las celdas de un bloque. Los cortes de columnas podrían restringirse a
 intervalos consecutivos, lo que reduciría las 2047 biparticiones posibles con doce
@@ -1359,7 +1439,7 @@ capturar horarios no contiguos, como las dos horas punta del día. Por último, 
 paso posterior de fusión de hojas vecinas recuperaría los patrones que cruzan
 bloques base, que es la limitación de la restricción guillotina.
 
-\section{Consideraciones Finales}\label{sec:prop-final}
+\section{Consideraciones finales}\label{sec:prop-final}
 
 Este capítulo presentó AST-CC, una extensión de ST-CC que refina localmente la
 partición en tablero mediante un árbol de cortes guiados por pruebas de

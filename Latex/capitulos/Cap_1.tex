@@ -10,8 +10,10 @@
 El presente capítulo introduce el problema abordado en esta tesis. Se parte
 del contexto general del análisis de datos espacio-temporales, se describe
 la limitación específica del co-agrupamiento de rejilla regular que motiva
-el trabajo, y se presentan los objetivos, la organización del documento y
-el cronograma de actividades.
+el trabajo y se plantea la pregunta estadística que debe responderse para
+superarla. A continuación se formula el problema, se enuncian los objetivos
+general y específicos, se explica cómo se organiza el resto del documento y
+se presenta el cronograma de actividades.
 
 % ---------------------------------------------------------------------
 \section{Motivación y Contexto}
@@ -20,13 +22,12 @@ el cronograma de actividades.
 El avance de los sensores, los dispositivos con posicionamiento global y
 los sistemas de registro automático ha hecho que grandes volúmenes de datos
 espacio-temporales estén disponibles de forma cotidiana. Los registros de
-viajes en taxi, los catálogos sísmicos o las series de monitoreo ambiental
-describen dónde y cuándo ocurre un fenómeno, y su análisis
-permite comprender la dinámica de una ciudad o de un territorio y apoyar la
-toma de decisiones en planificación urbana, transporte y gestión de riesgos
-\cite{Liu2021}.
+viajes en taxi, entre otros, describen dónde y cuándo ocurre un fenómeno.
+En el caso de la movilidad en taxis, su análisis permite comprender la
+dinámica de una ciudad y apoyar la toma de decisiones en planificación
+urbana y transporte \citep{Liu2021}.
 
-Sin embargo, estos datos presentan una dificultad característica, y es que la
+Sin embargo, estos datos presentan una dificultad característica, pues la
 dimensión espacial y la temporal no son independientes. En la movilidad
 urbana, por ejemplo, los destinos de los viajes se concentran en zonas de
 trabajo durante la mañana y en zonas residenciales durante la tarde. Un
@@ -34,7 +35,7 @@ patrón de este tipo solo es visible si se observan ambas dimensiones a la
 vez. Las técnicas tradicionales de agrupamiento espacio-temporal suelen
 analizar una sola dimensión, o bien tratan cada dimensión por separado, lo
 cual puede producir resultados poco representativos y perder la información
-de interacción entre espacio y tiempo \cite{Liu2021}.
+de interacción entre espacio y tiempo \citep{Liu2021}.
 
 El \ac{CC} ofrece una alternativa natural a este problema. En lugar de
 agrupar solo filas o solo columnas, particiona simultáneamente ambas
@@ -42,11 +43,14 @@ dimensiones de una matriz de datos. Aplicado a una matriz de co-ocurrencia
 $O \in \mathbb{R}_{+}^{m \times n}$, cuyas filas son regiones y cuyas
 columnas son intervalos de tiempo, el co-agrupamiento identifica grupos de
 regiones que se comportan de manera similar en ciertos grupos de horarios.
-Sobre esta idea, \cite{Liu2021} propusieron el marco \ac{ST-CC}, que emplea
-el algoritmo \ac{BBACI} \cite{Banerjee2007} para descubrir patrones de
-movilidad en los datos de taxis de Manhattan. Su estudio utilizó alrededor
-de diez millones de viajes registrados en noviembre de 2017, agregados en
-66 regiones y 12 intervalos de dos horas.
+Sobre esta idea, \citet{Liu2021} propusieron el marco \ac{ST-CC}, que emplea
+el algoritmo \ac{BBACI} \citep{Banerjee2007} para descubrir patrones de
+movilidad en los datos de taxis de Manhattan. El conjunto de datos de
+noviembre de 2017 reúne alrededor de diez millones de viajes de los taxis
+amarillos y verdes de Nueva York en el mes, de los cuales las matrices de
+Manhattan, agregadas en 66 zonas y 12 intervalos de dos horas, contienen
+unos 3.6 millones de viajes en el periodo laborable y 2.4 millones en el
+periodo feriado.
 
 El resultado de \ac{BBACI} es una partición en tablero de ajedrez
 (\emph{checkerboard}) donde cada región pertenece a un único grupo de regiones y
@@ -57,45 +61,48 @@ regiones se comporta de manera distinta solo en un horario concreto, por
 ejemplo un foco de actividad alrededor de una estación de trenes al final
 de la tarde, la única forma de capturarlo es dividir el grupo de regiones
 completo en todos los horarios. En otras palabras, un detalle local obliga
-a aumentar la resolución de toda la fila o columna de la partición. Este
-problema también fue señalado en la literatura de modelos de bloques, donde
-motivó enfoques bayesianos no paramétricos como el proceso de Mondrian
-\cite{Roy2008}.
-
-\cite{Liu2021} reconocieron parte de esta limitación y aplicaron
-K-means sobre los bloques del tablero para obtener \emph{co-clusters} que no
-siguen la rejilla. No obstante, ese paso reagrupa bloques ya
+a aumentar la resolución de toda la fila o columna de la partición. Como
+referencia, el proceso de Mondrian es un enfoque bayesiano no paramétrico
+que particiona la matriz de forma jerárquica y no en rejilla \citep{Roy2008}.
+Esta limitación es una observación de la presente tesis sobre el marco
+\ac{ST-CC}. \citet{Liu2021} aplicaron K-means sobre los bloques del tablero
+para obtener \emph{co-clusters} que no siguen la rejilla. No obstante, ese paso reagrupa bloques ya
 existentes a partir de su media y desviación estándar; no subdivide
 un bloque internamente. Por tanto, la heterogeneidad que queda oculta dentro
 de un bloque, que es precisamente donde pueden residir los patrones locales,
 no se recupera. La alternativa de aumentar $K_R$ y $K_T$, o de elegirlos
-automáticamente con métodos como Cross-Associations \cite{Chakrabarti2004},
+automáticamente con métodos como Cross-Associations \citep{Chakrabarti2004},
 sigue produciendo una rejilla global y aumenta el número de parámetros en
 toda la matriz.
 
-Una segunda pregunta surge al intentar refinar localmente, ¿cuándo debería detenerse?
-Todo bloque presenta algo de variación, de modo que se necesita un criterio
+Al intentar refinar localmente surge una segunda pregunta, que es cuándo
+debería detenerse el refinamiento. Todo bloque presenta algo de variación, de modo que se necesita un criterio
 que distinga la heterogeneidad real del ruido. Dos rasgos de los datos de
 movilidad hacen que esa distinción no sea trivial. El primero es que la matriz
 agrega varios días, y la actividad de cada celda varía de un día a otro mucho
 más de lo que supone el modelo de Poisson, y de forma correlacionada entre
 celdas, porque factores como el clima afectan a muchas regiones a la vez; una
-prueba que ignore esa variabilidad declara heterogéneo casi cualquier bloque. El
+prueba que ignore esa variabilidad tiende a declarar heterogéneo casi cualquier bloque. El
 segundo es que, con millones de viajes, incluso una diferencia irrelevante
 resulta estadísticamente significativa. En agrupamiento interpretable
-basado en árboles, \cite{Hu2025} propusieron evaluar cada división candidata
+basado en árboles, \citet{Hu2025} propusieron evaluar cada división candidata
 mediante pruebas de hipótesis, elegir la de menor $p$-valor y detener el
 crecimiento cuando ninguna división es estadísticamente significativa. Este
 principio, sin embargo, fue desarrollado para agrupar datos categóricos en
 una sola dimensión y no para bloques bidimensionales de una matriz
 espacio-temporal.
 
-Esta tesis se sitúa en la intersección de ambas líneas. Se propone extender
-\ac{ST-CC} con un refinamiento jerárquico que actúe dentro de cada
-bloque, guiado por un criterio estadístico coherente con la misma función
-objetivo que optimiza \ac{BBACI}. En el caso de conteos, la I-divergencia
-que minimiza \ac{BBACI} coincide, salvo un factor constante, con la
-devianza de un modelo log-lineal de Poisson. En consecuencia, la reducción
+Esta tesis se sitúa en la intersección de ambas líneas. Se propone
+\ac{AST-CC}, un árbol que
+refina, dentro de cada bloque, la partición de \ac{ST-CC} tal cual, mediante
+pruebas de hipótesis calibradas con un \emph{bootstrap} de días y guiadas por
+un criterio estadístico coherente con la misma función objetivo que optimiza
+\ac{BBACI}. Las particiones alternativas, a saber la base C5 y una rejilla
+optimizada, se usan solo como análisis de sensibilidad. En el caso de
+conteos, la I-divergencia que minimiza \ac{BBACI} equivale a la mitad de la
+devianza de un modelo log-lineal de Poisson, como se muestra en la
+Sección~\ref{sec:loglineal} del Capítulo~\ref{chap:marco}
+\citep{Banerjee2007}. En consecuencia, la reducción
 de divergencia al partir un bloque puede interpretarse como un estadístico
 de razón de verosimilitud. Esta conexión permite construir el criterio de
 refinamiento a partir del propio marco de \ac{ST-CC}, en lugar de importar
@@ -103,8 +110,10 @@ un criterio ajeno. Para que el criterio sea fiable, su distribución de
 referencia se obtiene remuestreando los días que forman la matriz, de modo que
 refleje la variabilidad real de los datos y no la que supondría un modelo de
 Poisson, y la decisión de refinar exige, además de significancia, un tamaño de
-efecto mínimo. El resultado puede aplicarse en otros dominios con datos de
-conteo espacio-temporales agregados a partir de réplicas, como días o semanas.
+efecto mínimo. El resultado podría aplicarse en otros dominios con datos de
+conteo espacio-temporales agregados a partir de réplicas, como días o semanas,
+aunque en esta tesis solo se valida con los datos de taxis de Manhattan y con
+datos sintéticos.
 
 % ---------------------------------------------------------------------
 \section{Planteamiento del Problema}
@@ -156,8 +165,10 @@ detectados puedan leerse directamente como grupos de regiones y de horarios.
           de \ac{ST-CC}.
 
     \item Diseñar la regla de decisión y de parada del refinamiento,
-          combinando una prueba global por bloque, la selección del mejor
-          corte en filas, en columnas o en ambas a la vez, pruebas calibradas
+          combinando una prueba global por bloque, la selección, entre
+          los cortes admisibles en filas, en columnas o en ambas a la vez (los
+          significativos y con un tamaño de efecto mínimo), del de mayor
+          estadístico estandarizado, pruebas calibradas
           con la variabilidad entre días de los datos, el control de
           comparaciones múltiples a lo largo del árbol y un umbral mínimo de
           tamaño de efecto.
@@ -177,11 +188,10 @@ detectados puedan leerse directamente como grupos de regiones y de horarios.
 \section{Organización de la tesis}
 \label{sec:organizacion}
 
-El restante de este documento de tesis está organizado de la siguiente
-forma. Los capítulos siguen el orden natural del trabajo, que va de los
-fundamentos teóricos a la propuesta, de la propuesta a su evaluación
-experimental y, finalmente, a las conclusiones. Cada capítulo se resume a
-continuación.
+El resto de este documento se organiza como sigue. Los capítulos siguen el
+orden natural del trabajo, que va de los fundamentos teóricos a la propuesta,
+de la propuesta a su evaluación experimental y, finalmente, a las
+conclusiones, y cada uno se resume en los elementos siguientes.
 
 \begin{itemize}
     \item El Capítulo~\ref{chap:marco} presenta el marco teórico y el estado
@@ -207,7 +217,7 @@ continuación.
 
 La Tabla~\ref{tab:cronograma} presenta la planificación de las actividades
 de la tesis, organizadas en diez meses y vinculadas a los objetivos
-específicos (OE) definidos en la Sección~\ref{subsec:objetivos-especificos}. Las
+específicos (\ac{OE}) definidos en la Sección~\ref{subsec:objetivos-especificos}. Las
 primeras actividades corresponden a la revisión de la literatura y a la
 reproducción de \ac{ST-CC}, que sirven de base para el resto del trabajo. Luego
 siguen el diseño y la implementación del método, su evaluación con datos
